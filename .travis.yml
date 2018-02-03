@@ -1,7 +1,0 @@
-language: csharp
-solution: DbLocalizationProvider.Core.sln
-install:
-    - git submodule update --init
-    - dotnet restore
-mono: none
-dotnet: 2.0.3
