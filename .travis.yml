@@ -1,0 +1,8 @@
+language: csharp
+install:
+    - git submodule update --init
+    - dotnet restore
+mono: none
+dotnet: 2.0.3
+script:
+    - xbuild /p:Configuration=Release DbLocalizationProvider.Core.sln
