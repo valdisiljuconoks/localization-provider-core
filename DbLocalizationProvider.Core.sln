@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AspNetCore", "src\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj", "{F6627B30-A832-4EB8-A0A1-1125249F2CB6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Abstractions", "lib\localization-provider\src\DbLocalizationProvider.Abstractions\DbLocalizationProvider.Abstractions.csproj", "{5E9121F2-E6F3-43D5-8262-8C29A2727A68}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider", "lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj", "{3D112110-2DE2-40E9-A3BB-78A64C473CDB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F5B8BFCE-3471-4B0F-99F8-BE786AD33B51}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Core.AspNetSample", "tests\DbLocalizationProvider.Core.AspNetSample\DbLocalizationProvider.Core.AspNetSample.csproj", "{A9330AEF-F9AC-44A0-B5B8-B845884F0229}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{45DBFA30-8F60-4D5A-8437-2BAE3976594F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		_config.yml = _config.yml
+		build-packages.ps1 = build-packages.ps1
+		global.json = global.json
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{07147348-CBC2-45C3-800B-5D970EF005D2}"
+	ProjectSection(SolutionItems) = preProject
+		docs\getting-started-netcore.md = docs\getting-started-netcore.md
+		docs\localizing-content-netcore.md = docs\localizing-content-netcore.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F6627B30-A832-4EB8-A0A1-1125249F2CB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6627B30-A832-4EB8-A0A1-1125249F2CB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6627B30-A832-4EB8-A0A1-1125249F2CB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6627B30-A832-4EB8-A0A1-1125249F2CB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E9121F2-E6F3-43D5-8262-8C29A2727A68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E9121F2-E6F3-43D5-8262-8C29A2727A68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E9121F2-E6F3-43D5-8262-8C29A2727A68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E9121F2-E6F3-43D5-8262-8C29A2727A68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D112110-2DE2-40E9-A3BB-78A64C473CDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D112110-2DE2-40E9-A3BB-78A64C473CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D112110-2DE2-40E9-A3BB-78A64C473CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D112110-2DE2-40E9-A3BB-78A64C473CDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9330AEF-F9AC-44A0-B5B8-B845884F0229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9330AEF-F9AC-44A0-B5B8-B845884F0229}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9330AEF-F9AC-44A0-B5B8-B845884F0229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9330AEF-F9AC-44A0-B5B8-B845884F0229}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A9330AEF-F9AC-44A0-B5B8-B845884F0229} = {F5B8BFCE-3471-4B0F-99F8-BE786AD33B51}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0E35C742-F247-48BF-A94F-BA48F1629C9C}
+	EndGlobalSection
+EndGlobal
