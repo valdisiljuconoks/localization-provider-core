@@ -1,5 +1,4 @@
 before_build:
-- git submodule update
 - nuget restore
 - dotnet restore
 version: 4.1.1-{build}
