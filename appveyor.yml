@@ -1,0 +1,9 @@
+before_build:
+- nuget restore
+- dotnet restore
+- git submodule foreach git pull origin master
+version: 4.1.1-{build}
+image: Visual Studio 2017
+platform: Any CPU
+build:
+  verbosity: minimal
