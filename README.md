@@ -3,6 +3,7 @@
 Database driven localization provider for .Net Core applications.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/algu4ji9oebedb2b?svg=true)](https://ci.appveyor.com/project/ValdisIljuconoks/localization-provider-core)
+[![Build Status](https://travis-ci.org/valdisiljuconoks/localization-provider-core.svg?branch=master)](https://travis-ci.org/valdisiljuconoks/localization-provider-core)
 
 ## What is the LocalizationProvider project?
 
