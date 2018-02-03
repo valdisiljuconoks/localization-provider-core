@@ -1,5 +1,5 @@
 before_build:
-- git submodule foreach git pull origin master
+- git submodule update
 - nuget restore
 - dotnet restore
 version: 4.1.1-{build}
