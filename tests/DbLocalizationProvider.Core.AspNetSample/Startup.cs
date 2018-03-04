@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using StackifyMiddleware;
 
 namespace DbLocalizationProvider.Core.AspNetSample
 {
@@ -67,7 +71,6 @@ namespace DbLocalizationProvider.Core.AspNetSample
             }
 
             app.UseStaticFiles();
-            app.UseMiddleware<RequestTracerMiddleware>();
 
             app.UseMvc(routes =>
             {
@@ -77,6 +80,9 @@ namespace DbLocalizationProvider.Core.AspNetSample
             });
 
             app.UseDbLocalizationProvider();
+
+            app.UseDbLocalizationProviderAdminUI("/admin-ui");
+
         }
     }
 }

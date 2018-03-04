@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AspNetCore", "src\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj", "{F6627B30-A832-4EB8-A0A1-1125249F2CB6}"
 EndProject
@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{07147348-C
 		docs\localizing-content-netcore.md = docs\localizing-content-netcore.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLocalizationProvider.AdminUI.AspNetCore", "src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj", "{EFBEF627-654F-4A18-B9FA-4F4486539C06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{A9330AEF-F9AC-44A0-B5B8-B845884F0229}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9330AEF-F9AC-44A0-B5B8-B845884F0229}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9330AEF-F9AC-44A0-B5B8-B845884F0229}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFBEF627-654F-4A18-B9FA-4F4486539C06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFBEF627-654F-4A18-B9FA-4F4486539C06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFBEF627-654F-4A18-B9FA-4F4486539C06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFBEF627-654F-4A18-B9FA-4F4486539C06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
