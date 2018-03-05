@@ -18,4 +18,10 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Abstractions\DbLocalizationProvider.Abstractions.csproj" />
+    <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
+    <ProjectReference Include="..\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj" />
+  </ItemGroup>
+
 </Project>
