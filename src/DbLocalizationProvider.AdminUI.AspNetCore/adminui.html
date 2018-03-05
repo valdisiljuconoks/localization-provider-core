@@ -1,8 +1,83 @@
-﻿<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin UI</title>
 </head>
 <body>
 <h1>admin ui</h1>
+
+<div id="app">
+    <table>
+        <tr>
+            <th>Resource Key</th>
+            <th>Invariant</th>
+            <th>English</th>
+        </tr>
+        <tr v-for="resource in resources">
+            <td>{{resource.key}}</td>
+            <td>1</td>
+            <td>2</td>
+        </tr>
+    </table>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js" integrity="sha256-1Q2q5hg2YXp9fYlM++sIEXOcUb8BRSDUsQ1zXvLBqmA=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.0/vue-resource.min.js" integrity="sha256-SKdOGI9oIPdHcwjFQg+eCwBdIWFjxiNhWFlU9Gt0o18=" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+    var res = {
+        "resources": [
+            {
+                "key": "key1",
+                "value": [
+                    {
+                        "key":"key1",
+                        "value": "value 1",
+                        "sourceCulture": {
+                            "code": "",
+                            "display": "Invariant Language (Invariant Country)"
+                        }
+                    },
+                    {
+                        "key":"key1",
+                        "value": "value 1 (EN)",
+                        "sourceCulture": {
+                            "code": "en",
+                            "display": "English"
+                        }
+                    }]
+            }]
+    };
+
+    var vm = {
+        "resources": [{}]
+    };
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            resources: vm
+        },
+        methods: {
+            loadData: function() {
+                this.$http.get('api/adminuiapi/get').then(response => {
+                    this.resources = response.body.resources;
+                }, response => {
+                    alert('error retrieving resources: ' + response.statusText);
+                });
+            }
+        }
+    });
+
+    document.onreadystatechange = function () {
+        if (document.readyState == 'interactive') {
+            app.loadData();
+        }
+    }
+</script>
 </body>
 </html>
