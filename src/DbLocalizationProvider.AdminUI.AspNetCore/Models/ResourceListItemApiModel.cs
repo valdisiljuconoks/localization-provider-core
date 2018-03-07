@@ -18,17 +18,25 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore.Models {
+namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
+{
     public class ResourceListItemApiModel
     {
         public ResourceListItemApiModel(string key, ICollection<ResourceItemApiModel> translations, bool syncedFromCode)
         {
-            Key = key;
-            Value = translations;
+            Key = key ?? throw new ArgumentNullException(nameof(key));
+            Value = translations ?? throw new ArgumentNullException(nameof(translations));
             SyncedFromCode = syncedFromCode;
             AllowDelete = !syncedFromCode;
+
+            var displayLength = 120;
+            var titleLength = 80;
+
+            DisplayKey = $"{key.Substring(0, key.Length > displayLength ? displayLength : key.Length)}{(key.Length > displayLength ? "..." : "")}";
+            TitleKey = $"{(key.Length > titleLength ? "..." : "")}{key.Substring(key.Length - Math.Min(titleLength, key.Length))}";
         }
 
         public string Key { get; }
@@ -37,8 +45,10 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models {
 
         public bool SyncedFromCode { get; }
 
-        public bool AllowDelete { get; set; }
+        public bool AllowDelete { get; }
 
-        public string DisplayKey { get; set; }
+        public string DisplayKey { get; }
+
+        public string TitleKey { get; }
     }
 }

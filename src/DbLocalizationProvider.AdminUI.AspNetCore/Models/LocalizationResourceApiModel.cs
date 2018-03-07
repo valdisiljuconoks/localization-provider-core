@@ -35,21 +35,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
             if(languages == null)
                 throw new ArgumentNullException(nameof(languages));
 
-            Resources = resources.Select(r =>
-                                         {
-                                             return new ResourceListItemApiModel(r.ResourceKey,
-                                                                                 r.Translations.Select(t => new ResourceItemApiModel(r.ResourceKey,
-                                                                                                                                     t.Value,
-                                                                                                                                     t.Language)).ToList(),
-                                                                                 r.FromCode);
-                                         }).ToList();
-
-            Resources.ForEach(r =>
-                              {
-                                  var trimmed = new string(r.Key.Take(80).ToArray());
-                                  r.DisplayKey = r.Key.Length <= 80 ? trimmed : $"{trimmed}...";
-                              });
-
+            Resources = resources.Select(ConvertToApiModel).ToList();
             Languages = languages.Select(l => new CultureApiModel(l.Name, l.EnglishName));
         }
 
@@ -58,5 +44,14 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
         public IEnumerable<CultureApiModel> Languages { get; }
 
         public bool AdminMode { get; set; }
+
+        private static ResourceListItemApiModel ConvertToApiModel(LocalizationResource resource)
+        {
+            return new ResourceListItemApiModel(resource.ResourceKey,
+                                                resource.Translations.Select(t => new ResourceItemApiModel(resource.ResourceKey,
+                                                                                                           t.Value,
+                                                                                                           t.Language)).ToList(),
+                                                resource.FromCode);
+        }
     }
 }

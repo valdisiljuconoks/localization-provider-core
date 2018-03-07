@@ -5,75 +5,221 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin UI</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="node_modules.vue_directive_tooltip.css.index.min.css">
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+
+        textarea {
+            width: 100%;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .full-width-tooltip {
+            max-width: 1200px;
+        }
+
+         .modal-mask {
+             position: fixed;
+             z-index: 9998;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background-color: rgba(0, 0, 0, .5);
+             display: table;
+             transition: opacity .3s ease;
+         }
+
+        .modal-wrapper {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .modal-container {
+            width: 750px;
+            margin: 0 auto;
+            padding: 20px 30px;
+            background-color: #fff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+            transition: all .3s ease;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        .modal-header h3 {
+            margin-top: 0;
+            color: #42b983;
+        }
+
+        .modal-body {
+            margin: 20px 0;
+        }
+
+        .modal-default-button {
+            float: right;
+        }
+
+        .modal-enter, .modal-leave {
+            opacity: 0;
+        }
+
+        .modal-enter .modal-container,
+        .modal-leave .modal-container {
+            -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+
+        .translation {
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+
 <h1>admin ui</h1>
 
-<div id="app">
-    <table>
+<script type="text/x-template" id="modal-template">
+    <div class="modal-mask" transition="modal">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <span name="header" v-bind:title="model.key">{{ model.title }}</span>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="4" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
+                </div>
+                <div class="modal-footer">
+                <slot name="footer">
+                    <button class="modal-default-button btn btn-primary" @click="$emit('save')">Save</button>
+                    <button class="modal-default-button btn btn-default" @click="$emit('close')">Cancel</button>
+                </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div id="app" v-cloak>
+
+    <modal v-if="model.showModal" @save="save" @close="model.showModal = false" :model="model.currentResource"></modal>
+
+    <table v-show="!model.loading" class="table table-bordered">
         <tr>
             <th>Resource Key</th>
-            <th>Invariant</th>
-            <th>English</th>
+            <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}}</th>
         </tr>
-        <tr v-for="resource in resources">
-            <td>{{resource.key}}</td>
-            <td>1</td>
-            <td>2</td>
+        <tr v-for="resource in model.resources">
+            <td>
+                <span v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
+            </td>
+            <td v-for="lang in model.supportedLanguages">
+
+                <span class="translation" @click="edit(resource, lang.code)">{{ findTranslation(resource, lang.code) }}</span>
+
+                <!--<label @dblclick="edit(resource, lang.code)">{{ findTranslation(resource, lang.code) }}</label>
+                <input class="edit" type="text"
+                       v-model="re.title"
+                       v-todo-focus="todo == editedTodo"
+                       @blur="doneEdit(todo)"
+                       @keyup.enter="doneEdit(resource)"
+                       @keyup.esc="cancelEdit(resource)">-->
+
+            </td>
         </tr>
     </table>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js" integrity="sha256-1Q2q5hg2YXp9fYlM++sIEXOcUb8BRSDUsQ1zXvLBqmA=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.0/vue-resource.min.js" integrity="sha256-SKdOGI9oIPdHcwjFQg+eCwBdIWFjxiNhWFlU9Gt0o18=" crossorigin="anonymous"></script>
+<script src="node_modules.vue_directive_tooltip.dist.vueDirectiveTooltip.min.js"></script>
 
 <script type="text/javascript">
+    Vue.component('modal', {
+        template: '#modal-template',
+        props: {
+            model: Object
+        },
+        data: function() {
+            return {
+                open: false
+            }
+        },
+        mounted: function() {
+            this.$refs.translationEditor.focus();
+        }
+    });
 
-    var res = {
-        "resources": [
-            {
-                "key": "key1",
-                "value": [
-                    {
-                        "key":"key1",
-                        "value": "value 1",
-                        "sourceCulture": {
-                            "code": "",
-                            "display": "Invariant Language (Invariant Country)"
-                        }
-                    },
-                    {
-                        "key":"key1",
-                        "value": "value 1 (EN)",
-                        "sourceCulture": {
-                            "code": "en",
-                            "display": "English"
-                        }
-                    }]
-            }]
-    };
+    Vue.use(vueDirectiveTooltip, {
+        delay: 500,
+        placement: 'top',
+        triggers: ['hover'],
+        offset: 0
+    });
 
     var vm = {
-        "resources": [{}]
+        resources: [],
+        supportedLanguages: [],
+        loading: true,
+        showModal: false,
+        currentResource: {}
     };
 
     var app = new Vue({
         el: '#app',
         data: {
-            resources: vm
+            model: vm
         },
         methods: {
             loadData: function() {
-                this.$http.get('api/adminuiapi/get').then(response => {
-                    this.resources = response.body.resources;
-                }, response => {
-                    alert('error retrieving resources: ' + response.statusText);
-                });
+                this.$http.get('api/service/get').then(response => {
+                        var result = response.body;
+                        this.model.resources = result.resources;
+                        this.model.supportedLanguages = result.languages;
+                        this.model.loading = false;
+                    },
+                    response => {
+                        alert('error retrieving resources: ' + response.statusText);
+                    });
+            },
+
+            findTranslation: function(resource, lang) {
+                var translation = null;
+                if (resource.value.length > 0) {
+                    resource.value.forEach(function(el) {
+                        if (el.sourceCulture.code == lang)
+                            translation = el.value;
+                    });
+                }
+
+                return translation;
+            },
+
+            edit: function(resource, lang) {
+                this.model.currentResource = {
+                    title: resource.titleKey,
+                    key: resource.key,
+                    translation: this.findTranslation(resource, lang),
+                    lang: lang
+                };
+
+                this.model.showModal = true;
+            },
+
+            save: function() {
+                this.model.showModal = false;
             }
         }
     });
 
-    document.onreadystatechange = function () {
+    document.onreadystatechange = function() {
         if (document.readyState == 'interactive') {
             app.loadData();
         }

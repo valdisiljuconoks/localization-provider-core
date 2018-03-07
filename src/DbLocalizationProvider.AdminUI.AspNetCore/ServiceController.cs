@@ -25,7 +25,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
-    public class AdminUIApiController : Controller
+    public class ServiceController : Controller
     {
         [HttpGet]
         public JsonResult Get()

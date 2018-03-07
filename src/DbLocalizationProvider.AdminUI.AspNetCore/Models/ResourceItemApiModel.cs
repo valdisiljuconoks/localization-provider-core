@@ -36,6 +36,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models {
 
         public string Value { get; }
 
-        public CultureApiModel SourceCulture { get; set; }
+        public CultureApiModel SourceCulture { get; }
     }
 }

@@ -29,8 +29,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models {
             Display = display ?? throw new ArgumentNullException(nameof(display));
         }
 
-        public string Code { get; set; }
+        public string Code { get; }
 
-        public string Display { get; set; }
+        public string Display { get; }
     }
 }

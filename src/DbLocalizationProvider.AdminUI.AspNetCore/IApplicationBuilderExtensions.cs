@@ -53,7 +53,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                                                DefaultHandler = app.ApplicationServices.GetRequiredService<MvcRouteHandler>()
                                            };
 
-                        routeBuilder.MapRoute("Admin UI webapi route", "api/{controller=AdminUIApi}/{action=Index}");
+                        routeBuilder.MapRoute("Admin UI webapi route", "api/{controller=Service}/{action=Index}");
                         var route = routeBuilder.Build();
                         builder.UseRouter(route);
                     });
