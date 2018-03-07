@@ -8,9 +8,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="node_modules.vue_directive_tooltip.css.index.min.css">
     <style type="text/css">
-        [v-cloak] {
-            display: none;
+        body {
+            margin: 10px;
         }
+
+        h1 {
+            font-size: 24px;
+        }
+
+         [v-cloak] {
+             display: none;
+         }
 
         textarea {
             width: 100%;
@@ -24,17 +32,17 @@
             max-width: 1200px;
         }
 
-         .modal-mask {
-             position: fixed;
-             z-index: 9998;
-             top: 0;
-             left: 0;
-             width: 100%;
-             height: 100%;
-             background-color: rgba(0, 0, 0, .5);
-             display: table;
-             transition: opacity .3s ease;
-         }
+        .modal-mask {
+            position: fixed;
+            z-index: 9998;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, .5);
+            display: table;
+            transition: opacity .3s ease;
+        }
 
         .modal-wrapper {
             display: table-cell;
@@ -80,11 +88,16 @@
             text-decoration: underline;
             cursor: pointer;
         }
+
+        .translation.empty {
+            color: red;
+            text-decoration-style: dotted;
+        }
     </style>
 </head>
 <body>
 
-<h1>admin ui</h1>
+<h1>Localization Resources AdminUI</h1>
 
 <script type="text/x-template" id="modal-template">
     <div class="modal-mask" transition="modal">
@@ -108,9 +121,7 @@
 </script>
 
 <div id="app" v-cloak>
-
     <modal v-if="model.showModal" @save="save" @close="model.showModal = false" :model="model.currentResource"></modal>
-
     <table v-show="!model.loading" class="table table-bordered">
         <tr>
             <th>Resource Key</th>
@@ -121,9 +132,8 @@
                 <span v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
             </td>
             <td v-for="lang in model.supportedLanguages">
-
-                <span class="translation" @click="edit(resource, lang.code)">{{ findTranslation(resource, lang.code) }}</span>
-
+                <span class="translation" @click="edit(resource, lang.code)" v-show="findTranslation(resource, lang.code) != null">{{ findTranslation(resource, lang.code) }}</span>
+                <span class="translation empty" @click="new(resource, lang.code)" v-show="findTranslation(resource, lang.code) == null">N/A</span>
                 <!--<label @dblclick="edit(resource, lang.code)">{{ findTranslation(resource, lang.code) }}</label>
                 <input class="edit" type="text"
                        v-model="re.title"
@@ -131,7 +141,6 @@
                        @blur="doneEdit(todo)"
                        @keyup.enter="doneEdit(resource)"
                        @keyup.esc="cancelEdit(resource)">-->
-
             </td>
         </tr>
     </table>
