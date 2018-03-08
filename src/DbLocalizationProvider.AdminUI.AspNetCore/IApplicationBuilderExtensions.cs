@@ -20,6 +20,8 @@
 
 using System;
 using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
+using DbLocalizationProvider.AspNetCore.Commands;
+using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -63,10 +65,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             factory.ForQuery<AvailableLanguages.Query>()
                    .SetHandler(() => new AvailableLanguagesHandler(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>()));
 
+            ConfigurationContext.Current.TypeFactory.ForCommand<CreateOrUpdateTranslation.Command>().SetHandler<CreateOrUpdateTranslationHandler>();
+
             //ConfigurationContext.Current.TypeFactory.ForQuery<GetAllTranslations.Query>().SetHandler<GetAllTranslations.Handler>();
             //ConfigurationContext.Current.TypeFactory.ForCommand<CreateNewResource.Command>().SetHandler<CreateNewResource.Handler>();
             //ConfigurationContext.Current.TypeFactory.ForCommand<DeleteResource.Command>().SetHandler<DeleteResource.Handler>();
-            //ConfigurationContext.Current.TypeFactory.ForCommand<CreateOrUpdateTranslation.Command>().SetHandler<CreateOrUpdateTranslation.Handler>();
 
             return app;
         }

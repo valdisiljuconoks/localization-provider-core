@@ -6,12 +6,16 @@
 
   <ItemGroup>
     <None Remove="adminui.html" />
+    <None Remove="node_modules\axios\dist\axios.min.js" />
+    <None Remove="node_modules\axios\dist\axios.min.map" />
     <None Remove="node_modules\vue-directive-tooltip\css\index.min.css" />
     <None Remove="node_modules\vue-directive-tooltip\dist\vueDirectiveTooltip.min.js" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="adminui.html" />
+    <EmbeddedResource Include="node_modules\axios\dist\axios.min.js" />
+    <EmbeddedResource Include="node_modules\axios\dist\axios.min.map" />
     <EmbeddedResource Include="node_modules\vue-directive-tooltip\css\index.min.css" />
     <EmbeddedResource Include="node_modules\vue-directive-tooltip\dist\vueDirectiveTooltip.min.js" />
   </ItemGroup>

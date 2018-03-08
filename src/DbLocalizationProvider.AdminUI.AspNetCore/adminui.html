@@ -122,32 +122,36 @@
 
 <div id="app" v-cloak>
     <modal v-if="model.showModal" @save="save" @close="model.showModal = false" :model="model.currentResource"></modal>
-    <table v-show="!model.loading" class="table table-bordered">
-        <tr>
-            <th>Resource Key</th>
-            <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}}</th>
-        </tr>
-        <tr v-for="resource in model.resources">
-            <td>
-                <span v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
-            </td>
-            <td v-for="lang in model.supportedLanguages">
-                <span class="translation" @click="edit(resource, lang.code)" v-show="findTranslation(resource, lang.code) != null">{{ findTranslation(resource, lang.code) }}</span>
-                <span class="translation empty" @click="new(resource, lang.code)" v-show="findTranslation(resource, lang.code) == null">N/A</span>
-                <!--<label @dblclick="edit(resource, lang.code)">{{ findTranslation(resource, lang.code) }}</label>
-                <input class="edit" type="text"
-                       v-model="re.title"
-                       v-todo-focus="todo == editedTodo"
-                       @blur="doneEdit(todo)"
-                       @keyup.enter="doneEdit(resource)"
-                       @keyup.esc="cancelEdit(resource)">-->
-            </td>
-        </tr>
-    </table>
+    <div classs="table-responsive">
+        <table v-show="!model.loading" class="table table-bordered table-hover table-sm">
+            <thread class="thead-dark">
+                <tr>
+                    <th>Resource Key</th>
+                    <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}}</th>
+                </tr>
+            </thread>
+            <tr v-for="resource in model.resources">
+                <td>
+                    <span v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
+                </td>
+                <td v-for="lang in model.supportedLanguages">
+                    <span class="translation" @click="edit(resource, lang.code)" v-show="findTranslation(resource, lang.code) != null">{{ findTranslation(resource, lang.code) }}</span>
+                    <span class="translation empty" @click="new(resource, lang.code)" v-show="findTranslation(resource, lang.code) == null">N/A</span>
+                    <!--<label @dblclick="edit(resource, lang.code)">{{ findTranslation(resource, lang.code) }}</label>
+                    <input class="edit" type="text"
+                           v-model="re.title"
+                           v-todo-focus="todo == editedTodo"
+                           @blur="doneEdit(todo)"
+                           @keyup.enter="doneEdit(resource)"
+                           @keyup.esc="cancelEdit(resource)">-->
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js" integrity="sha256-1Q2q5hg2YXp9fYlM++sIEXOcUb8BRSDUsQ1zXvLBqmA=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.0/vue-resource.min.js" integrity="sha256-SKdOGI9oIPdHcwjFQg+eCwBdIWFjxiNhWFlU9Gt0o18=" crossorigin="anonymous"></script>
+<script src="node_modules.axios.dist.axios.min.js"></script>
 <script src="node_modules.vue_directive_tooltip.dist.vueDirectiveTooltip.min.js"></script>
 
 <script type="text/javascript">
@@ -188,14 +192,13 @@
         },
         methods: {
             loadData: function() {
-                this.$http.get('api/service/get').then(response => {
-                        var result = response.body;
+                axios.get('api/service/get').then(response => {
+                        var result = response.data;
                         this.model.resources = result.resources;
                         this.model.supportedLanguages = result.languages;
                         this.model.loading = false;
-                    },
-                    response => {
-                        alert('error retrieving resources: ' + response.statusText);
+                    }).catch(function(error) {
+                        alert('error retrieving resources: ' + error);
                     });
             },
 
@@ -224,6 +227,8 @@
 
             save: function() {
                 this.model.showModal = false;
+
+                axios.post('api/service/save', this.model.currentResource);
             }
         }
     });
