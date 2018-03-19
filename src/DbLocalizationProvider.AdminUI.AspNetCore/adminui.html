@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin UI</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="node_modules.bootstrap.dist.css.bootstrap.min.css">
     <link rel="stylesheet" href="node_modules.vue_directive_tooltip.css.index.min.css">
     <style type="text/css">
         body {
@@ -124,19 +124,23 @@
     <modal v-if="model.showModal" @save="save" @close="model.showModal = false" :model="model.currentResource"></modal>
     <div classs="table-responsive">
         <table v-show="!model.loading" class="table table-bordered table-hover table-sm">
-            <thread class="thead-dark">
+            <thead class="thead-dark">
                 <tr>
                     <th>Resource Key</th>
+                    <th>Invariant (In Code)</th>
                     <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}}</th>
                 </tr>
-            </thread>
+            </thead>
             <tr v-for="resource in model.resources">
                 <td>
                     <span v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
                 </td>
+                <td>
+                    <span>{{ resource["_"] }}</span>
+                </td>
                 <td v-for="lang in model.supportedLanguages">
-                    <span class="translation" @click="edit(resource, lang.code)" v-show="findTranslation(resource, lang.code) != null">{{ findTranslation(resource, lang.code) }}</span>
-                    <span class="translation empty" @click="new(resource, lang.code)" v-show="findTranslation(resource, lang.code) == null">N/A</span>
+                    <span class="translation" @click="edit(resource, lang.code)" v-show="resource[lang.code] != null">{{ resource[lang.code] }}</span>
+                    <span class="translation empty" @click="edit(resource, lang.code)" v-show="resource[lang.code] == null">N/A</span>
                     <!--<label @dblclick="edit(resource, lang.code)">{{ findTranslation(resource, lang.code) }}</label>
                     <input class="edit" type="text"
                            v-model="re.title"
@@ -150,7 +154,7 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js" integrity="sha256-1Q2q5hg2YXp9fYlM++sIEXOcUb8BRSDUsQ1zXvLBqmA=" crossorigin="anonymous"></script>
+<script src="node_modules.vue.dist.vue.min.js"></script>
 <script src="node_modules.axios.dist.axios.min.js"></script>
 <script src="node_modules.vue_directive_tooltip.dist.vueDirectiveTooltip.min.js"></script>
 
@@ -202,23 +206,11 @@
                     });
             },
 
-            findTranslation: function(resource, lang) {
-                var translation = null;
-                if (resource.value.length > 0) {
-                    resource.value.forEach(function(el) {
-                        if (el.sourceCulture.code == lang)
-                            translation = el.value;
-                    });
-                }
-
-                return translation;
-            },
-
             edit: function(resource, lang) {
                 this.model.currentResource = {
                     title: resource.titleKey,
                     key: resource.key,
-                    translation: this.findTranslation(resource, lang),
+                    translation: resource[lang],
                     lang: lang
                 };
 
@@ -227,8 +219,13 @@
 
             save: function() {
                 this.model.showModal = false;
-
                 axios.post('api/service/save', this.model.currentResource);
+
+                // update viewmodel
+                var editedResource = this.model.resources.find((r) => { return r.key == this.model.currentResource.key; });
+                if (editedResource != null) {
+                    editedResource[this.model.currentResource.lang] = this.model.currentResource.translation;
+                }
             }
         }
     });

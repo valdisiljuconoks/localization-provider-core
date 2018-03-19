@@ -24,7 +24,6 @@ using DbLocalizationProvider.AdminUI.AspNetCore.Models;
 using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
@@ -42,7 +41,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             var cmd = new CreateOrUpdateTranslation.Command(model.Key, new CultureInfo(model.Language), model.Translation);
             cmd.Execute();
 
-            return new JsonResult("{}");
+            return ServiceOperationResult.Ok;
         }
 
         private LocalizationResourceApiModel PrepareViewModel()
@@ -61,19 +60,5 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
             return new LocalizationResourceApiModel(resources, languages) { AdminMode = isAdmin };
         }
-    }
-
-
-    [JsonObject]
-    public class CreateOrUpdateTranslationRequestModel
-    {
-        [JsonProperty("key")]
-        public string Key { get; set; }
-
-        [JsonProperty("lang")]
-        public string Language { get; set; }
-
-        [JsonProperty("translation")]
-        public string Translation { get; set; }
     }
 }

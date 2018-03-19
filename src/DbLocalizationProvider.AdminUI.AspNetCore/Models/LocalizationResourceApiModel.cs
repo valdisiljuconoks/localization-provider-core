@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
 {
@@ -35,23 +36,37 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
             if(languages == null)
                 throw new ArgumentNullException(nameof(languages));
 
-            Resources = resources.Select(ConvertToApiModel).ToList();
+            Resources = resources.Select(r => ConvertToApiModel(r, languages)).ToList();
             Languages = languages.Select(l => new CultureApiModel(l.Name, l.EnglishName));
         }
 
-        public List<ResourceListItemApiModel> Resources { get; }
+        public List<JObject> Resources { get; }
 
         public IEnumerable<CultureApiModel> Languages { get; }
 
         public bool AdminMode { get; set; }
 
-        private static ResourceListItemApiModel ConvertToApiModel(LocalizationResource resource)
+        private static JObject ConvertToApiModel(LocalizationResource resource, IEnumerable<CultureInfo> languages)
         {
-            return new ResourceListItemApiModel(resource.ResourceKey,
-                                                resource.Translations.Select(t => new ResourceItemApiModel(resource.ResourceKey,
-                                                                                                           t.Value,
-                                                                                                           t.Language)).ToList(),
-                                                resource.FromCode);
+            var displayLength = 120;
+            var titleLength = 80;
+
+            var key = resource.ResourceKey;
+
+            var result = new JObject
+                         {
+                             ["key"] = resource.ResourceKey,
+                             ["displayKey"] = $"{key.Substring(0, key.Length > displayLength ? displayLength : key.Length)}{(key.Length > displayLength ? "..." : "")}",
+                             ["titleKey"] = $"{(key.Length > titleLength ? "..." : "")}{key.Substring(key.Length - Math.Min(titleLength, key.Length))}",
+                             ["syncedFromCode"] = resource.FromCode,
+                             ["allowDelete"] = !resource.FromCode,
+                             ["_"] = resource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value
+                         };
+
+            foreach(var language in languages)
+                result[language.Name] = resource.Translations.FindByLanguage(language)?.Value;
+
+            return result;
         }
     }
 }

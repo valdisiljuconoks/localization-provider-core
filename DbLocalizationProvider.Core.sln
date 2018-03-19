@@ -32,7 +32,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{07147348-C
 		docs\localizing-content-netcore.md = docs\localizing-content-netcore.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLocalizationProvider.AdminUI.AspNetCore", "src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj", "{EFBEF627-654F-4A18-B9FA-4F4486539C06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AdminUI.AspNetCore", "src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj", "{EFBEF627-654F-4A18-B9FA-4F4486539C06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLocalizationProvider.AdminUI.AspNetCore.Tests", "tests\DbLocalizationProvider.AdminUI.AspNetCore.Tests\DbLocalizationProvider.AdminUI.AspNetCore.Tests.csproj", "{35692314-A1E9-4A5C-B9AA-562D45BB88AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,12 +62,17 @@ Global
 		{EFBEF627-654F-4A18-B9FA-4F4486539C06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFBEF627-654F-4A18-B9FA-4F4486539C06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFBEF627-654F-4A18-B9FA-4F4486539C06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35692314-A1E9-4A5C-B9AA-562D45BB88AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35692314-A1E9-4A5C-B9AA-562D45BB88AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35692314-A1E9-4A5C-B9AA-562D45BB88AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35692314-A1E9-4A5C-B9AA-562D45BB88AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A9330AEF-F9AC-44A0-B5B8-B845884F0229} = {F5B8BFCE-3471-4B0F-99F8-BE786AD33B51}
+		{35692314-A1E9-4A5C-B9AA-562D45BB88AB} = {F5B8BFCE-3471-4B0F-99F8-BE786AD33B51}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0E35C742-F247-48BF-A94F-BA48F1629C9C}
