@@ -122,6 +122,9 @@
 
 <div id="app" v-cloak>
     <modal v-if="model.showModal" @save="save" @close="model.showModal = false" :model="model.currentResource"></modal>
+    <div class="form-group">
+        <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="search for something..." />
+    </div>
     <div classs="table-responsive">
         <table v-show="!model.loading" class="table table-bordered table-hover table-sm">
             <thead class="thead-dark">
@@ -131,7 +134,7 @@
                     <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}}</th>
                 </tr>
             </thead>
-            <tr v-for="resource in model.resources">
+            <tr v-for="resource in filteredResources">
                 <td>
                     <span v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
                 </td>
@@ -180,6 +183,7 @@
         loading: true,
         showModal: false,
         currentResource: {},
+        searchKeyword: '',
         options: {
             showInvariantCulture: true
         }
@@ -223,6 +227,15 @@
                 if (editedResource != null) {
                     editedResource[this.model.currentResource.lang] = this.model.currentResource.translation;
                 }
+            }
+        },
+        computed: {
+            filteredResources: function() {
+                var upperSearch = this.model.searchKeyword.toUpperCase();
+                return this.model.resources.filter((r) => {
+                    return Object.values(r).some(v =>
+                        String(v).toUpperCase().includes(upperSearch));
+                });
             }
         }
     });
