@@ -127,7 +127,7 @@
             <thead class="thead-dark">
                 <tr>
                     <th>Resource Key</th>
-                    <th>Invariant (In Code)</th>
+                    <th v-if="model.options.showInvariantCulture">Invariant (In Code)</th>
                     <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}}</th>
                 </tr>
             </thead>
@@ -135,19 +135,12 @@
                 <td>
                     <span v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
                 </td>
-                <td>
+                <td v-if="model.options.showInvariantCulture">
                     <span>{{ resource["_"] }}</span>
                 </td>
                 <td v-for="lang in model.supportedLanguages">
                     <span class="translation" @click="edit(resource, lang.code)" v-show="resource[lang.code] != null">{{ resource[lang.code] }}</span>
                     <span class="translation empty" @click="edit(resource, lang.code)" v-show="resource[lang.code] == null">N/A</span>
-                    <!--<label @dblclick="edit(resource, lang.code)">{{ findTranslation(resource, lang.code) }}</label>
-                    <input class="edit" type="text"
-                           v-model="re.title"
-                           v-todo-focus="todo == editedTodo"
-                           @blur="doneEdit(todo)"
-                           @keyup.enter="doneEdit(resource)"
-                           @keyup.esc="cancelEdit(resource)">-->
                 </td>
             </tr>
         </table>
@@ -186,7 +179,10 @@
         supportedLanguages: [],
         loading: true,
         showModal: false,
-        currentResource: {}
+        currentResource: {},
+        options: {
+            showInvariantCulture: true
+        }
     };
 
     var app = new Vue({
@@ -197,13 +193,14 @@
         methods: {
             loadData: function() {
                 axios.get('api/service/get').then(response => {
-                        var result = response.data;
-                        this.model.resources = result.resources;
-                        this.model.supportedLanguages = result.languages;
-                        this.model.loading = false;
-                    }).catch(function(error) {
-                        alert('error retrieving resources: ' + error);
-                    });
+                    var result = response.data;
+                    this.model.resources = result.resources;
+                    this.model.supportedLanguages = result.languages;
+                    this.model.loading = false;
+                    this.model.options = result.options;
+                }).catch(function(error) {
+                    alert('error retrieving resources: ' + error);
+                });
             },
 
             edit: function(resource, lang) {

@@ -52,6 +52,11 @@ namespace DbLocalizationProvider.Core.AspNetSample
             {
                 _.EnableInvariantCultureFallback = true;
             });
+
+            services.AddDbLocalizationProviderAdminUI(c =>
+            {
+                c.ShowInvariantCulture = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,9 +85,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
             });
 
             app.UseDbLocalizationProvider();
-
             app.UseDbLocalizationProviderAdminUI("/admin-ui");
-
         }
     }
 }

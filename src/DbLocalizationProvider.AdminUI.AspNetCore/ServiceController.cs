@@ -29,6 +29,13 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
     public class ServiceController : Controller
     {
+        private readonly UiConfigurationContext _config;
+
+        public ServiceController(UiConfigurationContext config)
+        {
+            _config = config;
+        }
+
         [HttpGet]
         public JsonResult Get()
         {
@@ -58,7 +65,16 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             //if (user != null)
             //    isAdmin = user.Identity.IsAuthenticated && UiConfigurationContext.Current.AuthorizedAdminRoles.Any(r => user.IsInRole(r));
 
-            return new LocalizationResourceApiModel(resources, languages) { AdminMode = isAdmin };
+            var result = new LocalizationResourceApiModel(resources, languages, _config.MaxResourceKeyPopupTitleLength, _config.MaxResourceKeyDisplayLength)
+                         {
+                             Options =
+                             {
+                                 AdminMode = isAdmin,
+                                 ShowInvariantCulture = _config.ShowInvariantCulture
+                             }
+                         };
+
+            return result;
         }
     }
 }

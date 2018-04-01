@@ -28,7 +28,10 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
 {
     public class LocalizationResourceApiModel
     {
-        public LocalizationResourceApiModel(ICollection<LocalizationResource> resources, IEnumerable<CultureInfo> languages)
+        private readonly int _popupTitleLength;
+        private readonly int _listDisplayLength;
+
+        public LocalizationResourceApiModel(ICollection<LocalizationResource> resources, IEnumerable<CultureInfo> languages, int popupTitleLength, int listDisplayLength)
         {
             if(resources == null)
                 throw new ArgumentNullException(nameof(resources));
@@ -36,28 +39,27 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
             if(languages == null)
                 throw new ArgumentNullException(nameof(languages));
 
+            _popupTitleLength = popupTitleLength;
+            _listDisplayLength = listDisplayLength;
             Resources = resources.Select(r => ConvertToApiModel(r, languages)).ToList();
             Languages = languages.Select(l => new CultureApiModel(l.Name, l.EnglishName));
+            Options = new UiOptions();
         }
 
         public List<JObject> Resources { get; }
 
         public IEnumerable<CultureApiModel> Languages { get; }
 
-        public bool AdminMode { get; set; }
+        public UiOptions Options { get; }
 
-        private static JObject ConvertToApiModel(LocalizationResource resource, IEnumerable<CultureInfo> languages)
+        private JObject ConvertToApiModel(LocalizationResource resource, IEnumerable<CultureInfo> languages)
         {
-            var displayLength = 120;
-            var titleLength = 80;
-
             var key = resource.ResourceKey;
-
             var result = new JObject
                          {
                              ["key"] = resource.ResourceKey,
-                             ["displayKey"] = $"{key.Substring(0, key.Length > displayLength ? displayLength : key.Length)}{(key.Length > displayLength ? "..." : "")}",
-                             ["titleKey"] = $"{(key.Length > titleLength ? "..." : "")}{key.Substring(key.Length - Math.Min(titleLength, key.Length))}",
+                             ["displayKey"] = $"{key.Substring(0, key.Length > _listDisplayLength ? _listDisplayLength : key.Length)}{(key.Length > _listDisplayLength ? "..." : "")}",
+                             ["titleKey"] = $"{(key.Length > _popupTitleLength ? "..." : "")}{key.Substring(key.Length - Math.Min(_popupTitleLength, key.Length))}",
                              ["syncedFromCode"] = resource.FromCode,
                              ["allowDelete"] = !resource.FromCode,
                              ["_"] = resource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value
