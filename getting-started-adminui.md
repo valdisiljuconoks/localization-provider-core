@@ -56,7 +56,34 @@ public class Startup
         ...
 
         app.UseDbLocalizationProvider();
-        app.UseDbLocalizationProviderAdminUI("/admin-ui");
+        app.UseDbLocalizationProviderAdminUI();
+    }
+}
+```
+
+## Accessing AdminUI
+
+By default administration UI is mapped on `/localization-admin` path. You can customize path via `app.UseDbLocalizationProviderAdminUI();`. For example to map to `/loc-admin-ui`, you have to:
+
+```
+public class Startup
+{
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        ...
+    }
+
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        ...
+
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationProviderAdminUI("/loc-admin-ui");
     }
 }
 ```
