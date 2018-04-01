@@ -1,5 +1,3 @@
-using System;
-
 namespace DbLocalizationProvider.Core.AspNetSample.Models
 {
     public class ErrorViewModel
