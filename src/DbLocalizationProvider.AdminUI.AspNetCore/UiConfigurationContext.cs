@@ -19,6 +19,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
@@ -30,7 +31,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// <summary>
         /// Set roles to users who will have admin access to UI (can delete resources, etc).
         /// </summary>
-        //public ICollection<string> AuthorizedAdminRoles { get; } = new DirtyList<string>("Administrators");
+        public ICollection<string> AuthorizedAdminRoles { get; } = new List<string> { "Administrators" };
 
         /// <summary>
         /// Set roles to users who will have editor access to UI (can add translations).

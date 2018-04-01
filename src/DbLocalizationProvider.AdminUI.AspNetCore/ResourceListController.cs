@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Extensions;
+﻿using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
-    [Authorize]
+    [AuthorizeRoles]
     public class ResourceListController : Controller
     {
         public ActionResult Index()

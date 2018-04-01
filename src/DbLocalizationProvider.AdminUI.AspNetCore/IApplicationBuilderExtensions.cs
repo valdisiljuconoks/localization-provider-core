@@ -44,9 +44,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             app.Map(new PathString(path),
                     builder =>
                     {
-
-                        builder.UseMiddleware<AuthenticationMiddleware>();
-
                         builder.Map(new PathString("/res"),
                                     _ =>
                                     {
