@@ -8,7 +8,7 @@ PM> Install-Package LocalizationProvider.AspNetCore
 
 ## Configure Services
 
-In your `Startup.cs` class you need to stuff related to Mvc localization (to get required services into DI container - service collection).
+In your `Startup.cs` class you need to add stuff related to Mvc localization (to get required services into DI container - service collection).
 
 And then `services.AddDbLocalizationProvider()`. You can pass in configuration settings class and setup provider's behavior.
 
@@ -22,8 +22,10 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // add basic localization support
         services.AddLocalization();
 
+        // add localization to Mvc
         services.AddMvc()
                 .AddViewLocalization()
                 .AddDataAnnotationsLocalization();
@@ -60,4 +62,8 @@ public class Startup
 }
 ```
 
-Using localization provider will make sure that resources are discovered and registered in the database (if this process will not be disabled via `AddDbLocalizationProvider()` method).
+Using localization provider will make sure that resources are discovered and registered in the database (if this process will not be disabled via `AddDbLocalizationProvider()` method by setting `ConfigurationContext.DiscoverAndRegisterResources` to `false`).
+
+## Add AdminUI
+
+For adding AdminUI to your application - refer to instructions [here](getting-started-adminui.md).

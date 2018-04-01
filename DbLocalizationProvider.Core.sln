@@ -28,13 +28,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{07147348-CBC2-45C3-800B-5D970EF005D2}"
 	ProjectSection(SolutionItems) = preProject
+		getting-started-adminui.md = getting-started-adminui.md
 		docs\getting-started-netcore.md = docs\getting-started-netcore.md
 		docs\localizing-content-netcore.md = docs\localizing-content-netcore.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AdminUI.AspNetCore", "src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj", "{EFBEF627-654F-4A18-B9FA-4F4486539C06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLocalizationProvider.AdminUI.AspNetCore.Tests", "tests\DbLocalizationProvider.AdminUI.AspNetCore.Tests\DbLocalizationProvider.AdminUI.AspNetCore.Tests.csproj", "{35692314-A1E9-4A5C-B9AA-562D45BB88AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AdminUI.AspNetCore.Tests", "tests\DbLocalizationProvider.AdminUI.AspNetCore.Tests\DbLocalizationProvider.AdminUI.AspNetCore.Tests.csproj", "{35692314-A1E9-4A5C-B9AA-562D45BB88AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

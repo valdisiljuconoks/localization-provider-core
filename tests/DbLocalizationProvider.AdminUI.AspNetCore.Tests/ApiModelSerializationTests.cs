@@ -39,7 +39,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests
                                                          {
                                                              new CultureInfo("en"),
                                                              new CultureInfo("no")
-                                                         });
+                                                         },
+                                                         120,
+                                                         80);
 
             var result = JsonConvert.SerializeObject(model);
         }
@@ -70,7 +72,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests
                                                          {
                                                              new CultureInfo("en"),
                                                              new CultureInfo("no")
-                                                         });
+                                                         },
+                                                         120,
+                                                         80);
 
             var result = JsonConvert.SerializeObject(model);
         }

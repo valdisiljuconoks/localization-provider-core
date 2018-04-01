@@ -2,6 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>4.2.0</Version>
+    <Authors>Valdis Iljuconoks, https://tech-fellow.net</Authors>
+    <Company>Valdis Iljuconoks, https://tech-fellow.net</Company>
+    <Product>DbLocalizationProvider</Product>
+    <PackageId>LocalizationProvider.AdminUI.AspNetCore</PackageId>
+    <Description>Database driven localization provider. Admin UI for Asp.Net Core apps.</Description>
+    <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/valdisiljuconoks/LocalizationProvider/blob/master/LICENSE</PackageLicenseUrl>
+    <Copyright>Tech Fellow Consulting, Copyright © 2018</Copyright>
+    <PackageTags>Localization Provider DbLocalization DbLocalizationProvider LocalizationProvider Database Driven AdminUI AspNetCore NetCore</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,9 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.0.0" />
+	<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,5 +52,12 @@
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
     <ProjectReference Include="..\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj" />
   </ItemGroup>
+
+  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+    <ItemGroup>
+      <DocFile Include="bin\$(Configuration)\$(TargetFramework)\*.xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DocFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
+  </Target>
 
 </Project>

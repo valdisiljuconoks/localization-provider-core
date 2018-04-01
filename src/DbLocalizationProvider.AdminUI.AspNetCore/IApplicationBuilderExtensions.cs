@@ -23,6 +23,7 @@ using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
 using DbLocalizationProvider.AspNetCore.Commands;
 using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Internal;
@@ -43,21 +44,30 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             app.Map(new PathString(path),
                     builder =>
                     {
-                        builder.UseFileServer(new FileServerOptions
-                                              {
-                                                  FileProvider = new EmbeddedFileProvider(typeof(IApplicationBuilderExtensions).Assembly),
-                                                  EnableDefaultFiles = true,
-                                                  DefaultFilesOptions = { DefaultFileNames = new[] { "adminui.html" } }
-                                              });
+
+                        builder.UseMiddleware<AuthenticationMiddleware>();
+
+                        builder.Map(new PathString("/res"),
+                                    _ =>
+                                    {
+                                        _.UseFileServer(new FileServerOptions
+                                                        {
+                                                            FileProvider = new EmbeddedFileProvider(typeof(IApplicationBuilderExtensions).Assembly)
+                                                        });
+                                    });
 
                         var routeBuilder = new RouteBuilder(builder)
                                            {
                                                DefaultHandler = app.ApplicationServices.GetRequiredService<MvcRouteHandler>()
                                            };
 
-                        routeBuilder.MapRoute("Admin UI webapi route", "api/{controller=Service}/{action=Index}");
-                        var route = routeBuilder.Build();
-                        builder.UseRouter(route);
+                        routeBuilder.MapRoute("Admin UI default route", "{controller=ResourceList}/{action=Index}");
+                        var defaultRoute = routeBuilder.Build();
+                        builder.UseRouter(defaultRoute);
+
+                        routeBuilder.MapRoute("Admin UI api route", "api/{controller=Service}/{action=Index}");
+                        var apiRoute = routeBuilder.Build();
+                        builder.UseRouter(apiRoute);
                     });
 
             // we need to set handlers at this stage as Mvc config might be added to the service collection *after* DbLocalizationProvider
