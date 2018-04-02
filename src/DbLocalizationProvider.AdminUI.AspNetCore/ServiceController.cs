@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
+    [AuthorizeRoles]
     public class ServiceController : Controller
     {
         private readonly UiConfigurationContext _config;
@@ -59,11 +60,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             var getResourcesQuery = new GetAllResources.Query();
             var resources = getResourcesQuery.Execute().OrderBy(r => r.ResourceKey).ToList();
 
-            //var user = RequestContext.Principal;
+            var user = Request.HttpContext.User;
             var isAdmin = false;
 
-            //if (user != null)
-            //    isAdmin = user.Identity.IsAuthenticated && UiConfigurationContext.Current.AuthorizedAdminRoles.Any(r => user.IsInRole(r));
+            if(user != null)
+                isAdmin = user.Identity.IsAuthenticated && _config.AuthorizedAdminRoles.Any(r => user.IsInRole(r));
 
             var result = new LocalizationResourceApiModel(resources, languages, _config.MaxResourceKeyPopupTitleLength, _config.MaxResourceKeyDisplayLength)
                          {

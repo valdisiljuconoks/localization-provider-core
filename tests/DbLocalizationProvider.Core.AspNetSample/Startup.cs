@@ -57,7 +57,10 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                            });
 
             services.AddDbLocalizationProvider();
-            services.AddDbLocalizationProviderAdminUI();
+            services.AddDbLocalizationProviderAdminUI(_ =>
+                                                      {
+                                                          _.AuthorizedAdminRoles.Add("Admin");
+                                                      });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

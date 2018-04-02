@@ -55,9 +55,7 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
         public async Task<ActionResult> AddRole(string roleName)
         {
             if(!await _roleManager.RoleExistsAsync(roleName))
-            {
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
-            }
 
             return Json(_roleManager.Roles);
         }
@@ -66,10 +64,8 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
         public async Task<ActionResult> AddCurrentUserToRole(string roleName)
         {
             var user = await _userManager.FindByNameAsync(Request.HttpContext.User.Identity.Name);
-            if(!User.IsInRole("Administrators"))
-            {
-                await _userManager.AddToRoleAsync(user, "Administrators");
-            }
+            if(!User.IsInRole(roleName))
+                await _userManager.AddToRoleAsync(user, roleName);
 
             return Json(await _userManager.GetRolesAsync(user));
         }

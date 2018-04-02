@@ -31,6 +31,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
             services.AddSingleton(_ => UiConfigurationContext.Current);
 
+            services.AddScoped<AuthorizeRolesAttribute>();
+
             return services;
         }
     }

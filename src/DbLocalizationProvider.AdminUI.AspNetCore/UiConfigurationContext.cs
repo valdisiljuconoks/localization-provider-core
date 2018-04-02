@@ -29,14 +29,18 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
     public class UiConfigurationContext
     {
         /// <summary>
-        /// Set roles to users who will have admin access to UI (can delete resources, etc).
+        /// Set roles to users who will have admin access to UI with more privileges (create new, delete, import, etc).
         /// </summary>
         public ICollection<string> AuthorizedAdminRoles { get; } = new List<string> { "Administrators" };
 
         /// <summary>
         /// Set roles to users who will have editor access to UI (can add translations).
         /// </summary>
-        //public ICollection<string> AuthorizedEditorRoles { get; } = new DirtyList<string>("Administrators", "Editors");
+        public ICollection<string> AuthorizedEditorRoles { get; } = new List<string>
+                                                                    {
+                                                                        "Administrators",
+                                                                        "Editors"
+                                                                    };
 
         /// <summary>
         /// Sometimes resource keys might get pretty long.
