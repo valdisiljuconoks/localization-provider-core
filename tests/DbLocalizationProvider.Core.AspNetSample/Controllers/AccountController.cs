@@ -19,17 +19,20 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _emailSender = emailSender;
             _logger = logger;
         }
@@ -46,6 +49,29 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 
             ViewData["ReturnUrl"] = returnUrl;
             return View();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> AddRole(string roleName)
+        {
+            if(!await _roleManager.RoleExistsAsync(roleName))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+
+            return Json(_roleManager.Roles);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> AddCurrentUserToRole(string roleName)
+        {
+            var user = await _userManager.FindByNameAsync(Request.HttpContext.User.Identity.Name);
+            if(!User.IsInRole("Administrators"))
+            {
+                await _userManager.AddToRoleAsync(user, "Administrators");
+            }
+
+            return Json(await _userManager.GetRolesAsync(user));
         }
 
         [HttpPost]
