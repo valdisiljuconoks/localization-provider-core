@@ -85,4 +85,4 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 
 When everything is setup correctly and Asp.Net Core runtime does not blame you for incorrect configuration, you may access AdminUI via `.../localization-admin` url (by default).
 
-![aspnetcore-admin-ui](aspnetcore-admin-ui.jpg)
+![](aspnetcore-admin-ui.jpg)
