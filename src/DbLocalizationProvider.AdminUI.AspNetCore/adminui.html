@@ -131,7 +131,7 @@
                 <tr>
                     <th>Resource Key</th>
                     <th v-if="model.options.showInvariantCulture">Invariant (In Code)</th>
-                    <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}}</th>
+                    <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}} ({{lang.code}})</th>
                 </tr>
             </thead>
             <tr v-for="resource in filteredResources">

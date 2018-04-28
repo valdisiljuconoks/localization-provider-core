@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.Core.AspNetSample
 {
@@ -56,10 +57,14 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                                opts.SupportedUICultures = supportedCultures;
                                                            });
 
-            services.AddDbLocalizationProvider();
+            services.AddDbLocalizationProvider(_ =>
+                                               {
+                                                   _.EnableInvariantCultureFallback = true;
+                                               });
             services.AddDbLocalizationProviderAdminUI(_ =>
                                                       {
                                                           _.AuthorizedAdminRoles.Add("Admin");
+                                                          _.ShowInvariantCulture = true;
                                                       });
         }
 
@@ -77,10 +82,11 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(options.Value);
+
             app.UseStaticFiles();
-
             app.UseAuthentication();
-
             app.UseMvc(routes =>
                        {
                            routes.MapRoute(

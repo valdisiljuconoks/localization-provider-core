@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
 {

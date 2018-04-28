@@ -24,7 +24,7 @@ using System.Collections.Generic;
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
     /// <summary>
-    /// Main class responsible for providing way to customize AdminUI
+    /// Class responsible for providing way to customize AdminUI
     /// </summary>
     public class UiConfigurationContext
     {
@@ -43,12 +43,12 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                                                                     };
 
         /// <summary>
-        /// Sometimes resource keys might get pretty long.
+        /// Sometimes resource keys might get pretty long. You can chop them here.
         /// </summary>
         public int MaxResourceKeyDisplayLength { get; set; } = 80;
 
         /// <summary>
-        /// Sometimes resource keys might get pretty long even in edit popup window.
+        /// Sometimes resource keys might get pretty long even in edit popup window. You can chop them here.
         /// </summary>
         public int MaxResourceKeyPopupTitleLength { get; set; } = 120;
 
@@ -91,7 +91,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         //public bool TreeViewExpandedByDefault { get; set; } = true;
 
         /// <summary>
-        /// This is sometimes pretty useful when want to see what exactly resource translation was synced from code.
+        /// This is sometimes pretty useful when want to see what exactly resource translation was synced from the code.
         /// </summary>
         public bool ShowInvariantCulture { get; set; } = false;
 
@@ -107,7 +107,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// <summary>
         /// Wanna customize anything here? Call this method.
         /// </summary>
-        /// <param name="configCallback"></param>
+        /// <param name="configCallback">You will receive context instance through which some customization is theoretically possible.</param>
         public static void Setup(Action<UiConfigurationContext> configCallback)
         {
             configCallback?.Invoke(Current);

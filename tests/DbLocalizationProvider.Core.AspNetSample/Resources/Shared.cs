@@ -5,7 +5,7 @@
         [LocalizedResource]
         public class CommonResources
         {
-            public string Yes => "Yup";
+            public static string Yes => "Yup";
 
             public string No => "Nop";
         }

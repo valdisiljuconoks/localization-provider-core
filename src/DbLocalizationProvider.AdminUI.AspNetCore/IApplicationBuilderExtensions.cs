@@ -23,7 +23,6 @@ using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
 using DbLocalizationProvider.AspNetCore.Commands;
 using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Internal;
@@ -34,8 +33,17 @@ using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
+    /// <summary>
+    /// Do I really need to document extension classes? (Making analyzer happy)
+    /// </summary>
     public static class IApplicationBuilderExtensions
     {
+        /// <summary>
+        /// Use this method if you wanna see AdminUI under given path.
+        /// </summary>
+        /// <param name="app">Whatever</param>
+        /// <param name="path">Set the path where you want to mount AdminUI. Needs to start with `/` otherwise Asp.Net Core will blame you!</param>
+        /// <returns>If you want to chain calls later, you can use the same application builder that was used.</returns>
         public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app, string path = "/localization-admin")
         {
             if(path == null)

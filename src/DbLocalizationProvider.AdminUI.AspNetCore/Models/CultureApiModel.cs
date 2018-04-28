@@ -20,7 +20,8 @@
 
 using System;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore.Models {
+namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
+{
     public class CultureApiModel
     {
         public CultureApiModel(string code, string display)

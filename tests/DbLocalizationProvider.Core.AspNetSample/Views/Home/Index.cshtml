@@ -2,6 +2,7 @@
 @using DbLocalizationProvider.AspNetCore
 @using DbLocalizationProvider.Core.AspNetSample.Models
 @using DbLocalizationProvider.Core.AspNetSample.Resources
+@using Microsoft.AspNetCore.Localization
 @using Microsoft.AspNetCore.Mvc.Localization
 @model UserViewModel
 @inject IViewLocalizer Localizer
@@ -9,9 +10,12 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    var currentCulture = Context.Features.Get<IRequestCultureFeature>()?.RequestCulture?.UICulture;
 }
 
-<div>ViewData["TestString"] = @ViewData["TestString"]</div>
+<h2>Current Culture: @currentCulture</h2>
+
+<div>ViewData["TestString"] ("Shared.Yes") = @ViewData["TestString"]</div>
 <div>ViewData["TestString2"] = @ViewData["TestString2"]</div>
 <div>ViewData["TestString3"] (injected LocalizationProvider) = @ViewData["TestString3"]</div>
 <div>ViewData["TestString4"] (IHtmlLocalizer) = @ViewData["TestString4"]</div>

@@ -6,8 +6,16 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly LocalizationProvider _provider;
+
+        public HomeController(LocalizationProvider provider)
+        {
+            _provider = provider;
+        }
+
         public IActionResult Index()
         {
+            ViewData["TestString"] = _provider.GetString(() => Resources.Shared.CommonResources.Yes);
             return View();
         }
 
