@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using DbLocalizationProvider.Core.AspNetSample.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 {
@@ -8,7 +9,7 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
     {
         private readonly LocalizationProvider _provider;
 
-        public HomeController(LocalizationProvider provider)
+        public HomeController(LocalizationProvider provider, IOptions<MvcOptions> options)
         {
             _provider = provider;
         }

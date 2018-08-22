@@ -2,6 +2,7 @@
 
 namespace DbLocalizationProvider.Core.AspNetSample.Models.AccountViewModels
 {
+    [LocalizedModel]
     public class RegisterViewModel
     {
         [Required]

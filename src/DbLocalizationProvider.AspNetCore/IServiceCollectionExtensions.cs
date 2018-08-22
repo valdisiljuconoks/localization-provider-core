@@ -28,7 +28,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AspNetCore
 {
@@ -52,20 +54,24 @@ namespace DbLocalizationProvider.AspNetCore
             // run custom configuration setup (if any)
             setup?.Invoke(ConfigurationContext.Current);
 
-            // setup model metadata providers
-            if(ConfigurationContext.Current.ModelMetadataProviders.ReplaceProviders)
-                services.Configure<MvcOptions>(_ =>
-                {
-                    _.ModelMetadataDetailsProviders.Add(new LocalizedDisplayMetadataProvider());
-                    _.ModelValidatorProviders.Add(new LocalizedValidationMetadataProvider());
-                });
-
             // get connection string from configuration providers
             var configProvider = provider.GetService<IConfiguration>();
             ConfigurationContext.Current.DbContextConnectionString = configProvider.GetConnectionString(ConfigurationContext.Current.Connection);
 
             services.AddSingleton<IStringLocalizerFactory, DbStringLocalizerFactory>();
             services.AddSingleton(_ => LocalizationProvider.Current);
+
+            // setup model metadata providers
+            if(ConfigurationContext.Current.ModelMetadataProviders.ReplaceProviders)
+            {
+                services.Configure<MvcOptions>(_ =>
+                                               {
+                                                   _.ModelMetadataDetailsProviders.Add(new LocalizedDisplayMetadataProvider());
+                                                   _.ModelValidatorProviders.Add(new LocalizedValidationMetadataProvider());
+                                               });
+
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
+            }
 
             return services;
         }

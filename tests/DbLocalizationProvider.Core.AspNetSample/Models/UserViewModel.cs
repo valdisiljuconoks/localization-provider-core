@@ -18,7 +18,7 @@ namespace DbLocalizationProvider.Core.AspNetSample.Models
 
         [Display(Name = "Password:")]
         [Required(ErrorMessage = "Password is kinda required :)")]
-        [StringLength(15, MinimumLength = 5, ErrorMessage = "Please use longer password than 5 symbols")]
+        [StringLength(15, MinimumLength = 5, ErrorMessage = "Please use longer password than 5 symbols!!")]
         public string Password { get; set; }
     }
 }
