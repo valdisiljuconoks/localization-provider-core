@@ -66,7 +66,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                                                DefaultHandler = app.ApplicationServices.GetRequiredService<MvcRouteHandler>()
                                            };
 
-                        routeBuilder.MapRoute("Admin UI default route", "{controller=ResourceList}/{action=Index}");
+                        routeBuilder.MapRoute("Admin UI default route", "{action=Index}/{controller=ResourceList}");
                         var defaultRoute = routeBuilder.Build();
                         builder.UseRouter(defaultRoute);
 

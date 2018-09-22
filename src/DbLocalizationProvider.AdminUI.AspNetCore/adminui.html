@@ -102,7 +102,7 @@
         <span class="h1">Localization Resources AdminUI</span>
     </span>
     <span class="pull-right">
-        <button>Export</button>
+        <a href="ExportResources?format=json">Export</a>
         <button>Import</button>
         <button>Languages</button>
         <button>Settings</button>
@@ -142,6 +142,7 @@
                     <th>Resource Key</th>
                     <th v-if="model.options.showInvariantCulture">Invariant (In Code)</th>
                     <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}} ({{lang.code}})</th>
+                    <th>Hidden?</th>
                 </tr>
             </thead>
             <tr v-for="resource in filteredResources">
@@ -155,6 +156,7 @@
                     <span class="translation" @click="edit(resource, lang.code)" v-show="resource[lang.code] != null">{{ resource[lang.code] }}</span>
                     <span class="translation empty" @click="edit(resource, lang.code)" v-show="resource[lang.code] == null">N/A</span>
                 </td>
+                <td>{{ resource.isHidden }}</td>
             </tr>
         </table>
     </div>

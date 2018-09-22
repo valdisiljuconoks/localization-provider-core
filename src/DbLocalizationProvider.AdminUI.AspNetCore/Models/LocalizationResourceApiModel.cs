@@ -62,7 +62,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
                              ["titleKey"] = $"{(key.Length > _popupTitleLength ? "..." : "")}{key.Substring(key.Length - Math.Min(_popupTitleLength, key.Length))}",
                              ["syncedFromCode"] = resource.FromCode,
                              ["allowDelete"] = !resource.FromCode,
-                             ["_"] = resource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value
+                             ["_"] = resource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value,
+                             ["isHidden"] = (resource.IsHidden ?? false).ToString()
                          };
 
             foreach(var language in languages)
