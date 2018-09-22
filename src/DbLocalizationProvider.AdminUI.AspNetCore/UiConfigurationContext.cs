@@ -50,7 +50,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// <summary>
         /// Sometimes resource keys might get pretty long even in edit popup window. You can chop them here.
         /// </summary>
-        public int MaxResourceKeyPopupTitleLength { get; set; } = 120;
+        public int MaxResourceKeyPopupTitleLength { get; set; } = 80;
 
         /// <summary>
         /// Someone asked me once - "I like tree view, can it be my default preference".
@@ -99,6 +99,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// Access to current configuration context instance. Statics sucks.
         /// </summary>
         public static UiConfigurationContext Current { get; } = new UiConfigurationContext();
+
+        /// <summary>
+        /// This might become handy sometimes when white background and black fonts are too boooooring.
+        /// </summary>
+        public string CustomCssPath { get; set; }
 
         //internal bool IsTreeViewDisabled { get; set; }
 

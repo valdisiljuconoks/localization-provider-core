@@ -97,14 +97,24 @@
 </head>
 <body>
 
-<h1>Localization Resources AdminUI</h1>
+<div class="row">
+    <span class="pull-left">
+        <span class="h1">Localization Resources AdminUI</span>
+    </span>
+    <span class="pull-right">
+        <button>Export</button>
+        <button>Import</button>
+        <button>Languages</button>
+        <button>Settings</button>
+    </span>
+</div>
 
 <script type="text/x-template" id="modal-template">
     <div class="modal-mask" transition="modal">
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" v-bind:title="model.key">{{ model.title }}</span>
+                    <span name="header" v-bind:title="model.key">{{ model.titleKey }}</span>
                 </div>
                 <div class="modal-body">
                     <textarea rows="4" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
@@ -123,7 +133,7 @@
 <div id="app" v-cloak>
     <modal v-if="model.showModal" @save="save" @close="model.showModal = false" :model="model.currentResource"></modal>
     <div class="form-group">
-        <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="search for something..." />
+        <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="if it is too much, type here to filter..." />
     </div>
     <div classs="table-responsive">
         <table v-show="!model.loading" class="table table-bordered table-hover table-sm">
@@ -136,7 +146,7 @@
             </thead>
             <tr v-for="resource in filteredResources">
                 <td>
-                    <span v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
+                    <span v-bind:title="model.key" v-tooltip.click="{ content: resource.key, class: 'full-width-tooltip' }">{{ resource.displayKey }}</span>
                 </td>
                 <td v-if="model.options.showInvariantCulture">
                     <span>{{ resource["_"] }}</span>
@@ -209,7 +219,7 @@
 
             edit: function(resource, lang) {
                 this.model.currentResource = {
-                    title: resource.titleKey,
+                    titleKey: resource.titleKey,
                     key: resource.key,
                     translation: resource[lang],
                     lang: lang
