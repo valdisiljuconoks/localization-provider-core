@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,19 +29,16 @@ namespace DbLocalizationProvider.Core.AspNetSample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddLocalization();
-
-            services.AddDbContext<ApplicationDbContext>(options =>
-                                                            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                     .AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddDefaultTokenProviders();
 
-            // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc()
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddViewLocalization()
                     .AddDataAnnotationsLocalization();
 
@@ -63,6 +61,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                });
             services.AddDbLocalizationProviderAdminUI(_ =>
                                                       {
+                                                          _.RootUrl = "/localization-admin";
                                                           _.AuthorizedAdminRoles.Add("Admin");
                                                           _.ShowInvariantCulture = true;
                                                           _.CustomCssPath = "~/css/custom-adminui.css";

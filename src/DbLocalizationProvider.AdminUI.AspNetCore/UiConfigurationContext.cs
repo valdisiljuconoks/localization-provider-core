@@ -105,6 +105,12 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// </summary>
         public string CustomCssPath { get; set; }
 
+        /// <summary>
+        /// If you find conflicts in your project and somebody already took this address, please set you unique custom address here.
+        /// </summary>
+        /// <remarks>This is Url how editors or even maybe admins will be able to access admin panel and mess around with translations. Needs to start with `/` otherwise runtime will blow up.</remarks>
+        public string RootUrl { get; set; } = "/localization-admin";
+
         //internal bool IsTreeViewDisabled { get; set; }
 
         //internal bool IsTableViewDisabled { get; set; }

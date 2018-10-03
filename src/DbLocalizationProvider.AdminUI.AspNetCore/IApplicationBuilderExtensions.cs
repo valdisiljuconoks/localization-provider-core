@@ -42,10 +42,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// Use this method if you wanna see AdminUI under given path.
         /// </summary>
         /// <param name="app">Whatever</param>
-        /// <param name="path">Set the path where you want to mount AdminUI. Needs to start with `/` otherwise Asp.Net Core will blame you!</param>
-        /// <returns>If you want to chain calls later, you can use the same application builder that was used.</returns>
-        public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app, string path = "/localization-admin")
+        /// <returns>If you want to chain calls further, you can use the same application builder that was used.</returns>
+        public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app)
         {
+            var path = UiConfigurationContext.Current.RootUrl;
+
             if(path == null)
                 throw new ArgumentNullException(nameof(path));
 
@@ -62,13 +63,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                                     });
 
                         var routeBuilder = new RouteBuilder(builder)
-                                           {
-                                               DefaultHandler = app.ApplicationServices.GetRequiredService<MvcRouteHandler>()
-                                           };
-
-                        routeBuilder.MapRoute("Admin UI default route", "{action=Index}/{controller=ResourceList}");
-                        var defaultRoute = routeBuilder.Build();
-                        builder.UseRouter(defaultRoute);
+                        {
+                            DefaultHandler = app.ApplicationServices.GetRequiredService<MvcRouteHandler>()
+                        };
 
                         routeBuilder.MapRoute("Admin UI api route", "api/{controller=Service}/{action=Index}");
                         var apiRoute = routeBuilder.Build();

@@ -19,6 +19,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
@@ -41,6 +42,14 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             services.AddSingleton(_ => UiConfigurationContext.Current);
             services.AddScoped<AuthorizeRolesAttribute>();
 
+            // add support for admin ui razor class library pages
+            services.Configure<RazorPagesOptions>(_ =>
+                                                  {
+                                                      _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUI");
+                                                      _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1",
+                                                                                     "/AdminUI",
+                                                                                     UiConfigurationContext.Current.RootUrl);
+                                                  });
             return services;
         }
     }
