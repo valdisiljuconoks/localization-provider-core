@@ -1,5 +1,9 @@
 ﻿@page
+@using DbLocalizationProvider.AdminUI.AspNetCore
+@using DbLocalizationProvider.AspNetCore
+@using Microsoft.AspNetCore.Mvc.Localization
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUIViewModel
+@inject IHtmlLocalizer<Resources> Localizer
 @{
     Layout = null;
 }
@@ -10,9 +14,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin UI</title>
+    <title>@Localizer.GetString(_ => _.Title)</title>
     <link rel="stylesheet" href="res/node_modules.bootstrap.dist.css.bootstrap.min.css">
     <link rel="stylesheet" href="res/node_modules.vue_directive_tooltip.css.index.min.css">
+    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
+    {
+        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
+    }
     <style type="text/css">
         body {
             margin: 10px;
@@ -106,15 +114,15 @@
 <div style="min-height: 75px;" class="row align-items-center">
     <div class="col-lg-6">
         <span class="float-left">
-            <span class="h1">Localization Resources AdminUI</span>
+            <span class="h1">@Localizer.GetString(_ => _.Header)</span>
         </span>
     </div>
     <div class="col-lg-6">
         <span class="float-right">
-            <a href="ExportResources?format=json" role="button" class="btn btn-light">Export</a>
-            <button class="btn btn-light">Import</button>
-            <button class="btn btn-light">Languages</button>
-            <button class="btn btn-light">Settings</button>
+            <a href="ExportResources?format=json" role="button" class="btn btn-light">@Localizer.GetString(_ => _.Export)</a>
+            <button class="btn btn-light">@Localizer.GetString(_ => _.Import)</button>
+            <button class="btn btn-light">@Localizer.GetString(_ => _.Languages)</button>
+            <button class="btn btn-light">@Localizer.GetString(_ => _.Settings)</button>
         </span>
     </div>
 </div>
@@ -131,8 +139,8 @@
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
-                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">Save</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">Cancel</button>
+                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@Localizer.GetString(_ => _.Save)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@Localizer.GetString(_ => _.Cancel)</button>
                 </slot>
                 </div>
             </div>
@@ -143,16 +151,16 @@
 <div id="app" v-cloak>
     <modal v-if="model.showModal" @@save="save" @@close="model.showModal = false" :model="model.currentResource"></modal>
     <div class="form-group">
-        <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="if it is too much, type here to filter..." />
+        <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@Localizer.GetString(_ => _.SearchPlaceholder)" />
     </div>
     <div classs="table-responsive">
         <table v-show="!model.loading" class="table table-bordered table-hover table-sm">
             <thead class="thead-dark">
                 <tr>
-                    <th>Resource Key</th>
-                    <th v-if="model.options.showInvariantCulture">Invariant (In Code)</th>
+                    <th>@Localizer.GetString(_ => _.ResourceKeyColumn)</th>
+                    <th v-if="model.options.showInvariantCulture">@Localizer.GetString(_ => _.InvariantCultureColumn)</th>
                     <th v-for="lang in model.supportedLanguages" scope="col">{{lang.display}} ({{lang.code}})</th>
-                    <th>Hidden?</th>
+                    <th>@Localizer.GetString(_ => _.HiddenColumn)</th>
                 </tr>
             </thead>
             <tr v-for="resource in filteredResources">
