@@ -23,6 +23,11 @@
     <None Remove="node_modules\axios\dist\axios.min.js" />
     <None Remove="node_modules\axios\dist\axios.min.map" />
     <None Remove="node_modules\bootstrap\dist\css\bootstrap.min.css" />
+    <None Remove="node_modules\bootstrap\dist\js\bootstrap.js" />
+    <None Remove="node_modules\jquery\dist\core.js" />
+    <None Remove="node_modules\jquery\dist\jquery.js" />
+    <None Remove="node_modules\popper.js\dist\umd\popper-utils.js" />
+    <None Remove="node_modules\popper.js\dist\umd\popper.js" />
     <None Remove="node_modules\vue-directive-tooltip\css\index.css" />
     <None Remove="node_modules\vue-directive-tooltip\css\index.css.map" />
     <None Remove="node_modules\vue-directive-tooltip\css\index.min.css" />
@@ -35,6 +40,11 @@
     <EmbeddedResource Include="node_modules\axios\dist\axios.min.js" />
     <EmbeddedResource Include="node_modules\axios\dist\axios.min.map" />
     <EmbeddedResource Include="node_modules\bootstrap\dist\css\bootstrap.min.css" />
+    <EmbeddedResource Include="node_modules\bootstrap\dist\js\bootstrap.js" />
+    <EmbeddedResource Include="node_modules\jquery\dist\core.js" />
+    <EmbeddedResource Include="node_modules\jquery\dist\jquery.js" />
+    <EmbeddedResource Include="node_modules\popper.js\dist\umd\popper-utils.js" />
+    <EmbeddedResource Include="node_modules\popper.js\dist\umd\popper.js" />
     <EmbeddedResource Include="node_modules\vue-directive-tooltip\css\index.css" />
     <EmbeddedResource Include="node_modules\vue-directive-tooltip\css\index.css.map" />
     <EmbeddedResource Include="node_modules\vue-directive-tooltip\css\index.min.css" />
