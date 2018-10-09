@@ -63,7 +63,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
                              ["syncedFromCode"] = resource.FromCode,
                              ["allowDelete"] = !resource.FromCode,
                              ["_"] = resource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value,
-                             ["isHidden"] = (resource.IsHidden ?? false).ToString()
+                             ["isHidden"] = (resource.IsHidden ?? false)
                          };
 
             foreach(var language in languages)

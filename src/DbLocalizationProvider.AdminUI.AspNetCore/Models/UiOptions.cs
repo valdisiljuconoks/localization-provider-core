@@ -27,5 +27,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
         public bool ShowInvariantCulture { get; set; }
 
         public bool ShowHiddenResources { get; set; }
+
+        public bool ShowOnlyEmptyResources { get; set; }
     }
 }

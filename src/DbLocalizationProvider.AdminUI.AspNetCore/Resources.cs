@@ -12,11 +12,13 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string Import = "Import";
         public string Languages = "Languages";
         public string Settings = "Settings";
+        public string ShowHiddenResources = "Show Hidden Resources";
         public string Save = "Ok, Save!";
         public string Cancel = "Cancel";
         public string SearchPlaceholder = "if it gets too noisy, type filter here...";
         public string ResourceKeyColumn = "Key";
         public string InvariantCultureColumn = "Invariant";
         public string HiddenColumn = "Is Hidden?";
+        public string ShowOnlyEmptyResources = "Show Only Empty Resources";
     }
 }
