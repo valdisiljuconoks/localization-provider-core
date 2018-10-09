@@ -71,7 +71,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                              Options =
                              {
                                  AdminMode = isAdmin,
-                                 ShowInvariantCulture = _config.ShowInvariantCulture
+                                 ShowInvariantCulture = _config.ShowInvariantCulture,
+                                 ShowHiddenResources = _config.ShowHiddenResources
                              }
                          };
 

@@ -64,6 +64,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                           _.RootUrl = "/localization-admin";
                                                           _.AuthorizedAdminRoles.Add("Admin");
                                                           _.ShowInvariantCulture = true;
+                                                          _.ShowHiddenResources = false;
                                                           _.CustomCssPath = "/css/custom-adminui.css";
                                                       });
         }

@@ -96,6 +96,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public bool ShowInvariantCulture { get; set; } = false;
 
         /// <summary>
+        /// Sometimes it's worth to look for some hidden treasure. This option will show all resources decorated with <see cref="DbLocalizationProvider.Abstractions.HiddenAttribute"/>.
+        /// </summary>
+        public bool ShowHiddenResources { get; set; } = false;
+
+        /// <summary>
         /// Access to current configuration context instance. Statics sucks.
         /// </summary>
         public static UiConfigurationContext Current { get; } = new UiConfigurationContext();
