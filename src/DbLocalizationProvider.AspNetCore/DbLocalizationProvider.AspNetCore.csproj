@@ -18,10 +18,10 @@
     <AssemblyOriginatorKeyFile>..\..\lib\localization-provider\strongname.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netcoreapp2.1\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netcoreapp2.0\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netcoreapp2.1\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.1.1" />
