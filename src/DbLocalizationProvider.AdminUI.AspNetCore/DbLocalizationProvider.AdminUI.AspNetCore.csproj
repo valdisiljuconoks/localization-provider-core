@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="adminui.html" />
     <None Remove="node_modules\axios\dist\axios.min.js" />
     <None Remove="node_modules\axios\dist\axios.min.map" />
     <None Remove="node_modules\bootstrap\dist\css\bootstrap.min.css" />
@@ -46,7 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="adminui.html" />
     <EmbeddedResource Include="node_modules\axios\dist\axios.min.js" />
     <EmbeddedResource Include="node_modules\axios\dist\axios.min.map" />
     <EmbeddedResource Include="node_modules\bootstrap\dist\css\bootstrap.min.css" />
@@ -67,7 +65,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.2" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
