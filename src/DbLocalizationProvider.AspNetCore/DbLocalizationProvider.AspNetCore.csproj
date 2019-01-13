@@ -2,23 +2,24 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <PackageId>LocalizationProvider.AspNetCore</PackageId>
-    <Version>5.0.0</Version>
+    <Version>5.1.0</Version>
+    <AssemblyVersion>5.1.0.0</AssemblyVersion>
+    <FileVersion>5.1.0.0</FileVersion>
     <Authors>Valdis Iljuconoks, https://tech-fellow.net</Authors>
     <Company>Valdis Iljuconoks, https://tech-fellow.net</Company>
     <Product>DbLocalizationProvider</Product>
     <Description>Database driven localization provider. Asp.Net Core support package</Description>
-    <Copyright>Tech Fellow Consulting, Copyright © 2018</Copyright>
+    <Copyright>Tech Fellow Consulting, Copyright © 2019</Copyright>
     <PackageLicenseUrl>https://github.com/valdisiljuconoks/LocalizationProvider/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
     <PackageTags>Localization Provider DbLocalization DbLocalizationProvider LocalizationProvider Database Driven AspNetCore NetCore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>5.0.0.0</AssemblyVersion>
-    <FileVersion>5.0.0.0</FileVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\lib\localization-provider\strongname.snk</AssemblyOriginatorKeyFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netcoreapp2.1\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
@@ -39,7 +40,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="2.1.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.1" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Abstractions\DbLocalizationProvider.Abstractions.csproj" />

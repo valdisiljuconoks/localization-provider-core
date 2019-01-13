@@ -1,4 +1,4 @@
-﻿// Copyright © 2017 Valdis Iljuconoks.
+﻿// Copyright (c) 2019 Valdis Iljuconoks.
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
 // files (the "Software"), to deal in the Software without
@@ -59,8 +59,7 @@ namespace DbLocalizationProvider.AspNetCore.Sync
             Parallel.Invoke(() => RegisterDiscoveredResources(discoveredResources, allResources),
                             () => RegisterDiscoveredResources(discoveredModels, allResources));
 
-            if(ConfigurationContext.Current.PopulateCacheOnStartup)
-                PopulateCache();
+            StoreKnownResourcesAndPopulateCache();
         }
 
         public void RegisterManually(IEnumerable<ManualResource> resources)
@@ -76,15 +75,23 @@ namespace DbLocalizationProvider.AspNetCore.Sync
             }
         }
 
-        private void PopulateCache()
+        private void StoreKnownResourcesAndPopulateCache()
         {
-            new ClearCache.Command().Execute();
-            var allResources = new GetAllResources.Query().Execute();
+            var allResources = new GetAllResources.Query(true).Execute();
 
-            foreach(var resource in allResources)
+            if(ConfigurationContext.Current.PopulateCacheOnStartup)
             {
-                var key = CacheKeyHelper.BuildKey(resource.ResourceKey);
-                ConfigurationContext.Current.CacheManager.Insert(key, resource);
+                new ClearCache.Command().Execute();
+                foreach(var resource in allResources)
+                {
+                    var key = CacheKeyHelper.BuildKey(resource.ResourceKey);
+                    ConfigurationContext.Current.CacheManager.Insert(key, resource);
+                }
+            }
+            else
+            {
+                // just store known resource keys in cache
+                allResources.ForEach(r => ConfigurationContext.Current.BaseCacheManager.StoreKnownKey(r.ResourceKey));
             }
         }
 
