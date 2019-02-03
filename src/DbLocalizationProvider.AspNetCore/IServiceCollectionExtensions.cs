@@ -20,9 +20,11 @@
 
 using System;
 using DbLocalizationProvider.AspNetCore.Cache;
+using DbLocalizationProvider.AspNetCore.Commands;
 using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
 using DbLocalizationProvider.Cache;
+using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -39,12 +41,17 @@ namespace DbLocalizationProvider.AspNetCore
         public static IServiceCollection AddDbLocalizationProvider(this IServiceCollection services, Action<ConfigurationContext> setup = null)
         {
             // setup default implementations
-            ConfigurationContext.Current.TypeFactory.ForQuery<GetAllResources.Query>().SetHandler<GetAllResourcesHandler>();
-            ConfigurationContext.Current.TypeFactory.ForQuery<GetAllResources.Query>().DecorateWith<CachedGetAllResourcesHandler>();
-            ConfigurationContext.Current.TypeFactory.ForQuery<GetResource.Query>().SetHandler<GetResourceHandler>();
-            ConfigurationContext.Current.TypeFactory.ForQuery<GetTranslation.Query>().SetHandler<GetTranslationHandler>();
-            ConfigurationContext.Current.TypeFactory.ForQuery<DetermineDefaultCulture.Query>().SetHandler<DetermineDefaultCulture.Handler>();
-            ConfigurationContext.Current.TypeFactory.ForCommand<ClearCache.Command>().SetHandler<ClearCacheHandler>();
+            var factory = ConfigurationContext.Current.TypeFactory;
+
+            factory.ForQuery<GetAllResources.Query>().SetHandler<GetAllResourcesHandler>();
+            factory.ForQuery<GetAllResources.Query>().DecorateWith<CachedGetAllResourcesHandler>();
+            factory.ForQuery<GetResource.Query>().SetHandler<GetResourceHandler>();
+            factory.ForQuery<GetTranslation.Query>().SetHandler<GetTranslationHandler>();
+            factory.ForQuery<DetermineDefaultCulture.Query>().SetHandler<DetermineDefaultCulture.Handler>();
+            factory.ForCommand<ClearCache.Command>().SetHandler<ClearCacheHandler>();
+
+            factory.ForCommand<CreateOrUpdateTranslation.Command>().SetHandler<CreateOrUpdateTranslationHandler>();
+            factory.ForCommand<RemoveTranslation.Command>().SetHandler<RemoveTranslationHandler>();
 
             var provider = services.BuildServiceProvider();
 

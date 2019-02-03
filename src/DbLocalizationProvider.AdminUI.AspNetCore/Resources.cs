@@ -15,6 +15,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string ShowHiddenResources = "Show Hidden Resources";
         public string Save = "Ok, Save!";
         public string Cancel = "Cancel";
+        public string Remove = "Remove";
+        public string RemoveConfirmation = "Do you want to remove this translation?";
         public string SearchPlaceholder = "if it gets too noisy, type filter here...";
         public string ResourceKeyColumn = "Key";
         public string InvariantCultureColumn = "Invariant";

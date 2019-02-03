@@ -25,13 +25,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="node_modules\open-iconic\**" />
-    <Content Remove="node_modules\open-iconic\**" />
-    <EmbeddedResource Remove="node_modules\open-iconic\**" />
-    <None Remove="node_modules\open-iconic\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="node_modules\axios\dist\axios.min.js" />
     <None Remove="node_modules\axios\dist\axios.min.map" />
     <None Remove="node_modules\bootstrap\dist\css\bootstrap.min.css" />

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Valdis Iljuconoks.
+﻿// Copyright (c) 2019 Valdis Iljuconoks.
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
 // files (the "Software"), to deal in the Software without
@@ -20,8 +20,6 @@
 
 using System;
 using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
-using DbLocalizationProvider.AspNetCore.Commands;
-using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -76,12 +74,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             var factory = ConfigurationContext.Current.TypeFactory;
             factory.ForQuery<AvailableLanguages.Query>()
                    .SetHandler(() => new AvailableLanguagesHandler(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>()));
-
-            ConfigurationContext.Current.TypeFactory.ForCommand<CreateOrUpdateTranslation.Command>().SetHandler<CreateOrUpdateTranslationHandler>();
-
-            //ConfigurationContext.Current.TypeFactory.ForQuery<GetAllTranslations.Query>().SetHandler<GetAllTranslations.Handler>();
-            //ConfigurationContext.Current.TypeFactory.ForCommand<CreateNewResource.Command>().SetHandler<CreateNewResource.Handler>();
-            //ConfigurationContext.Current.TypeFactory.ForCommand<DeleteResource.Command>().SetHandler<DeleteResource.Handler>();
 
             return app;
         }

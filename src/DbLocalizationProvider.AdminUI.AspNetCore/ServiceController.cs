@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Valdis Iljuconoks.
+﻿// Copyright (c) 2019 Valdis Iljuconoks.
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
 // files (the "Software"), to deal in the Software without
@@ -47,6 +47,15 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public JsonResult Save([FromBody] CreateOrUpdateTranslationRequestModel model)
         {
             var cmd = new CreateOrUpdateTranslation.Command(model.Key, new CultureInfo(model.Language), model.Translation);
+            cmd.Execute();
+
+            return ServiceOperationResult.Ok;
+        }
+
+        [HttpPost]
+        public JsonResult Remove([FromBody] RemoveTranslationRequestModel model)
+        {
+            var cmd = new RemoveTranslation.Command(model.Key, new CultureInfo(model.Language));
             cmd.Execute();
 
             return ServiceOperationResult.Ok;
