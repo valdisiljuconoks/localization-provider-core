@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DbLocalizationProvider.Core.AspNetSample.Resources;
 
 namespace DbLocalizationProvider.Core.AspNetSample.Models
 {
@@ -12,8 +13,9 @@ namespace DbLocalizationProvider.Core.AspNetSample.Models
 
         public AddressViewModel Address { get; set; }
 
-        [Display(Name = "User name:")]
+        [Display(Name = "User name:", Description = "This is description of UserName field")]
         [Required(ErrorMessage = "Name of the user is required!")]
+        [WeirdCustom("Weird UserName attribute")]
         public string UserName { get; set; }
 
         [Display(Name = "Password:")]

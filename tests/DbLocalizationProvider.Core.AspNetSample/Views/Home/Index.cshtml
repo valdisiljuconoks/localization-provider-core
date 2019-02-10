@@ -33,6 +33,21 @@
     <div>IHtmlLocalizer.WithCulture() = @(Localizer2.WithCulture(new CultureInfo("no")).GetString(() => SampleResources.PageHeader))</div>
 </div>
 
+<hr/>
+
+<div>
+    HtmlHelper.LabelFor(UserName) - @Html.LabelFor(m => m.UserName)
+</div>
+<div>
+    HtmlHelper.TranslateFor(UserName) - @Html.TranslateFor(m => m.UserName)
+</div>
+<div>
+    HtmlHelper.TranslateFor(UserName, WeirdCustomAttribute) - @Html.TranslateFor(m => m.UserName, typeof(WeirdCustomAttribute))
+</div>
+<div>
+    HtmlHelper.DescriptionFor(UserName) - @Html.DescriptionFor(m => m.UserName)
+</div>
+
 <form asp-controller="Home" asp-action="Index" method="post">
     <div>
         <label asp-for="UserName"></label>

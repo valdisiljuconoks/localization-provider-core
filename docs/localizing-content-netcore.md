@@ -73,10 +73,21 @@ Regarding the views, story here is exactly the same - all built-in approach is s
 @HtmlLocalizer.GetString(r => r.PageHeader)
 ```
 
+You can also depend directly on `LocalizationProvider`.
+
+```
+@inject LocalizationProvider Provider
+
+..
+
+@Provider.GetString(() => ...)
+```
+
+
 ### Data Annotations
 Supported. Sample:
 
-```
+```csharp
 [LocalizedModel]
 public class UserViewModel
 {
@@ -91,7 +102,8 @@ public class UserViewModel
 ```
 
 View.cshtml:
-```
+
+```html
 @model UserViewModel
 
 <form asp-controller="Home" asp-action="Index" method="post">
@@ -107,7 +119,42 @@ View.cshtml:
     </div>
     ...
 </form>
+```
 
+### Property [DisplayName] Description
+
+Sometimes you need to get description of the property (like for the cases when you need to provide some descriptive label or help text for the property). This is now supported with following code:
+
+```csharp
+[LocalizedModel]
+public class UserViewModel
+{
+    [Display(Name = "User name:",
+             Description = "This is help text for the user name property")]
+    public string UserName { get; set; }
+}
+```
+
+View.cshtml:
+
+```
+@Html.DescriptionFor(m => m.UserName)
+```
+
+### HtmlHelper
+
+You can also use `HtmlHelper` extension methods.
+
+For view models:
+
+```
+@Html.TranslateFor(m => m.UserName)
+```
+
+Just translating a resource:
+
+```
+@Html.Translate(() => SampleResource.SomeStaticProperty)
 ```
 
 ## Localization in Libraries

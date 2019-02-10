@@ -1,8 +1,31 @@
-﻿@{
+﻿@using DbLocalizationProvider
+@using DbLocalizationProvider.AspNetCore
+@using DbLocalizationProvider.Core.AspNetSample.Resources
+@{
     ViewData["Title"] = "Contact";
 }
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewData["Message"]</h3>
+
+<hr/>
+
+<div>
+    Html.Translate(SomeHtmlResource) - @Html.Translate(() => SampleResources.SomeHtmlResource)
+</div>
+<div>
+    Html.Translate(SomeEnumProperty) - @Html.Translate(SampleResources.SomeEnumProperty)
+</div>
+<div>
+    Html.Translate(SomeHtmlResource, WeirdAttribute) - @Html.Translate(() => SampleResources.SomeHtmlResource, typeof(WeirdCustomAttribute))
+</div>
+<div>
+    Html.Translate(SomeEnumProperty, WeirdAttribute) - @Html.Translate(() => SampleResources.SomeEnumProperty, typeof(WeirdCustomAttribute))
+</div>
+<div>
+    SampleResources.SomeEnumProperty.Translate() - @SampleResources.SomeEnumProperty.Translate()
+</div>
+
+<hr/>
 
 <address>
     One Microsoft Way<br />

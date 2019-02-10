@@ -4,6 +4,7 @@ using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Models;
+using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Core.AspNetSample.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,6 +59,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
             services.AddDbLocalizationProvider(_ =>
                                                {
                                                    _.EnableInvariantCultureFallback = true;
+                                                   _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
                                                });
             services.AddDbLocalizationProviderAdminUI(_ =>
                                                       {

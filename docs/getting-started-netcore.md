@@ -64,6 +64,10 @@ public class Startup
 
 Using localization provider will make sure that resources are discovered and registered in the database (if this process will not be disabled via `AddDbLocalizationProvider()` method by setting `ConfigurationContext.DiscoverAndRegisterResources` to `false`).
 
+## Working with [LocalizedResource] & [LocalizedModel] Attributes
+
+For more information on how localized resources and localized models are working - please read [docs in main package repo](https://github.com/valdisiljuconoks/LocalizationProvider/blob/master/docs/resource-types.md).
+
 ## Add AdminUI
 
 For adding AdminUI to your application - refer to instructions [here](getting-started-adminui.md).
