@@ -89,7 +89,7 @@ When everything is setup correctly and Asp.Net Core runtime does not blame you f
 
 ### Change Default Route for AdminUI
 
-If you want to change url for the AdminUI application -> just specify if via `AddDbLocalizationProviderAdminUI` configuration method:
+By default AdminUI is mapped to `/localization-admin` url. If you want to change url for the AdminUI application -> just specify if via `AddDbLocalizationProviderAdminUI` configuration method:
 
 ```
 public void ConfigureServices(IServiceCollection services)
