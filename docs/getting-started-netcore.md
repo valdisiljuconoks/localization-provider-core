@@ -68,6 +68,30 @@ Using localization provider will make sure that resources are discovered and reg
 
 For more information on how localized resources and localized models are working - please read [docs in main package repo](https://github.com/valdisiljuconoks/LocalizationProvider/blob/master/docs/resource-types.md).
 
+## Adding Additional Cultures
+
+Localization is all about translations into multiple languages. So it's often required to add more supported languages to the application. LocalizationProvider uses `RequestLocalizationOptions` to understand what languages application is supporting. You can configure this setting using `ConfigureServices` startup method.
+
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    ...
+    // just adding English and Latvian support
+    services.Configure<RequestLocalizationOptions>(opts =>
+    {
+        var supportedCultures = new List<CultureInfo>
+                                {
+                                    new CultureInfo("en"),
+                                    new CultureInfo("lv")
+                                };
+
+        opts.DefaultRequestCulture = new RequestCulture("en");
+        opts.SupportedCultures = supportedCultures;
+        opts.SupportedUICultures = supportedCultures;
+    });
+}
+```
+
 ## Add AdminUI
 
 For adding AdminUI to your application - refer to instructions [here](getting-started-adminui.md).
