@@ -17,7 +17,7 @@ Essentially there are 2 parts of the whole setup process:
 
 Configuration of the services is part of the Asp.Net Core dependency injection process setup. So to add AdminUI to you application you need (in `Startup.cs`):
 
-### Enable Built-In Localization Support
+### Configure Localization Provider Services
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -52,7 +52,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 
 ### Setup Library
 
-And when built+in support is configured, you can now add support for DbLocalizationProvider library (again in `Startup.cs`):
+And when built-in support is configured, you can now add support for DbLocalizationProvider library (again in `Startup.cs`):
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -86,3 +86,19 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 When everything is setup correctly and Asp.Net Core runtime does not blame you for incorrect configuration, you may access AdminUI via `.../localization-admin` url (by default).
 
 ![](aspnetcore-admin-ui.jpg)
+
+### Change Default Route for AdminUI
+
+If you want to change url for the AdminUI application -> just specify if via `AddDbLocalizationProviderAdminUI` configuration method:
+
+```
+public void ConfigureServices(IServiceCollection services)
+{
+    ...
+    services.AddDbLocalizationProviderAdminUI(_ =>
+                                              {
+                                                  _.RootUrl = "/localization-admin";
+                                                  ...
+                                              });
+}
+```
