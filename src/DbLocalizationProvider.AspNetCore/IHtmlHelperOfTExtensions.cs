@@ -154,5 +154,10 @@ namespace DbLocalizationProvider.AspNetCore
 
             return new HtmlString(LocalizationProvider.Current.GetStringByCulture(ExpressionHelper.GetFullMemberName(expression) + "-Description", language, formatArguments));
         }
+
+        public static IHtmlContent GetTranslations<TModel>(this IHtmlHelper<TModel> helper, Type containerType)
+        {
+            return new HtmlString("<script src=\"/jsl10n/get\"></script>");
+        }
     }
 }

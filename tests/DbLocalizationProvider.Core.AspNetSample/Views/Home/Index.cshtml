@@ -17,6 +17,11 @@
     var localized = Provider.Translate<SampleResources>();
 }
 
+<div>
+    Html.GetTranslations():
+    @Html.GetTranslations(typeof(SampleResources))
+</div>
+
 <h2>Current Culture: @currentCulture</h2>
 
 <div>Translate&lt;SampleResources&gt;(PageHeader2) - @localized.PageHeader2</div>
