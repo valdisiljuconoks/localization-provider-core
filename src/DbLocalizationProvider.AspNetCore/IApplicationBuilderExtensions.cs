@@ -20,12 +20,7 @@
 
 using DbLocalizationProvider.AspNetCore.Sync;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Internal;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore
 {
@@ -34,7 +29,7 @@ namespace DbLocalizationProvider.AspNetCore
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
             // create db schema
-            using(var ctx =new LanguageEntities())
+            using(var ctx = new LanguageEntities())
                 ctx.Database.Migrate();
 
             var synchronizer = new ResourceSynchronizer();
@@ -44,42 +39,7 @@ namespace DbLocalizationProvider.AspNetCore
             // and only then setup configuration is ran - here we need to reset instance once again with new settings
             LocalizationProvider.Initialize();
 
-            builder.Map(new PathString("/jsl10n"),
-                    _ =>
-                    {
-                        var routeBuilder = new RouteBuilder(builder)
-                                           {
-                                               DefaultHandler = builder.ApplicationServices.GetRequiredService<MvcRouteHandler>()
-                                           };
-
-                        routeBuilder.MapRoute("DbLocalizationProvider for Javascript", "api/{controller=Jsl10n}/{action=Get}");
-                        var apiRoute = routeBuilder.Build();
-                        builder.UseRouter(apiRoute);
-                    });
-
-
             return builder;
-        }
-    }
-
-
-    public class Jsl10nController : Controller
-    {
-        [HttpGet]
-        public JavaScriptResult Get()
-        {
-            var c = "window.jsl10n = \"{ 'ok' : 'okey' }\"";
-
-            return new JavaScriptResult(c);
-        }
-    }
-
-    public class JavaScriptResult : ContentResult
-    {
-        public JavaScriptResult(string script)
-        {
-            Content = script;
-            ContentType = "application/javascript";
         }
     }
 }

@@ -18,9 +18,22 @@
 }
 
 <div>
-    Html.GetTranslations():
+    Html.GetTranslations()...
     @Html.GetTranslations(typeof(SampleResources))
+    @(Html.GetTranslations(() => Shared.CommonResources.Yes))
+
+    @Html.GetTranslations(typeof(SampleResources), "no", "jsl10nNO")
+    ..
+    @Html.GetTranslations(typeof(SampleResources), "no", "jsl10nNO2")
+
+    <div id="placeHolder1"></div>
+    <div id="placeHolder2"></div>
 </div>
+
+<script type="text/javascript">
+    document.getElementById('placeHolder1').innerHTML = window.jsl10n.DbLocalizationProvider.Core.AspNetSample.Resources.SampleResources.SomeHtmlResource + " (" + window.jsl10n.DbLocalizationProvider.Core.AspNetSample.Resources.Shared.CommonResources.Yes + ")";
+    document.getElementById('placeHolder2').innerHTML = window.jsl10nNO.DbLocalizationProvider.Core.AspNetSample.Resources.SampleResources.SomeHtmlResource;
+</script>
 
 <h2>Current Culture: @currentCulture</h2>
 

@@ -98,6 +98,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                        });
 
             app.UseDbLocalizationProvider();
+            app.UseDbLocalizationClientsideProvider();
             app.UseDbLocalizationProviderAdminUI();
         }
     }

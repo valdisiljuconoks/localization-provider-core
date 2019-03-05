@@ -1,0 +1,64 @@
+﻿// Copyright (c) 2019 Valdis Iljuconoks.
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+
+using System;
+using System.Collections.Generic;
+using DbLocalizationProvider.AspNetCore.Cache;
+using DbLocalizationProvider.Cache;
+
+namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
+{
+    internal class CacheHelper
+    {
+        private static readonly string _separator = "_|_";
+
+        public static string GenerateKey(string filename, string language, bool isDebugMode, string alias)
+        {
+            return $"{filename}{_separator}{language}{_separator}{(isDebugMode ? "debug" : "release")}{_separator}{alias}";
+        }
+
+        public static string GetContainerName(string key)
+        {
+            if(key == null)
+                throw new ArgumentNullException(nameof(key));
+
+            return !key.Contains(_separator) ? null : key.Substring(0, key.IndexOf(_separator, StringComparison.Ordinal));
+        }
+
+        public static void CacheManagerOnOnRemove(CacheEventArgs args, ICacheManager cache)
+        {
+            // TODO: implement IEnumerable on cache manager
+            using(var existingKeys = InMemoryCacheManager.Entries.GetEnumerator())
+            {
+                var entriesToRemove = new List<string>();
+                while(existingKeys.MoveNext())
+                {
+                    var key = CacheKeyHelper.GetResourceKeyFromCacheKey(existingKeys.Current.Key);
+                    var containerName = GetContainerName(key);
+                    if(containerName != null && args.ResourceKey.StartsWith(containerName))
+                        entriesToRemove.Add(existingKeys.Current.Key);
+                }
+
+                foreach(var entry in entriesToRemove)
+                    cache.Remove(entry);
+            }
+        }
+    }
+}

@@ -58,7 +58,10 @@ namespace DbLocalizationProvider.AspNetCore
             // set to default in-memory provider
             var cache = provider.GetService<IMemoryCache>();
             if(cache != null)
+            {
                 ConfigurationContext.Current.CacheManager = new InMemoryCacheManager(cache);
+                services.AddSingleton(ConfigurationContext.Current.CacheManager);
+            }
 
             // run custom configuration setup (if any)
             setup?.Invoke(ConfigurationContext.Current);
@@ -81,6 +84,8 @@ namespace DbLocalizationProvider.AspNetCore
 
                 services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
             }
+
+            services.AddHttpContextAccessor();
 
             return services;
         }

@@ -1,4 +1,4 @@
-// Copyright © 2017 Valdis Iljuconoks.
+// Copyright (c) 2019 Valdis Iljuconoks.
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
 // files (the "Software"), to deal in the Software without
@@ -18,40 +18,12 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-using System.Collections.Concurrent;
-using DbLocalizationProvider.Cache;
-using Microsoft.Extensions.Caching.Memory;
-
-namespace DbLocalizationProvider.AspNetCore.Cache
+namespace DbLocalizationProvider.AspNetCore
 {
-    public class InMemoryCacheManager : ICacheManager
+    internal class ClientsideConfigurationContext
     {
-        internal static readonly ConcurrentDictionary<string, bool> Entries = new ConcurrentDictionary<string, bool>();
-        private readonly IMemoryCache _memCache;
+        public static string DeepMergeScriptName = "deep-merge.js";
 
-        public InMemoryCacheManager(IMemoryCache memCache)
-        {
-            _memCache = memCache;
-        }
-
-        public void Insert(string key, object value)
-        {
-            _memCache.Set(key, value);
-            Entries.TryAdd(key, true);
-        }
-
-        public object Get(string key)
-        {
-            return _memCache.Get(key);
-        }
-
-        public void Remove(string key)
-        {
-            _memCache.Remove(key);
-            Entries.TryRemove(key, out _);
-        }
-
-        public event CacheEventHandler OnInsert;
-        public event CacheEventHandler OnRemove;
+        public static string RootPath { get; internal set; }
     }
 }
