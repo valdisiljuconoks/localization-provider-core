@@ -56,7 +56,8 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
 
             var debugMode = context.Request.Query.ContainsKey("debug");
             var camelCase = context.Request.Query.ContainsKey("camel");
-            var alias = !context.Request.Query.ContainsKey("alias") ? "jsl10n" : context.Request.Query["alias"].ToString();
+            var windowAlias = !context.Request.Query.ContainsKey("json");
+            var alias = !context.Request.Query.ContainsKey("alias") ? ClientsideConfigurationContext.DefaultAlias : context.Request.Query["alias"].ToString();
 
             var cacheKey = CacheHelper.GenerateKey(filename, languageName, debugMode, alias);
             var cache = context.RequestServices.GetService<ICacheManager>();
@@ -64,10 +65,11 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
             if(!(cache.Get(cacheKey) is string responseObject))
             {
                 responseObject = GetJson(filename, languageName, debugMode, camelCase);
-                responseObject = $"window.{alias} = jsResourceHandler.deepmerge(window.{alias} || {{}}, {responseObject})";
-
                 cache.Insert(cacheKey, responseObject);
             }
+
+            if(windowAlias)
+                responseObject = $"window.{alias} = jsResourceHandler.deepmerge(window.{alias} || {{}}, {responseObject})";
 
             return responseObject;
         }

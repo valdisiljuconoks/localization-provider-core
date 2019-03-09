@@ -24,6 +24,14 @@ namespace DbLocalizationProvider.AspNetCore
     {
         public static string DeepMergeScriptName = "deep-merge.js";
 
-        public static string RootPath { get; internal set; }
+        public static string RootPath { get; private set; }
+
+        public static string DefaultAlias { get; private set; }
+
+        internal static void SetRootPath(string path)
+        {
+            DefaultAlias = path.StartsWith('/') ? path.Substring(1, path.Length - 1) : path;
+            RootPath = path.StartsWith('/') ? path : '/' + path;
+        }
     }
 }

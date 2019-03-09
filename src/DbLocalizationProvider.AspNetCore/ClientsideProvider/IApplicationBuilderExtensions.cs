@@ -37,7 +37,7 @@ namespace DbLocalizationProvider.AspNetCore
             if(string.IsNullOrEmpty(path))
                 throw new ArgumentNullException(nameof(path));
 
-            ClientsideConfigurationContext.RootPath = path.StartsWith('/') ? path : '/' + path;
+            ClientsideConfigurationContext.SetRootPath(path);
             AppContext.Configure(builder.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             _cache = builder.ApplicationServices.GetRequiredService<ICacheManager>();
             builder.ApplicationServices.GetService<ICacheManager>().OnRemove += OnOnRemove;
