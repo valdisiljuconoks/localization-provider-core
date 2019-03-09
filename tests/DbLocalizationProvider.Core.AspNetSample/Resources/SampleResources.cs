@@ -1,4 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DbLocalizationProvider;
+
+namespace MyProject
+{
+    [LocalizedResource]
+    public class SampleResources
+    {
+        public static string PageHeader => "This is page header";
+    }
+}
 
 namespace DbLocalizationProvider.Core.AspNetSample.Resources
 {
