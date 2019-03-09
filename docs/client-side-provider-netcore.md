@@ -1,3 +1,5 @@
+# Client-side Localization
+
 Starting with v5.4.1 version of the [LocalizationProvider package for .NET Core](https://www.nuget.org/packages/LocalizationProvider.AspNetCore/), it's now possible to work with translations also on client-side.
 
 ## Getting Started
