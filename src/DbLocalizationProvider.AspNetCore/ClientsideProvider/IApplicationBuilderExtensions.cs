@@ -22,6 +22,7 @@ using System;
 using DbLocalizationProvider.AspNetCore.ClientsideProvider;
 using DbLocalizationProvider.Cache;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using AppContext = DbLocalizationProvider.AspNetCore.ClientsideProvider.AppContext;
@@ -40,7 +41,10 @@ namespace DbLocalizationProvider.AspNetCore
             ClientsideConfigurationContext.SetRootPath(path);
             AppContext.Configure(builder.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             _cache = builder.ApplicationServices.GetRequiredService<ICacheManager>();
-            builder.ApplicationServices.GetService<ICacheManager>().OnRemove += OnOnRemove;
+
+            var cacheManager = builder.ApplicationServices.GetService<ICacheManager>();
+            cacheManager.OnRemove += OnOnRemove;
+            builder.ApplicationServices.GetRequiredService<IApplicationLifetime>().ApplicationStopping.Register(() => cacheManager.OnRemove -= OnOnRemove);
 
             builder.MapWhen(context => context.Request.Path.ToString().StartsWith(ClientsideConfigurationContext.RootPath),
                             _ => { _.UseMiddleware<RequestHandler>(); });

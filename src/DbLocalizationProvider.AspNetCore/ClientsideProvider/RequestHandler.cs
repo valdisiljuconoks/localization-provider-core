@@ -37,13 +37,13 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
         public async Task Invoke(HttpContext context)
         {
             var response = GenerateResponse(context);
-
-            context.Response.ContentType = "application/javascript";
             await context.Response.WriteAsync(response);
         }
 
         private string GenerateResponse(HttpContext context)
         {
+            context.Response.ContentType = "application/javascript";
+
             var languageName = !context.Request.Query.ContainsKey("lang")
                                    ? CultureInfo.CurrentUICulture.Name
                                    : context.Request.Query["lang"].ToString();
@@ -59,7 +59,7 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
             var windowAlias = !context.Request.Query.ContainsKey("json");
             var alias = !context.Request.Query.ContainsKey("alias") ? ClientsideConfigurationContext.DefaultAlias : context.Request.Query["alias"].ToString();
 
-            var cacheKey = CacheHelper.GenerateKey(filename, languageName, debugMode, alias);
+            var cacheKey = CacheHelper.GenerateKey(filename, languageName, debugMode, camelCase);
             var cache = context.RequestServices.GetService<ICacheManager>();
 
             if(!(cache.Get(cacheKey) is string responseObject))
@@ -70,6 +70,8 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
 
             if(windowAlias)
                 responseObject = $"window.{alias} = jsResourceHandler.deepmerge(window.{alias} || {{}}, {responseObject})";
+            else
+                context.Response.ContentType = "application/json";
 
             return responseObject;
         }

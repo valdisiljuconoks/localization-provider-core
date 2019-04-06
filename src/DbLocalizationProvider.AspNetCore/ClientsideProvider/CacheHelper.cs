@@ -29,9 +29,9 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
     {
         private static readonly string _separator = "_|_";
 
-        public static string GenerateKey(string filename, string language, bool isDebugMode, string alias)
+        public static string GenerateKey(string filename, string language, bool isDebugMode, bool camelCase)
         {
-            return $"{filename}{_separator}{language}{_separator}{(isDebugMode ? "debug" : "release")}{_separator}{alias}";
+            return $"{filename}{_separator}{language}__{(isDebugMode ? "debug" : "release")}__{camelCase}";
         }
 
         public static string GetContainerName(string key)
