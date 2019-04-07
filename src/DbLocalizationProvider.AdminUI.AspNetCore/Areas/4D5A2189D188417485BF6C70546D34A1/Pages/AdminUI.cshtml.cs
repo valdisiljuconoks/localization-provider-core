@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using DbLocalizationProvider.Export;
 using DbLocalizationProvider.Queries;
@@ -21,21 +20,13 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
             return Page();
         }
 
-        public FileResult ExportResources(string format = "json")
+        public FileResult OnGetExport(string format = "json")
         {
             var exporter = ConfigurationContext.Current.Export.Providers.FindById(format);
             var resources = new GetAllResources.Query().Execute();
             var result = exporter.Export(resources.ToList(), null);
 
-            using(var stream = new MemoryStream())
-                using(var writer = new StreamWriter(stream, Encoding.UTF8))
-                {
-                    writer.Write(result.SerializedData);
-                    writer.Flush();
-                    stream.Position = 0;
-
-                    return File(stream, result.FileMimeType, result.FileName);
-                }
+            return new FileContentResult(Encoding.UTF8.GetBytes(result.SerializedData), result.FileMimeType) { FileDownloadName = result.FileName };
         }
     }
 }
