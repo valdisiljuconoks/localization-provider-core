@@ -2,15 +2,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <PackageId>LocalizationProvider.AspNetCore</PackageId>
-    <Version>5.4.1</Version>
-    <AssemblyVersion>5.4.1.0</AssemblyVersion>
-    <FileVersion>5.4.1.0</FileVersion>
+    <Version>5.5.0</Version>
+    <AssemblyVersion>5.5.0.0</AssemblyVersion>
+    <FileVersion>5.5.0.0</FileVersion>
     <Authors>Valdis Iljuconoks, https://tech-fellow.net</Authors>
     <Company>Valdis Iljuconoks, https://tech-fellow.net</Company>
     <Product>DbLocalizationProvider</Product>
     <Description>Database driven localization provider. Asp.Net Core support package</Description>
     <Copyright>Tech Fellow Consulting, Copyright © 2019</Copyright>
-    <PackageLicenseUrl>https://github.com/valdisiljuconoks/LocalizationProvider/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
     <PackageTags>Localization Provider DbLocalization DbLocalizationProvider LocalizationProvider Database Driven AspNetCore NetCore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,6 +19,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseExpression>https://github.com/valdisiljuconoks/LocalizationProvider/blob/master/LICENSE</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netcoreapp2.1\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
