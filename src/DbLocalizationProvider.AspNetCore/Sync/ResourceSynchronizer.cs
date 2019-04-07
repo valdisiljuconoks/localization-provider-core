@@ -125,9 +125,9 @@ namespace DbLocalizationProvider.AspNetCore.Sync
                                  foreach(var refactoredResource in refactoredResources)
                                  {
                                      sb.Append($@"
-        if exists(select 1 from localizationresources with(nolock) where resourcekey = '{refactoredResource.OldResourceKey}')
+        if exists(select 1 from LocalizationResources with(nolock) where ResourceKey = '{refactoredResource.OldResourceKey}')
         begin
-            update dbo.localizationresources set resourcekey = '{refactoredResource.Key}', fromcode = 1 where resourcekey = '{refactoredResource.OldResourceKey}'
+            update dbo.LocalizationResources set ResourceKey = '{refactoredResource.Key}', FromCode = 1 where ResourceKey = '{refactoredResource.OldResourceKey}'
         end
         ");
                                  }
@@ -139,10 +139,10 @@ namespace DbLocalizationProvider.AspNetCore.Sync
                                      if(existingResource == null)
                                      {
                                          sb.Append($@"
-        set @resourceId = isnull((select id from localizationresources where [resourcekey] = '{property.Key}'), -1)
+        set @resourceId = isnull((select id from LocalizationResources where [ResourceKey] = '{property.Key}'), -1)
         if (@resourceId = -1)
         begin
-            insert into localizationresources ([resourcekey], modificationdate, author, fromcode, ismodified, ishidden)
+            insert into LocalizationResources ([ResourceKey], ModificationDate, Author, FromCode, IsModified, IsHidden)
             values ('{property.Key}', getutcdate(), 'type-scanner', 1, 0, {Convert.ToInt32(property.IsHidden)})
             set @resourceId = SCOPE_IDENTITY()");
 
@@ -150,7 +150,7 @@ namespace DbLocalizationProvider.AspNetCore.Sync
                                                  foreach(var propertyTranslation in property.Translations)
                                          {
                                              sb.Append($@"
-            insert into localizationresourcetranslations (resourceid, [language], [value]) values (@resourceId, '{propertyTranslation.Culture}', N'{
+            insert into LocalizationResourceTranslations (ResourceId, [Language], [Value]) values (@resourceId, '{propertyTranslation.Culture}', N'{
                                                                propertyTranslation.Translation.Replace("'", "''")
                                                            }')
         ");
@@ -163,10 +163,10 @@ namespace DbLocalizationProvider.AspNetCore.Sync
 
                                      if(existingResource != null)
                                      {
-                                         sb.AppendLine($"update localizationresources set fromcode = 1, ishidden = {Convert.ToInt32(property.IsHidden)} where [id] = {existingResource.Id}");
+                                         sb.AppendLine($"update LocalizationResources set FromCode = 1, IsHidden = {Convert.ToInt32(property.IsHidden)} where [Id] = {existingResource.Id}");
 
                                          var invariantTranslation = property.Translations.First(t => t.Culture == string.Empty);
-                                         sb.AppendLine($"update localizationresourcetranslations set [value] = N'{invariantTranslation.Translation.Replace("'", "''")}' where resourceid={existingResource.Id} and [language]='{invariantTranslation.Culture}'");
+                                         sb.AppendLine($"update LocalizationResourceTranslations set [Value] = N'{invariantTranslation.Translation.Replace("'", "''")}' where ResourceId={existingResource.Id} and [Language]='{invariantTranslation.Culture}'");
 
                                          if(existingResource.IsModified.HasValue && !existingResource.IsModified.Value)
                                          {
@@ -196,13 +196,13 @@ namespace DbLocalizationProvider.AspNetCore.Sync
             if(existingTranslation == null)
             {
                 buffer.Append($@"
-        insert into localizationresourcetranslations (resourceid, [language], [value]) values ({existingResource.Id}, '{resource.Culture}', N'{resource.Translation.Replace("'", "''")}')
+        insert into LocalizationResourceTranslations (ResourceId, [Language], [Value]) values ({existingResource.Id}, '{resource.Culture}', N'{resource.Translation.Replace("'", "''")}')
         ");
             }
             else if(!existingTranslation.Value.Equals(resource.Translation))
             {
                 buffer.Append($@"
-        update localizationresourcetranslations set [value] = N'{resource.Translation.Replace("'", "''")}' where resourceid={existingResource.Id} and [language]='{resource.Culture}'
+        update LocalizationResourceTranslations set [Value] = N'{resource.Translation.Replace("'", "''")}' where ResourceId={existingResource.Id} and [Language]='{resource.Culture}'
         ");
             }
         }
