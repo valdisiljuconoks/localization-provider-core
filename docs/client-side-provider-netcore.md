@@ -94,6 +94,8 @@ Pulled down translated object needs to be assigned to something in order to work
 
 But you might ask - what about case when I need to dynamically pull down resources on my own and don't need to pollute global scope with some weird objects?
 
+## Resources as JSON
+
 In these cases you can issue request directly to localization provider endpoint and get only JSON representation of the resource class translations.
 
 For example, issuing request straight to resource endpoint and providing `json` query parameter, you will get back only JSON object.
