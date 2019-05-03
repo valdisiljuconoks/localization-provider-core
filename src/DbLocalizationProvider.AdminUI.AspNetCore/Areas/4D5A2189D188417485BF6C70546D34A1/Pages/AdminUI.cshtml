@@ -193,7 +193,7 @@
                 </td>
                 <td v-for="lang in model.supportedLanguages">
                     <span class="translation" @@click="edit(resource, lang.code)" v-show="resource[lang.code] != null">{{ resource[lang.code] }}</span>
-                    <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] == null">N/A</span>
+                    <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] == null || resource[lang.code] == ''">N/A</span>
                 </td>
                 <td>{{ resource.isHidden }}</td>
             </tr>
