@@ -60,6 +60,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                {
                                                    _.EnableInvariantCultureFallback = true;
                                                    _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
+                                                   _.Connection = "DefaultConnection";
                                                });
             services.AddDbLocalizationProviderAdminUI(_ =>
                                                       {
