@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AspNetCore", "src\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj", "{F6627B30-A832-4EB8-A0A1-1125249F2CB6}"
 EndProject
@@ -32,6 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{07147348-C
 		getting-started-adminui.md = getting-started-adminui.md
 		docs\getting-started-netcore.md = docs\getting-started-netcore.md
 		docs\localizing-content-netcore.md = docs\localizing-content-netcore.md
+		docs\localizing-viewmodel-netcore.md = docs\localizing-viewmodel-netcore.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AdminUI.AspNetCore", "src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj", "{EFBEF627-654F-4A18-B9FA-4F4486539C06}"

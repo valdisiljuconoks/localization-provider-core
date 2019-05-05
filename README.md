@@ -22,6 +22,7 @@ Database localization provider is split into main [abstraction projects](https:/
 * [Getting Started](docs/getting-started-netcore.md)
 * [Getting Started with AdminUI](docs/getting-started-adminui.md)
 * [Localizing App Content](docs/localizing-content-netcore.md)
+* [Localizing View Model (with DataAnnotations attributes)](docs/localizing-viewmodel-netcore.md)
 * [Localizing Client-side](docs/client-side-provider-netcore.md)
 
 ## GitHub Source Code Structure
