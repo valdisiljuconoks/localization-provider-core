@@ -5,10 +5,11 @@
     "devDependencies": {},
     "dependencies": {
         "axios": "0.18.0",
-        "bootstrap": "4.0.0",
-        "jquery": "3.3.1",
+        "bootstrap": "4.3.1",
+        "popper.js": "1.14.7",
+        "jquery": "3.4.1",
         "open-iconic": "1.1.1",
-        "vue": "2.5.13",
-        "vue-directive-tooltip": "1.4.2"
+        "vue": "2.6.10",
+        "vue-directive-tooltip": "1.5.1"
     }
 }
