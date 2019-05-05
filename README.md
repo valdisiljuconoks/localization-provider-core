@@ -1,6 +1,6 @@
-# LocalizationProvider .Net Core
+# LocalizationProvider for .NET Core
 
-Database driven localization provider for .Net Core applications.
+Database driven localization provider for .NET Core applications.
 
 [<img src="https://tech-fellow-consulting.visualstudio.com/_apis/public/build/definitions/f63fd8ab-e3f1-48c1-bca0-f027727a53c4/9/badge"/>](https://tech-fellow-consulting.visualstudio.com/localization-provider-core/_build/index?definitionId=9)
 
@@ -11,11 +11,11 @@ LocalizationProvider project is Asp.Net Mvc web application localization provide
 Giving you main following features:
 * Database driven localization provider for .Net applications
 * Easy resource registrations via code
-* Supports hierarchical resource organization (with help of child classes)
+* Supports hierarchical resources (with help of child classes)
 
 ## Project Structure
 
-Database localization provider is split into main [abstraction projects](https://github.com/valdisiljuconoks/LocalizationProvider) and .Net Core support project (this).
+Database localization provider is split into main [abstraction projects](https://github.com/valdisiljuconoks/LocalizationProvider) and .NET Core support project (this).
 
 ## Getting Started
 
@@ -27,7 +27,7 @@ Database localization provider is split into main [abstraction projects](https:/
 
 ## GitHub Source Code Structure
 
-.Net Core support project has its own repo while main abstraction projects are included as [submodules](https://gist.github.com/gitaarik/8735255) here.
+.NET Core support project has its own repo while main abstraction projects are included as [submodules](https://gist.github.com/gitaarik/8735255) here.
 
 # How to Contribute
 
