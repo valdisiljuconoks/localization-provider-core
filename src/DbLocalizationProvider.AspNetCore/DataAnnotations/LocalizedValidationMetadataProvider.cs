@@ -9,6 +9,8 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
     {
         public void CreateValidators(ModelValidatorProviderContext context)
         {
+            var isReusable = ConfigurationContext.Current.ModelMetadataProviders.UseCachedProviders;
+
             for(var i = 0; i < context.Results.Count; i++)
             {
                 var validatorItem = context.Results[i];
@@ -20,7 +22,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
                     continue;
 
                 validatorItem.Validator = new LocalizedModelValidator(attribute);
-                validatorItem.IsReusable = true;
+                validatorItem.IsReusable = isReusable;
 
                 // Inserts validators based on whether or not they are 'required'. We want to run
                 // 'required' validators first so that we get the best possible error message.
@@ -36,7 +38,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
                 context.Results.Add(new ValidatorItem
                 {
                     Validator = new ValidatableObjectAdapter(),
-                    IsReusable = true
+                    IsReusable = isReusable
                 });
         }
     }

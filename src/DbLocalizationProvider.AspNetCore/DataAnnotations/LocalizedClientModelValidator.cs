@@ -41,6 +41,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
                 throw new ArgumentNullException(nameof(context));
 
             var type = context.ModelMetadata.ContainerType ?? context.ModelMetadata.ModelType;
+            var isReusable = ConfigurationContext.Current.ModelMetadataProviders.UseCachedProviders;
             var flag = false;
 
             foreach (var result in context.Results)
@@ -61,7 +62,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
                         if(attributeAdapter != null)
                         {
                             result.Validator = attributeAdapter;
-                            result.IsReusable = true;
+                            result.IsReusable = isReusable;
                         }
                     }
                 }
@@ -76,8 +77,8 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
                                                                                                         new ValidationStringLocalizer(type,
                                                                                                                                       context.ModelMetadata.PropertyName,
                                                                                                                                       new RequiredAttribute())),
-                                    IsReusable = true
-                                });
+                                    IsReusable = isReusable
+            });
         }
     }
 }

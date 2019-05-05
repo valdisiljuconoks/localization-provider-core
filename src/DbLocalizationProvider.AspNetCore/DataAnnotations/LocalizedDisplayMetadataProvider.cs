@@ -49,8 +49,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
 
             var displayAttribute = theAttributes.OfType<DisplayAttribute>().FirstOrDefault();
             if(displayAttribute?.Description != null)
-                modelMetadata.Description = () =>
-                    ModelMetadataLocalizationHelper.GetTranslation(containerType, $"{propertyName}-Description");
+                modelMetadata.Description = () => ModelMetadataLocalizationHelper.GetTranslation(containerType, $"{propertyName}-Description");
         }
     }
 }
