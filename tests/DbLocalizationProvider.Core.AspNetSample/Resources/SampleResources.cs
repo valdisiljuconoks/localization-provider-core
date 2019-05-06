@@ -8,6 +8,19 @@ namespace MyProject
     {
         public static string PageHeader => "This is page header";
     }
+
+
+    public class ContainerClass
+    {
+        public class NestedClass
+        {
+            [LocalizedResource]
+            public class TheResourceClass
+            {
+                public static string SomeKey => "Some translation";
+            }
+        }
+    }
 }
 
 namespace DbLocalizationProvider.Core.AspNetSample.Resources

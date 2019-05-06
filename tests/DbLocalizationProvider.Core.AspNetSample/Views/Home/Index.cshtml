@@ -88,6 +88,53 @@
     <button type="submit">Submit</button>
 </form>
 
+<hr/>
+<div>
+    <span>This is coming from AJAX call to jsl10n endpoint with JSON parameter:</span><span id="theJsPlaceholder4"></span>
+</div>
+<div>
+    <span>This is coming from AJAX call to jsl10n endpoint with JSON parameter (MyProject.ContainerClass+NestedClass+TheResourceClass.SomeKey):</span><span id="theJsPlaceholder5"></span>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(function() {
+        $.ajax({
+            url: '/jsl10n/MyProject.SampleResources?json=true',
+            method: 'GET'
+        }).done(function (data) {
+            document.getElementById('theJsPlaceholder4').innerHTML = data.MyProject.SampleResources.PageHeader;
+        });
+
+        $.ajax({
+            url: '/jsl10n/MyProject.ContainerClass---NestedClass---TheResourceClass.SomeKey',
+            method: 'GET',
+            headers: {
+                Accept: "application/json, text/plain, */*"
+            },
+            xhr: function() {
+                // Get new xhr object using default factory
+                var xhr = $.ajaxSettings.xhr();
+                // Copy the browser's native setRequestHeader method
+                var setRequestHeader = xhr.setRequestHeader;
+                // Replace with a wrapper
+                xhr.setRequestHeader = function(name, value) {
+                    // Ignore the X-Requested-With header
+                    if (name == 'X-Requested-With') return;
+                    // Otherwise call the native setRequestHeader method
+                    // Note: setRequestHeader requires its 'this' to be the xhr object,
+                    // which is what 'this' is here when executed.
+                    setRequestHeader.call(this, name, value);
+                }
+                // pass it on to jQuery
+                return xhr;
+            }
+        }).done(function (data) {
+            document.getElementById('theJsPlaceholder5').innerHTML = data.MyProject.ContainerClass.NestedClass.TheResourceClass.SomeKey;
+        });
+    });
+</script>
+
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }

@@ -19,10 +19,12 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Cache;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using JsonConverter = DbLocalizationProvider.Json.JsonConverter;
@@ -56,11 +58,19 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
 
             var debugMode = context.Request.Query.ContainsKey("debug");
             var camelCase = context.Request.Query.ContainsKey("camel");
-            var windowAlias = !context.Request.Query.ContainsKey("json");
             var alias = !context.Request.Query.ContainsKey("alias") ? ClientsideConfigurationContext.DefaultAlias : context.Request.Query["alias"].ToString();
-
             var cacheKey = CacheHelper.GenerateKey(filename, languageName, debugMode, camelCase);
             var cache = context.RequestServices.GetService<ICacheManager>();
+
+            // trying to detect response format
+            var windowAlias = true;
+            if(context.Request.Query.ContainsKey("json"))
+                windowAlias = false;
+            else
+                if(context.Request.Headers.ContainsKey("X-Requested-With") && context.Request.Headers["X-Requested-With"].Contains("XMLHttpRequest"))
+                    windowAlias = false;
+                else if(context.Request.GetTypedHeaders().Accept.Contains(new MediaTypeHeaderValue("application/json")))
+                    windowAlias = false;
 
             if(!(cache.Get(cacheKey) is string responseObject))
             {
