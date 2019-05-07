@@ -2,6 +2,7 @@
 using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AspNetCore;
+using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Models;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
@@ -61,6 +62,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                    _.EnableInvariantCultureFallback = true;
                                                    _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
                                                    _.Connection = "DefaultConnection";
+                                                   _.ForeignResources.Add<Class1>();
                                                });
             services.AddDbLocalizationProviderAdminUI(_ =>
                                                       {
