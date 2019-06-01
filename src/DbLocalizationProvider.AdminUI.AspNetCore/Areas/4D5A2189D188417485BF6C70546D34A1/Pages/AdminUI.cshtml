@@ -193,7 +193,7 @@
                 </td>
                 <td v-for="lang in model.supportedLanguages">
                     <span class="translation" @@click="edit(resource, lang.code)" v-show="resource[lang.code] && resource[lang.code].trim() != ''">{{ resource[lang.code] }}</span>
-                    <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] != null && resource[lang.code].trim() == ''">Empty</span>
+                    <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] != null && resource[lang.code].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</span>
                     <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] == null">N/A</span>
                 </td>
                 <td>{{ resource.isHidden }}</td>

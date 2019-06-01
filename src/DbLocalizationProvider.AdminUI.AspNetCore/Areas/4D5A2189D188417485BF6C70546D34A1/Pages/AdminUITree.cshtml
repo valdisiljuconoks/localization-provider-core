@@ -22,11 +22,6 @@
     <link rel="stylesheet" href="../res/node_modules.vue_directive_tooltip.css.index.min.css">
     <link rel="stylesheet" href="../res/node_modules.vue_ads_table_tree.dist.vue-ads-table-tree.css">
     <link rel="stylesheet" href="../res/node_modules._fortawesome.fontawesome_free.css.all.min.css">
-
-    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
-    {
-        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
-    }
     <style type="text/css">
         body {
             margin: 10px;
@@ -121,7 +116,6 @@
             text-decoration-style: dotted;
         }
     </style>
-
     <style type="text/css">
         tr th.vue-ads-cursor-pointer {
             background-color: gray;
@@ -131,6 +125,12 @@
             background-color: red
         }
     </style>
+
+    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
+    {
+        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
+    }
+
 </head>
 <body class="container-fluid">
 
@@ -143,8 +143,7 @@
             :filter="filter"
             :page="page"
             @@filter-change="filterChanged"
-            @@page-change="pageChanged"
-            >
+            @@page-change="pageChanged">
             <template slot="bottom">&nbsp;</template>
             <template slot="no-rows">There are no resources registered. Make sure you sync them up!</template>
             <template slot="resourceKey" slot-scope="props">{{ props.row.resourceKey }}</template>
@@ -152,9 +151,10 @@
                 v-for="columnName in slottedColumns"
                 :slot="columnName"
                 slot-scope="props">
+                <a href="#" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
+                <a href="#" v-show="props.row[props.column.property] != null && props.row[props.column.property].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</a>
                 <a href="#" v-show="typeof(props.row[props.column.property]) !== 'undefined' && (props.row[props.column.property] == null || props.row[props.column.property] == '')">N/A</a>
-                <a href="#" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property] != ''">{{ props.row[props.column.property] }}</a>
-             </template>
+            </template>
         </vue-ads-table-tree>
     </div>
 </div>
@@ -191,95 +191,49 @@ new Vue({
     el: "#app",
 
     components: {
-       VueAdsTableTree
+        VueAdsTableTree
     },
 
     data() {
         return {
-        page: 0,
-        filter: '',
-        slottedColumns: [
-            'translationEn',
-          'translationNo',
-          'translationLv'
-        ],
-        columns: columnConfig,
-        rows: [
-            {
-                resourceKey: 'MyNaspace',
-                _classes: {
-                  row: { 'parent-row': true }
+            page: 0,
+            filter: '',
+            slottedColumns: [
+                'translationEn',
+                'translationNo',
+                'translationLv'
+            ],
+            columns: columnConfig,
+            rows: [],
+            classes: {
+                '0': {
+                    'vue-ads-bg-gray-lighter': false,
+                    'vue-ads-bg-blue-dark': true,
+                    'vue-ads-text-white': true,
+                    'vue-ads-font-bold': true,
                 },
-                _children: [
-                    {
-                    resourceKey: 'MyClassName',
-                        _children: [
-                    {
-                        resourceKey: 'MyProperty',
-                            translationEn: 'English Translation',
-                    },
-                                        {
-                        resourceKey: 'MyProperty2',
-                            translationEn: null,
-                    },
-                                        {
-                        resourceKey: 'EmptyEnglish',
-                            translationEn: '',
-                    },
-                                        {
-                        resourceKey: 'AnotherResource',
-                            translationEn: "Some translation",
-                      translationNo: "Tekst pa norsk",
-                    }
+                '1_/': {
+                    'hover:vue-ads-bg-red-lighter': true
+                }
+            }
+        };
+    },
 
-                    ]
-                  }]
-            },
-            {
-                resourceKey: 'MyNaspace2',
-                _children: [
-                    {
-                    resourceKey: 'MyClassName2',
-                        _children: [
-                    {
-                        resourceKey: 'MyProperty2',
-                            translationEn: 'English Translation',
-                    },
-                                        {
-                        resourceKey: 'MyProperty22',
-                            translationEn: null,
-                    },
-                                        {
-                        resourceKey: 'EmptyEnglish2',
-                            translationEn: '',
-                    },
-                                        {
-                        resourceKey: 'AnotherResource2',
-                            translationEn: "Some translation",
-                      translationNo: "Tekst pa norsk",
-                    }
+    mounted: function() {
+        axios.get('../api/service/gettree').then((response) => {
+            var result = response.data;
 
-                    ]
-                  }]
-            },
-        ],
-        classes: {
-          '0': {
-            'vue-ads-bg-gray-lighter': false,
-            'vue-ads-bg-blue-dark': true,
-            'vue-ads-text-white': true,
-            'vue-ads-font-bold': true,
-          },
-          '1_/': {
-            'hover:vue-ads-bg-red-lighter': true,
-          },
-        }
-      };
+            this.rows = result.resources;
+
+            //this.model.resources = result.resources;
+            //this.model.supportedLanguages = result.languages;
+            //this.model.loading = false;
+            //this.model.options = result.options;
+        }).catch(function(error) { alert('error retrieving resources: ' + error); });
     },
 
     methods: {
-
-                filterChanged (filter) {
+        filterChanged (filter) {
             this.filter = filter;
         },
 
@@ -289,20 +243,21 @@ new Vue({
 
         doFiltering () {
             this.rows = [
-            {
-                resourceKey: 'MyNaspace',
-                _children: [
-                    {
-                    resourceKey: 'MyClassName',
-                        _children: [
-                                        {
-                        resourceKey: 'MyProperty2',
-                            translationEn: null,
-                    }
+                {
+                    resourceKey: 'MyNaspace',
+                    _children: [
+                        {
+                            resourceKey: 'MyClassName',
+                            _children: [
+                                {
+                                    resourceKey: 'MyProperty2',
+                                    translationEn: null,
+                                }
+                            ]
+                        }
                     ]
-                  }]
-            }
-        ];
+                }
+            ];
         }
     }
 });

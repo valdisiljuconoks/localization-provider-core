@@ -22,5 +22,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string InvariantCultureColumn = "Invariant";
         public string HiddenColumn = "Is Hidden?";
         public string ShowOnlyEmptyResources = "Show Only Empty Resources";
+        public string EmptyTranslation = "Empty";
     }
 }
