@@ -46,6 +46,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             services.Configure<RazorPagesOptions>(_ =>
                                                   {
                                                       _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUI");
+                                                      _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree");
+
                                                       _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1",
                                                                                      "/AdminUI",
                                                                                      UiConfigurationContext.Current.RootUrl);

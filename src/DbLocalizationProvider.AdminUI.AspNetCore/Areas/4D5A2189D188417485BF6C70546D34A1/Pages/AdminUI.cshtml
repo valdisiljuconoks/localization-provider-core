@@ -165,6 +165,8 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" :class="{ 'dropdown-item-checked': model.options.showHiddenResources }" href="#" @@click="toggleHiddenResources">@Localizer.GetString(_ => _.ShowHiddenResources)</a>
                         <a class="dropdown-item" :class="{ 'dropdown-item-checked': model.options.showOnlyEmptyResources }" href="#" @@click="toggleEmptyResources">@Localizer.GetString(_ => _.ShowOnlyEmptyResources)</a>
+                        <a class="dropdown-item dropdown-item-checked disabled" href="#">@Localizer.GetString(_ => _.TableView)</a>
+                        <a class="dropdown-item" href="#" @@click="showTreeView">@Localizer.GetString(_ => _.TreeView)</a>
                     </div>
                 </div>
             </div>
@@ -252,7 +254,7 @@
             model: vm
         },
         methods: {
-            loadData: function() {
+            loadData() {
                 axios.get('api/service/get').then((response) => {
                     var result = response.data;
                     this.model.resources = result.resources;
@@ -262,7 +264,7 @@
                 }).catch(function(error) { alert('error retrieving resources: ' + error); });
             },
 
-            edit: function(resource, lang) {
+            edit(resource, lang) {
                 this.model.currentResource = {
                     titleKey: resource.titleKey,
                     key: resource.key,
@@ -274,7 +276,7 @@
                 this.model.showModal = true;
             },
 
-            save: function() {
+            save() {
                 this.model.showModal = false;
                 axios.post('api/service/save', this.model.currentResource);
 
@@ -286,7 +288,7 @@
                 }
             },
 
-            remove: function() {
+            remove() {
                 if (confirm('@Localizer.GetString(_ => _.RemoveConfirmation)')) {
                     this.model.showModal = false;
                     axios.post('api/service/remove', this.model.currentResource);
@@ -297,16 +299,20 @@
                 }
             },
 
-            toggleHiddenResources: function() {
+            toggleHiddenResources() {
                 this.model.options.showHiddenResources = !this.model.options.showHiddenResources;
             },
 
-            toggleEmptyResources: function() {
+            toggleEmptyResources() {
                 this.model.options.showOnlyEmptyResources = !this.model.options.showOnlyEmptyResources;
+            },
+
+            showTreeView() {
+                window.location.href = window.location.origin + window.location.pathname + 'tree/';
             }
         },
         computed: {
-            filteredResources: function() {
+            filteredResources() {
                 var upperSearch = this.model.searchKeyword.toUpperCase();
                 var result = this.model.resources;
 
