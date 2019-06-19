@@ -96,13 +96,13 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             var languages = availableLanguagesQuery.Execute();
 
             var getResourcesQuery = new GetAllResources.Query(true);
-            var resources = getResourcesQuery.Execute().OrderBy(r => r.ResourceKey).ToList();
+            var resources = getResourcesQuery.Execute().OrderBy(_ => _.ResourceKey).ToList();
 
             var user = Request.HttpContext.User;
             var isAdmin = false;
 
             if(user != null)
-                isAdmin = user.Identity.IsAuthenticated && _config.AuthorizedAdminRoles.Any(r => user.IsInRole(r));
+                isAdmin = user.Identity.IsAuthenticated && _config.AuthorizedAdminRoles.Any(_ => user.IsInRole(_));
 
             return (resources, languages, isAdmin);
         }

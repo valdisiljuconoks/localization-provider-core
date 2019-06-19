@@ -54,13 +54,15 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
                                                       {
                                                           ["resourceKey"] = "MyProperty",
                                                           ["translation"] = "Invariant Translation",
-                                                          ["translationEn"] = "English Translation"
+                                                          ["translation-en"] = "English Translation",
+                                                          ["translation-no"] = null
                                                       },
                                                       new JObject
                                                       {
                                                           ["resourceKey"] = "MyProperty2",
                                                           ["translation"] = "Invariant Translation (2)",
-                                                          ["translationEn"] = "English Translation (2)"
+                                                          ["translation-en"] = "English Translation (2)",
+                                                          ["translation-no"] = null
                                                       })
                        }
                    };

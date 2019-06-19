@@ -170,9 +170,9 @@
                 v-for="columnName in slottedColumns"
                 :slot="columnName"
                 slot-scope="props">
-                <a href="#" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
+                <a href="#" v-show="typeof(props.row[props.column.property]) !== 'undefined' && (props.row[props.column.property] == null)">N/A</a>
                 <a href="#" v-show="props.row[props.column.property] != null && props.row[props.column.property].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</a>
-                <a href="#" v-show="typeof(props.row[props.column.property]) !== 'undefined' && (props.row[props.column.property] == null || props.row[props.column.property] == '')">N/A</a>
+                <a href="#" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property] != null && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
             </template>
         </vue-ads-table-tree>
     </div>
@@ -187,10 +187,10 @@
 
 <script type="text/javascript">
 const VueAdsTableTree = window["vue-ads-table-tree"].default;
-const columnConfig = [
+const defaultColumn = [
     {
         property: 'resourceKey',
-        title: 'Resource Key',
+        title: 'Key',
         direction: null,
         filterable: true,
         collapseIcon: true
@@ -208,7 +208,7 @@ new Vue({
             page: 0,
             filter: '',
             slottedColumns: [],
-            columns: columnConfig,
+            columns: defaultColumn,
             rows: [],
             classes: {
                 '0': {
@@ -232,31 +232,26 @@ new Vue({
         axios.get('../api/service/gettree').then((response) => {
             var result = response.data;
             this.rows = result.resources;
-            this.columns = this.columns.concat(
-                [{
-                    property: 'translation',
-                    title: 'Invariant Culture',
-                    direction: null,
-                    filterable: true
-                },
-                {
-                    property: 'translationEn',
-                    title: 'English (en)',
-                    direction: null,
-                    filterable: true
-                },
-                {
-                    property: 'translationNo',
-                    title: 'Nork (no)',
-                    direction: null,
-                    filterable: true
-                }]);
 
-            this.slottedColumns = [
-                'translationEn',
-                'translationNo',
-                'translationLv'
-            ];
+            if (result.options.showInvariantCulture) {
+                this.columns.push({
+                    property: 'translation',
+                    title: 'Invariant',
+                    direction: null,
+                    filterable: true
+                });
+            }
+
+            result.languages.forEach((language) => {
+                this.columns.push({
+                    property: 'translation-' + language.code,
+                    title: language.display + ' (' + language.code + ')',
+                    direction: null,
+                    filterable: true
+                });
+
+                this.slottedColumns.push('translation-' + language.code);
+            });
 
             //this.model.resources = result.resources;
             //this.model.supportedLanguages = result.languages;
