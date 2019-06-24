@@ -18,8 +18,11 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using DbLocalizationProvider.AspNetCore;
 using Newtonsoft.Json.Linq;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
@@ -35,106 +38,45 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
             Resources = ConvertToApiModel(resources);
         }
 
-        private List<JObject> ConvertToApiModel(List<LocalizationResource> resources)
+        internal List<JObject> ConvertToApiModel(List<LocalizationResource> resources)
         {
-            return new List<JObject>
-                   {
-                       new JObject
-                       {
-                           ["resourceKey"] = "MyNamespace",
-                           ["_classes"] = new JObject
-                                          {
-                                              ["row"] = new JObject
-                                                        {
-                                                            ["parent-row"] = true
-                                                        }
-                                          },
-                           ["_children"] = new JArray(
-                                                      new JObject
-                                                      {
-                                                          ["resourceKey"] = "MyProperty",
-                                                          ["translation"] = "Invariant Translation",
-                                                          ["translation-en"] = "English Translation",
-                                                          ["translation-no"] = null
-                                                      },
-                                                      new JObject
-                                                      {
-                                                          ["resourceKey"] = "MyProperty2",
-                                                          ["translation"] = "Invariant Translation (2)",
-                                                          ["translation-en"] = "English Translation (2)",
-                                                          ["translation-no"] = null
-                                                      })
-                       }
-                   };
+            var result = new JArray();
+            foreach(var resource in resources)
+            {
+                var segments = resource.ResourceKey.Split('.', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+                void AddChildrenNodes(JArray children, List<string> list, LocalizationResource localizationResource, int currentLevel, int depth)
+                {
+                    var (head, tail) = list;
+                    var el = children.FirstOrDefault(c => c["resourceKey"] != null && c["resourceKey"].ToString().Equals(head, StringComparison.InvariantCultureIgnoreCase));
+                    if(el == null)
+                    {
+                        el = new JObject { ["resourceKey"] = head };
+                        if(currentLevel == depth)
+                        {
+                            // process leaf
+                            el["translation"] = localizationResource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value;
+                            foreach(var language in Languages)
+                                el["translation-" + language.Code] = localizationResource.Translations.FindByLanguage(language.Code)?.Value;
+                        }
+                        else
+                        {
+                            el["_children"] = new JArray();
+                            el["_classes"] = new JObject { ["row"] = new JObject { ["parent-row"] = true } };
+                        }
+
+                        children.Add(el);
+                    }
+
+                    if(tail.Any())
+                        AddChildrenNodes(el["_children"] as JArray, tail, localizationResource, currentLevel + 1, depth);
+                }
+
+                if(segments.Any())
+                    AddChildrenNodes(result, segments, resource, 0, segments.Count - 1);
+            }
+
+            return result.Cast<JObject>().ToList();
         }
     }
 }
-
-
-
-
-/*
- *
- *
- *             rows: [
-                {
-                    resourceKey: 'MyNamespace',
-                    _classes: {
-                        row: { 'parent-row': true }
-                    },
-                    _children: [
-                        {
-                            resourceKey: 'MyClassName',
-                            _children: [
-                                {
-                                    resourceKey: 'MyProperty',
-                                    translationEn: 'English Translation',
-                                },
-                                {
-                                    resourceKey: 'MyProperty2',
-                                    translationEn: null,
-                                },
-                                {
-                                    resourceKey: 'EmptyEnglish',
-                                    translationEn: '',
-                                },
-                                {
-                                    resourceKey: 'AnotherResource',
-                                    translationEn: "Some translation",
-                                    translationNo: "Tekst pa norsk",
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    resourceKey: 'MyNaspace2',
-                    _children: [
-                        {
-                            resourceKey: 'MyClassName2',
-                            _children: [
-                                {
-                                    resourceKey: 'MyProperty2',
-                                    translationEn: 'English Translation',
-                                },
-                                {
-                                    resourceKey: 'MyProperty22',
-                                    translationEn: null,
-                                },
-                                {
-                                    resourceKey: 'EmptyEnglish2',
-                                    translationEn: '',
-                                },
-                                {
-                                    resourceKey: 'AnotherResource2',
-                                    translationEn: "Some translation",
-                                    translationNo: "Tekst pa norsk",
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
- *
- *
- */

@@ -21,7 +21,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string RemoveConfirmation = "Do you want to remove this translation?";
         public string SearchPlaceholder = "if it gets too noisy, type filter here...";
         public string ResourceKeyColumn = "Key";
-        public string InvariantCultureColumn = "Invariant";
+        public string InvariantCultureColumn = "Invariant Language (Invariant Country)";
         public string HiddenColumn = "Is Hidden?";
         public string ShowOnlyEmptyResources = "Show Only Empty Resources";
         public string EmptyTranslation = "Empty";
