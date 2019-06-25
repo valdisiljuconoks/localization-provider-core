@@ -149,6 +149,28 @@
 </head>
 <body class="container-fluid">
 
+<script type="text/x-template" id="modal-template">
+    <div class="modal-mask" transition="modal" @@keydown.esc="$emit('close')">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <span name="header" v-bind:title="model.key">{{ model.titleKey }}</span>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="4" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
+                </div>
+                <div class="modal-footer">
+                <slot name="footer">
+                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@Localizer.GetString(_ => _.Save)</button>
+                    <button class="modal-default-button btn btn-danger" :disabled="!model.isModified" @@click="$emit('remove')">@Localizer.GetString(_ => _.Remove)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@Localizer.GetString(_ => _.Cancel)</button>
+                </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
 <div id="app" v-cloak>
     <div style="min-height: 75px;" class="row align-items-center">
         <div class="col-lg-6">
@@ -172,6 +194,7 @@
         </div>
     </div>
     <div>
+        <modal v-if="showModal" @@save="save" @@remove="remove" @@close="showModal = false" :model="currentResource"></modal>
         <vue-ads-table-tree
             :columns="columns"
             :rows="rows"
@@ -186,9 +209,9 @@
                 v-for="columnName in slottedColumns"
                 :slot="columnName"
                 slot-scope="props">
-                <a href="#" class="translation empty" v-show="typeof(props.row[props.column.property]) !== 'undefined' && (props.row[props.column.property] == null)">N/A</a>
-                <a href="#" class="translation empty" v-show="props.row[props.column.property] != null && props.row[props.column.property].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</a>
-                <a href="#" class="translation" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property] != null && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
+                <a href="#" class="translation empty" @@click="edit(props.row, '')" v-show="typeof(props.row[props.column.property]) !== 'undefined' && (props.row[props.column.property] == null)">N/A</a>
+                <a href="#" class="translation empty" @@click="edit(props.row, '')" v-show="props.row[props.column.property] != null && props.row[props.column.property].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</a>
+                <a href="#" class="translation" @@click="edit(props.row, '')" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property] != null && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
             </template>
         </vue-ads-table-tree>
     </div>
@@ -212,11 +235,27 @@ const defaultColumn = [
         collapseIcon: true
     }];
 
+const m = Vue.component('modal', {
+    template: '#modal-template',
+    props: {
+        model: Object
+    },
+    data() {
+        return {
+            open: false
+        };
+    },
+    mounted: function() {
+        this.$refs.translationEditor.focus();
+    }
+});
+
 new Vue({
     el: "#app",
 
     components: {
-        VueAdsTableTree
+        VueAdsTableTree,
+        m
     },
 
     data() {
@@ -240,7 +279,9 @@ new Vue({
             options: {
                 showHiddenResources: false,
                 showOnlyEmptyResources: false
-            }
+            },
+            showModal: false,
+            currentResource: {}
         };
     },
 
@@ -278,27 +319,30 @@ new Vue({
     },
 
     methods: {
-        filterChanged(filter) {
-            this.filter = filter;
+        edit(resource, lang) {
+            //this.currentResource = resource;
+
+            this.currentResource = {
+                titleKey: resource.titleKey,
+                key: resource.resourceKey,
+                translation: resource[lang],
+                lang: lang,
+                isModified: resource.isModified
+            };
+
+            this.showModal = true;
         },
 
-        doFiltering() {
-            this.rows = [
-                {
-                    resourceKey: 'MyNaspace',
-                    _children: [
-                        {
-                            resourceKey: 'MyClassName',
-                            _children: [
-                                {
-                                    resourceKey: 'MyProperty2',
-                                    translationEn: null
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ];
+        save() {
+
+        },
+
+        remove() {
+
+        },
+
+        filterChanged(filter) {
+            this.filter = filter;
         },
 
         toggleHiddenResources() {
