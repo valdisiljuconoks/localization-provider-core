@@ -9,6 +9,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
 {
     public class ModelTreeViewModelTests
     {
+        private const string _segmentPropertyName = "resourceKey";
+
         [Fact]
         public void GenerateSampleTreeModel_SingleResource()
         {
@@ -45,7 +47,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
             var first = result.Single();
 
             Assert.NotNull(first);
-            Assert.Equal("This", first["resourceKey"]);
+            Assert.Equal("This", first[_segmentPropertyName]);
             Assert.Equal("Invariant", result[0]["_children"][0]["_children"][0]["_children"][0]["translation"]);
         }
 
@@ -85,7 +87,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
             var first = result.Single();
 
             Assert.NotNull(first);
-            Assert.Equal("ThisIsResourceKey", first["resourceKey"]);
+            Assert.Equal("ThisIsResourceKey", first[_segmentPropertyName]);
         }
 
         [Fact]
@@ -124,7 +126,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
             var first = result.Single();
 
             Assert.NotNull(first);
-            Assert.Equal("This", first["resourceKey"]);
+            Assert.Equal("This", first[_segmentPropertyName]);
             Assert.Equal("Invariant", result[0]["_children"][0]["_children"][0]["_children"][0]["translation"]);
             Assert.Null(((JValue)result[0]["_children"][0]["_children"][0]["_children"][0]["translation-no"]).Value);
         }
@@ -187,7 +189,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
             var second = result[1];
 
             Assert.NotNull(first);
-            Assert.Equal("Another", second["resourceKey"]);
+            Assert.Equal("Another", second[_segmentPropertyName]);
             Assert.Equal("Invariant", result[0]["_children"][0]["_children"][0]["_children"][0]["translation"]);
             Assert.Equal("Invariant 2", result[1]["_children"][0]["_children"][0]["translation"]);
         }

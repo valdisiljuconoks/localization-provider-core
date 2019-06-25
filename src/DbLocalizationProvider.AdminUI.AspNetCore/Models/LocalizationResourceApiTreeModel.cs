@@ -29,12 +29,18 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
 {
     public class LocalizationResourceApiTreeModel : BaseApiModel
     {
+        private const string _segmentPropertyName = "segmentKey";
+        private readonly int _popupTitleLength;
+        private readonly int _listDisplayLength;
+
         public LocalizationResourceApiTreeModel(
             List<LocalizationResource> resources,
             IEnumerable<CultureInfo> languages,
-            int configMaxResourceKeyPopupTitleLength,
-            int configMaxResourceKeyDisplayLength) : base(languages)
+            int popupTitleLength,
+            int listDisplayLength) : base(languages)
         {
+            _popupTitleLength = popupTitleLength;
+            _listDisplayLength = listDisplayLength;
             Resources = ConvertToApiModel(resources);
         }
 
@@ -43,33 +49,50 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
             var result = new JArray();
             foreach(var resource in resources)
             {
-                var segments = resource.ResourceKey.Split('.', StringSplitOptions.RemoveEmptyEntries).ToList();
+                var segments = resource.ResourceKey.Split(new [] { '.', '+' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
                 void AddChildrenNodes(JArray children, List<string> list, LocalizationResource localizationResource, int currentLevel, int depth)
                 {
-                    var (head, tail) = list;
-                    var el = children.FirstOrDefault(c => c["resourceKey"] != null && c["resourceKey"].ToString().Equals(head, StringComparison.InvariantCultureIgnoreCase));
-                    if(el == null)
+                    while(true)
                     {
-                        el = new JObject { ["resourceKey"] = head };
-                        if(currentLevel == depth)
+                        var (head, tail) = list;
+                        var el = children.FirstOrDefault(c => c[_segmentPropertyName] != null && c[_segmentPropertyName].ToString().Equals(head, StringComparison.InvariantCultureIgnoreCase));
+                        if(el == null)
                         {
-                            // process leaf
-                            el["translation"] = localizationResource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value;
-                            foreach(var language in Languages)
-                                el["translation-" + language.Code] = localizationResource.Translations.FindByLanguage(language.Code)?.Value;
-                        }
-                        else
-                        {
-                            el["_children"] = new JArray();
-                            el["_classes"] = new JObject { ["row"] = new JObject { ["parent-row"] = true } };
+                            el = new JObject { [_segmentPropertyName] = head };
+                            if(currentLevel == depth)
+                            {
+                                // process leaf
+                                var key = localizationResource.ResourceKey;
+                                el["resourceKey"] = key;
+                                el["displayKey"] = $"{key.Substring(0, key.Length > _listDisplayLength ? _listDisplayLength : key.Length)}{(key.Length > _listDisplayLength ? "..." : "")}";
+                                el["titleKey"] = $"{(key.Length > _popupTitleLength ? "..." : "")}{key.Substring(key.Length - Math.Min(_popupTitleLength, key.Length))}";
+                                el["syncedFromCode"] = localizationResource.FromCode;
+                                el["isModified"] = localizationResource.IsModified;
+                                el["allowDelete"] = !localizationResource.FromCode;
+                                el["translation"] = localizationResource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value;
+                                foreach(var language in Languages)
+                                    el["translation-" + language.Code] = localizationResource.Translations.FindByLanguage(language.Code)?.Value;
+                            }
+                            else
+                            {
+                                el["_children"] = new JArray();
+                                el["_classes"] = new JObject { ["row"] = new JObject { ["parent-row"] = true } };
+                            }
+
+                            children.Add(el);
                         }
 
-                        children.Add(el);
+                        if(tail.Any())
+                        {
+                            children = el["_children"] as JArray;
+                            list = tail;
+                            currentLevel += 1;
+                            continue;
+                        }
+
+                        break;
                     }
-
-                    if(tail.Any())
-                        AddChildrenNodes(el["_children"] as JArray, tail, localizationResource, currentLevel + 1, depth);
                 }
 
                 if(segments.Any())

@@ -53,7 +53,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
             var key = resource.ResourceKey;
             var result = new JObject
                          {
-                             ["key"] = resource.ResourceKey,
+                             ["key"] = key,
                              ["displayKey"] = $"{key.Substring(0, key.Length > _listDisplayLength ? _listDisplayLength : key.Length)}{(key.Length > _listDisplayLength ? "..." : "")}",
                              ["titleKey"] = $"{(key.Length > _popupTitleLength ? "..." : "")}{key.Substring(key.Length - Math.Min(_popupTitleLength, key.Length))}",
                              ["syncedFromCode"] = resource.FromCode,
