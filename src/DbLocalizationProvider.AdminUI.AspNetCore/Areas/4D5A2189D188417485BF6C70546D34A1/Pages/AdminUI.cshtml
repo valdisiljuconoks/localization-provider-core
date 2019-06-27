@@ -22,11 +22,6 @@
     <link rel="stylesheet" href="res/node_modules.bootstrap.dist.css.bootstrap.min.css">
     <link rel="stylesheet" href="res/node_modules.vue_directive_tooltip.css.index.min.css">
     <link rel="stylesheet" href="res/node_modules._fortawesome.fontawesome_free.css.all.min.css">
-
-    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
-    {
-        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
-    }
     <style type="text/css">
         body {
             margin: 10px;
@@ -36,9 +31,9 @@
             font-size: 24px;
         }
 
-         [v-cloak] {
-             display: none;
-         }
+        [v-cloak] {
+            display: none;
+        }
 
         textarea {
             width: 100%;
@@ -46,6 +41,8 @@
             -webkit-box-sizing: border-box;
             -ms-box-sizing: border-box;
             box-sizing: border-box;
+            border-color: #A9A9A9;
+            border-width: 1px;
         }
 
         .full-width-tooltip {
@@ -79,7 +76,7 @@
         .modal-container {
             width: 750px;
             margin: 0 auto;
-            padding: 20px 30px;
+            padding: 20px;
             background-color: #fff;
             border-radius: 2px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
@@ -87,17 +84,30 @@
             font-family: Helvetica, Arial, sans-serif;
         }
 
-        .modal-header h3 {
-            margin-top: 0;
-            color: #42b983;
+        .modal-header {
+            padding: 0;
+        }
+
+        .modal-header .header {
+            font-weight: bold;
         }
 
         .modal-body {
             margin: 20px 0;
+            padding: 0;
+        }
+
+        .modal-footer {
+            padding: 0;
+            border-top: none;
         }
 
         .modal-default-button {
             float: right;
+        }
+
+        .btn-default {
+            border-color: #A9A9A9;
         }
 
         .modal-enter, .modal-leave {
@@ -125,6 +135,11 @@
             margin-right: 5px;
         }
     </style>
+
+    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
+    {
+        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
+    }
 </head>
 <body class="container-fluid">
 
@@ -133,10 +148,10 @@
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" v-bind:title="model.key">{{ model.titleKey }}</span>
+                    <span name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</span>
                 </div>
                 <div class="modal-body">
-                    <textarea rows="4" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
+                    <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">

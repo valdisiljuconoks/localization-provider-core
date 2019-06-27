@@ -41,6 +41,8 @@
             -webkit-box-sizing: border-box;
             -ms-box-sizing: border-box;
             box-sizing: border-box;
+            border-color: #A9A9A9;
+            border-width: 1px;
         }
 
         .full-width-tooltip {
@@ -74,7 +76,7 @@
         .modal-container {
             width: 750px;
             margin: 0 auto;
-            padding: 20px 30px;
+            padding: 20px;
             background-color: #fff;
             border-radius: 2px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
@@ -82,17 +84,30 @@
             font-family: Helvetica, Arial, sans-serif;
         }
 
-        .modal-header h3 {
-            margin-top: 0;
-            color: #42b983;
+        .modal-header {
+            padding: 0;
+        }
+
+        .modal-header .header {
+            font-weight: bold;
         }
 
         .modal-body {
             margin: 20px 0;
+            padding: 0;
+        }
+
+        .modal-footer {
+            padding: 0;
+            border-top: none;
         }
 
         .modal-default-button {
             float: right;
+        }
+
+        .btn-default {
+            border-color: #A9A9A9;
         }
 
         .modal-enter, .modal-leave {
@@ -154,10 +169,10 @@
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" v-bind:title="model.key">{{ model.titleKey }}</span>
+                    <span name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</span>
                 </div>
                 <div class="modal-body">
-                    <textarea rows="4" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
+                    <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
@@ -209,9 +224,9 @@
                 v-for="columnName in slottedColumns"
                 :slot="columnName"
                 slot-scope="props">
-                <a href="#" class="translation empty" @@click="edit(props.row, '')" v-show="typeof(props.row[props.column.property]) !== 'undefined' && (props.row[props.column.property] == null)">N/A</a>
-                <a href="#" class="translation empty" @@click="edit(props.row, '')" v-show="props.row[props.column.property] != null && props.row[props.column.property].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</a>
-                <a href="#" class="translation" @@click="edit(props.row, '')" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property] != null && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
+                <a href="#" class="translation empty" @@click="edit(props.row, props.column.language, props.row[props.column.property])" v-show="typeof(props.row[props.column.property]) !== 'undefined' && (props.row[props.column.property] == null)">N/A</a>
+                <a href="#" class="translation empty" @@click="edit(props.row, props.column.language, props.row[props.column.property])" v-show="props.row[props.column.property] != null && props.row[props.column.property].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</a>
+                <a href="#" class="translation" @@click="edit(props.row, props.column.language, props.row[props.column.property])" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property] != null && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
             </template>
         </vue-ads-table-tree>
     </div>
@@ -235,7 +250,7 @@ const defaultColumn = [
         collapseIcon: true
     }];
 
-const m = Vue.component('modal', {
+const VueModal = Vue.component('modal', {
     template: '#modal-template',
     props: {
         model: Object
@@ -255,7 +270,7 @@ new Vue({
 
     components: {
         VueAdsTableTree,
-        m
+        VueModal
     },
 
     data() {
@@ -293,6 +308,7 @@ new Vue({
             if (result.options.showInvariantCulture) {
                 this.columns.push({
                     property: 'translation',
+                    language: '',
                     title: '@Localizer.GetString(_ => _.InvariantCultureColumn)',
                     direction: null,
                     filterable: true
@@ -302,6 +318,7 @@ new Vue({
             result.languages.forEach((language) => {
                 this.columns.push({
                     property: 'translation-' + language.code,
+                    language: language.code,
                     title: language.titleDisplay,
                     direction: null,
                     filterable: true
@@ -310,35 +327,40 @@ new Vue({
                 this.slottedColumns.push('translation-' + language.code);
             });
 
-            //this.model.resources = result.resources;
-            //this.model.supportedLanguages = result.languages;
-            //this.model.loading = false;
-            //this.model.options = result.options;
-
         }).catch(function(error) { alert('error retrieving resources: ' + error); });
     },
 
     methods: {
-        edit(resource, lang) {
-            //this.currentResource = resource;
-
+        edit(resource, lang, translation) {
             this.currentResource = {
                 titleKey: resource.titleKey,
                 key: resource.resourceKey,
-                translation: resource[lang],
+                translation: translation,
                 lang: lang,
-                isModified: resource.isModified
+                isModified: resource.isModified,
+                _ref: resource
             };
 
             this.showModal = true;
         },
 
         save() {
+            this.showModal = false;
+            axios.post('../api/service/save', this.currentResource);
 
+            // update viewmodel
+            this.currentResource._ref['translation-' + this.currentResource.lang] = this.currentResource.translation;
+            this.currentResource._ref.isModified = true;
         },
 
         remove() {
+            if (confirm('@Localizer.GetString(_ => _.RemoveConfirmation)')) {
+                this.showModal = false;
+                axios.post('../api/service/remove', this.currentResource);
 
+                // update viewmodel
+                this.currentResource._ref['translation-' + this.currentResource.lang] = null;
+            }
         },
 
         filterChanged(filter) {
