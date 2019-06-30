@@ -45,6 +45,8 @@
             border-width: 1px;
         }
 
+
+
         .full-width-tooltip {
             max-width: 1200px;
         }
@@ -195,8 +197,10 @@
         </div>
     </div>
     <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
-    <div class="form-group">
-        <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@Localizer.GetString(_ => _.SearchPlaceholder)"/>
+    <div class="row">
+        <div class="form-group offset-lg-9 col-lg-3">
+            <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@Localizer.GetString(_ => _.SearchPlaceholder)"/>
+        </div>
     </div>
     <div classs="table-responsive">
         <table v-show="!model.loading" class="table table-bordered table-hover table-sm">
