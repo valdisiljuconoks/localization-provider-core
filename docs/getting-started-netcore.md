@@ -50,6 +50,7 @@ Following configuration options are available:
 | Import | Gets or sets settings to be used during resource import. |
 | ModelMetadataProviders | Settings for model metadata providers. |
 | PopulateCacheOnStartup | Gets or sets a value indicating whether cache should be populated during startup (default = `true`). |
+| ScanAllAssemblies | Forces type scanner to load all referenced assemblies. When enabled, scanner is not relying on current `AppDomain.GetAssemblies` but checks referenced assemblies recursively (default `false`). |
 | TypeFactory | Returns type factory used internally for creating new services or handlers for commands. |
 | TypeScanners | Gets list of all known type scanners. |
 

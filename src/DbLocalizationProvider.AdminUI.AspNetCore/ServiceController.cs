@@ -18,6 +18,7 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AdminUI.AspNetCore.Models;
@@ -43,6 +44,23 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             return Json(PrepareViewModel());
         }
 
+        [HttpGet]
+        public JsonResult GetTree()
+        {
+            return Json(PrepareTreeViewModel());
+        }
+
+        private LocalizationResourceApiTreeModel PrepareTreeViewModel()
+        {
+            var (resources, languages, isAdmin) = GetResources();
+            var result = new LocalizationResourceApiTreeModel(resources, languages, _config.MaxResourceKeyPopupTitleLength, _config.MaxResourceKeyDisplayLength)
+                         {
+                             Options = { AdminMode = isAdmin, ShowInvariantCulture = _config.ShowInvariantCulture, ShowHiddenResources = _config.ShowHiddenResources }
+                         };
+
+            return result;
+        }
+
         [HttpPost]
         public JsonResult Save([FromBody] CreateOrUpdateTranslationRequestModel model)
         {
@@ -63,29 +81,30 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
         private LocalizationResourceApiModel PrepareViewModel()
         {
+            var (resources, languages, isAdmin) = GetResources();
+            var result = new LocalizationResourceApiModel(resources, languages, _config.MaxResourceKeyPopupTitleLength, _config.MaxResourceKeyDisplayLength)
+                         {
+                             Options = { AdminMode = isAdmin, ShowInvariantCulture = _config.ShowInvariantCulture, ShowHiddenResources = _config.ShowHiddenResources }
+                         };
+
+            return result;
+        }
+
+        private (List<LocalizationResource>, IEnumerable<CultureInfo>, bool) GetResources()
+        {
             var availableLanguagesQuery = new AvailableLanguages.Query { IncludeInvariant = true };
             var languages = availableLanguagesQuery.Execute();
 
             var getResourcesQuery = new GetAllResources.Query(true);
-            var resources = getResourcesQuery.Execute().OrderBy(r => r.ResourceKey).ToList();
+            var resources = getResourcesQuery.Execute().OrderBy(_ => _.ResourceKey).ToList();
 
             var user = Request.HttpContext.User;
             var isAdmin = false;
 
             if(user != null)
-                isAdmin = user.Identity.IsAuthenticated && _config.AuthorizedAdminRoles.Any(r => user.IsInRole(r));
+                isAdmin = user.Identity.IsAuthenticated && _config.AuthorizedAdminRoles.Any(_ => user.IsInRole(_));
 
-            var result = new LocalizationResourceApiModel(resources, languages, _config.MaxResourceKeyPopupTitleLength, _config.MaxResourceKeyDisplayLength)
-                         {
-                             Options =
-                             {
-                                 AdminMode = isAdmin,
-                                 ShowInvariantCulture = _config.ShowInvariantCulture,
-                                 ShowHiddenResources = _config.ShowHiddenResources
-                             }
-                         };
-
-            return result;
+            return (resources, languages, isAdmin);
         }
     }
 }

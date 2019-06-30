@@ -18,7 +18,25 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Newtonsoft.Json.Linq;
+
+namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
 {
-    public class AdminUIViewModel : BasePage { }
+    public abstract class BaseApiModel
+    {
+        public BaseApiModel(IEnumerable<CultureInfo> languages)
+        {
+            Options = new UiOptions();
+            Languages = languages.Select(l => new CultureApiModel(l.Name, l.EnglishName));
+        }
+
+        public List<JObject> Resources { get; protected set; }
+
+        public IEnumerable<CultureApiModel> Languages { get; protected set; }
+
+        public UiOptions Options { get; protected set; }
+    }
 }

@@ -60,6 +60,15 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                                                         });
                                     });
 
+                        builder.Map(new PathString("/webfonts"),
+                                    _ =>
+                                    {
+                                        _.UseFileServer(new FileServerOptions
+                                                        {
+                                                            FileProvider = new EmbeddedFileProvider(typeof(IApplicationBuilderExtensions).Assembly, "DbLocalizationProvider.AdminUI.AspNetCore.node_modules._fortawesome.fontawesome_free.webfonts")
+                                                        });
+                                    });
+
                         var routeBuilder = new RouteBuilder(builder)
                         {
                             DefaultHandler = app.ApplicationServices.GetRequiredService<MvcRouteHandler>()

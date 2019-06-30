@@ -18,7 +18,21 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages
+namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
-    public class AdminUIViewModel : BasePage { }
+    /// <summary>
+    /// This is the way to decide which view editors gonna see by default.
+    /// </summary>
+    public enum ResourceListView
+    {
+        /// <summary>
+        /// Obviously this is table view.
+        /// </summary>
+        Table,
+
+        /// <summary>
+        /// Obviously this is tree view.
+        /// </summary>
+        Tree
+    }
 }

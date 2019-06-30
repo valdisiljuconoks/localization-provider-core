@@ -26,12 +26,16 @@ using Newtonsoft.Json.Linq;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
 {
-    public class LocalizationResourceApiModel
+    public class LocalizationResourceApiModel : BaseApiModel
     {
-        private readonly int _popupTitleLength;
         private readonly int _listDisplayLength;
+        private readonly int _popupTitleLength;
 
-        public LocalizationResourceApiModel(ICollection<LocalizationResource> resources, IEnumerable<CultureInfo> languages, int popupTitleLength, int listDisplayLength)
+        public LocalizationResourceApiModel(
+            ICollection<LocalizationResource> resources,
+            IEnumerable<CultureInfo> languages,
+            int popupTitleLength,
+            int listDisplayLength) : base(languages)
         {
             if(resources == null)
                 throw new ArgumentNullException(nameof(resources));
@@ -42,29 +46,21 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
             _popupTitleLength = popupTitleLength;
             _listDisplayLength = listDisplayLength;
             Resources = resources.Select(r => ConvertToApiModel(r, languages)).ToList();
-            Languages = languages.Select(l => new CultureApiModel(l.Name, l.EnglishName));
-            Options = new UiOptions();
         }
-
-        public List<JObject> Resources { get; }
-
-        public IEnumerable<CultureApiModel> Languages { get; }
-
-        public UiOptions Options { get; }
 
         private JObject ConvertToApiModel(LocalizationResource resource, IEnumerable<CultureInfo> languages)
         {
             var key = resource.ResourceKey;
             var result = new JObject
                          {
-                             ["key"] = resource.ResourceKey,
+                             ["key"] = key,
                              ["displayKey"] = $"{key.Substring(0, key.Length > _listDisplayLength ? _listDisplayLength : key.Length)}{(key.Length > _listDisplayLength ? "..." : "")}",
                              ["titleKey"] = $"{(key.Length > _popupTitleLength ? "..." : "")}{key.Substring(key.Length - Math.Min(_popupTitleLength, key.Length))}",
                              ["syncedFromCode"] = resource.FromCode,
                              ["isModified"] = resource.IsModified,
                              ["allowDelete"] = !resource.FromCode,
                              ["_"] = resource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value,
-                             ["isHidden"] = (resource.IsHidden ?? false)
+                             ["isHidden"] = resource.IsHidden ?? false
                          };
 
             foreach(var language in languages)

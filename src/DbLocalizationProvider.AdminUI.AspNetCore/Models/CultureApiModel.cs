@@ -28,10 +28,13 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
         {
             Code = code ?? throw new ArgumentNullException(nameof(code));
             Display = display ?? throw new ArgumentNullException(nameof(display));
+            TitleDisplay = $"{display}{(code != string.Empty ? " ("+code+")" : string.Empty)}";
         }
 
         public string Code { get; }
 
         public string Display { get; }
+
+        public string TitleDisplay { get; }
     }
 }

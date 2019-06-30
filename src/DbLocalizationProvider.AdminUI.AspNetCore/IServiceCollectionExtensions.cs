@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2018 Valdis Iljuconoks.
+﻿// Copyright (c) 2019 Valdis Iljuconoks.
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
 // files (the "Software"), to deal in the Software without
@@ -46,9 +46,14 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             services.Configure<RazorPagesOptions>(_ =>
                                                   {
                                                       _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUI");
+                                                      _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree");
+
                                                       _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1",
                                                                                      "/AdminUI",
                                                                                      UiConfigurationContext.Current.RootUrl);
+                                                      _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1",
+                                                                                     "/AdminUITree",
+                                                                                     UiConfigurationContext.Current.RootUrl + "/tree");
                                                   });
             return services;
         }

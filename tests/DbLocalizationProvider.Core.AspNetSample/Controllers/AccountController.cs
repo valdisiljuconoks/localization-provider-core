@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Extensions;
 using DbLocalizationProvider.Core.AspNetSample.Models;
 using DbLocalizationProvider.Core.AspNetSample.Models.AccountViewModels;
@@ -54,7 +55,9 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
         [HttpGet]
         public async Task<ActionResult> AddRole(string roleName)
         {
-            if(!await _roleManager.RoleExistsAsync(roleName))
+            var c = new Class1();
+
+            if(!await _roleManager.RoleExistsAsync(roleName) && c.ToString() == "Class1")
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
 
             return Json(_roleManager.Roles);

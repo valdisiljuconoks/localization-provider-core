@@ -1,0 +1,389 @@
+﻿@page "{handler?}"
+
+@using DbLocalizationProvider.AdminUI.AspNetCore
+@using DbLocalizationProvider.AspNetCore
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUITreeViewModel
+
+@inject IHtmlLocalizer<Resources> Localizer
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@Localizer.GetString(_ => _.Title)</title>
+    <link rel="stylesheet" href="../res/node_modules.bootstrap.dist.css.bootstrap.min.css">
+    <link rel="stylesheet" href="../res/node_modules.vue_directive_tooltip.css.index.min.css">
+    <link rel="stylesheet" href="../res/node_modules.vue_ads_table_tree.dist.vue-ads-table-tree.css">
+    <link rel="stylesheet" href="../res/node_modules._fortawesome.fontawesome_free.css.all.min.css">
+    <style type="text/css">
+        body {
+            margin: 10px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
+
+        textarea {
+            width: 100%;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+            border-color: #A9A9A9;
+            border-width: 1px;
+        }
+
+        .full-width-tooltip {
+            max-width: 1200px;
+        }
+
+        .dropdown-item-checked::before {
+            position: absolute;
+            left: .4rem;
+            content: '✓';
+            font-weight: 600;
+        }
+
+        .modal-mask {
+            position: fixed;
+            z-index: 9998;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, .5);
+            display: table;
+            transition: opacity .3s ease;
+        }
+
+        .modal-wrapper {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .modal-container {
+            width: 750px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+            transition: all .3s ease;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        .modal-header {
+            padding: 0;
+        }
+
+        .modal-header .header {
+            font-weight: bold;
+        }
+
+        .modal-body {
+            margin: 20px 0;
+            padding: 0;
+        }
+
+        .modal-footer {
+            padding: 0;
+            border-top: none;
+        }
+
+        .modal-default-button {
+            float: right;
+        }
+
+        .btn-default {
+            border-color: #A9A9A9;
+        }
+
+        .modal-enter, .modal-leave {
+            opacity: 0;
+        }
+
+        .modal-enter .modal-container,
+        .modal-leave .modal-container {
+            -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+
+        .translation {
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .translation.empty {
+            color: red;
+            text-decoration-style: dotted;
+        }
+
+        i.fas.fa-cog {
+            margin-right: 5px;
+        }
+    </style>
+    <style type="text/css">
+        table.vue-ads-border {
+            border-width: 0;
+        }
+
+        .vue-ads-py-3 {
+            padding-top: 0;
+        }
+
+        tr th.vue-ads-cursor-pointer {
+            background-color: #343a40;
+            color: white;
+            border-color: #454d55;
+        }
+
+        .parent-row {
+            background-color: lightgray;
+            font-weight: bold;
+        }
+
+        .vue-ads-text-sm {
+            font-size: 1rem;
+        }
+    </style>
+
+    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
+    {
+        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
+    }
+
+</head>
+<body class="container-fluid">
+
+<script type="text/x-template" id="modal-template">
+    <div class="modal-mask" transition="modal" @@keydown.esc="$emit('close')">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <span name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</span>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
+                </div>
+                <div class="modal-footer">
+                <slot name="footer">
+                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@Localizer.GetString(_ => _.Save)</button>
+                    <button class="modal-default-button btn btn-danger" :disabled="!model.isModified" @@click="$emit('remove')">@Localizer.GetString(_ => _.Remove)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@Localizer.GetString(_ => _.Cancel)</button>
+                </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<div id="app" v-cloak>
+    <div style="min-height: 75px;" class="row align-items-center">
+        <div class="col-lg-6">
+            <span class="float-left">
+                <span class="h1">@Localizer.GetString(_ => _.Header)</span>
+            </span>
+        </div>
+        <div class="col-lg-6">
+            <div class="float-right">
+                <a href="?handler=Export&format=json" role="button" class="btn btn-light">@Localizer.GetString(_ => _.Export)</a>
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@Localizer.GetString(_ => _.Settings)</button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                        @*<a class="dropdown-item" :class="{ 'dropdown-item-checked': options.showHiddenResources }" href="#" @@click="toggleHiddenResources">@Localizer.GetString(_ => _.ShowHiddenResources)</a>
+                        <a class="dropdown-item" :class="{ 'dropdown-item-checked': options.showOnlyEmptyResources }" href="#" @@click="toggleEmptyResources">@Localizer.GetString(_ => _.ShowOnlyEmptyResources)</a>*@
+                        <a class="dropdown-item" href="#" @@click="showTableView">@Localizer.GetString(_ => _.TableView)</a>
+                        <a class="dropdown-item dropdown-item-checked disabled" href="#">@Localizer.GetString(_ => _.TreeView)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <modal v-if="showModal" @@save="save" @@remove="remove" @@close="showModal = false" :model="currentResource"></modal>
+        <vue-ads-table-tree
+            :columns="columns"
+            :rows="rows"
+            :filter="filter"
+            :page="page"
+            @@filter-change="filterChanged">
+            <template slot="bottom">&nbsp;</template>
+            <template slot="no-rows">There are no resources registered. Make sure you sync them up!</template>
+            <template slot="segmentKey" slot-scope="props">{{ props.row.segmentKey }}</template>
+            <template slot="translation" slot-scope="props">{{ props.row[props.column.property] }}</template>
+            <template
+                v-for="columnName in slottedColumns"
+                :slot="columnName"
+                slot-scope="props">
+                <a href="#" class="translation empty" @@click="edit(props.row, props.column.language, props.row[props.column.property])" v-show="typeof(props.row[props.column.property]) !== 'undefined' && (props.row[props.column.property] == null)">N/A</a>
+                <a href="#" class="translation empty" @@click="edit(props.row, props.column.language, props.row[props.column.property])" v-show="props.row[props.column.property] != null && props.row[props.column.property].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</a>
+                <a href="#" class="translation" @@click="edit(props.row, props.column.language, props.row[props.column.property])" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property] != null && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
+            </template>
+        </vue-ads-table-tree>
+    </div>
+</div>
+
+<script src="../res/node_modules.jquery.dist.jquery.js"></script>
+<script src="../res/node_modules.popper.js.dist.umd.popper.js"></script>
+<script src="../res/node_modules.bootstrap.dist.js.bootstrap.js"></script>
+<script src="../res/node_modules.vue.dist.vue.min.js"></script>
+<script src="../res/node_modules.axios.dist.axios.min.js"></script>
+<script src="../res/node_modules.vue_ads_table_tree.dist.vue-ads-table-tree.umd.min.js"></script>
+
+<script type="text/javascript">
+const VueAdsTableTree = window["vue-ads-table-tree"].default;
+const defaultColumn = [
+    {
+        property: 'segmentKey',
+        title: 'Key',
+        direction: null,
+        filterable: true,
+        collapseIcon: true
+    }];
+
+const VueModal = Vue.component('modal', {
+    template: '#modal-template',
+    props: {
+        model: Object
+    },
+    data() {
+        return {
+            open: false
+        };
+    },
+    mounted: function() {
+        this.$refs.translationEditor.focus();
+    }
+});
+
+new Vue({
+    el: "#app",
+
+    components: {
+        VueAdsTableTree,
+        VueModal
+    },
+
+    data() {
+        return {
+            page: 0,
+            filter: '',
+            slottedColumns: [],
+            columns: defaultColumn,
+            rows: [],
+            classes: {
+                '0': {
+                    'vue-ads-bg-gray-lighter': false,
+                    'vue-ads-bg-blue-dark': true,
+                    'vue-ads-text-white': true,
+                    'vue-ads-font-bold': true
+                },
+                '1_/': {
+                    'hover:vue-ads-bg-red-lighter': true
+                }
+            },
+            options: {
+                showHiddenResources: false,
+                showOnlyEmptyResources: false
+            },
+            showModal: false,
+            currentResource: {}
+        };
+    },
+
+    mounted: function() {
+        axios.get('../api/service/gettree').then((response) => {
+            var result = response.data;
+            this.rows = result.resources;
+
+            if (result.options.showInvariantCulture) {
+                this.columns.push({
+                    property: 'translation',
+                    language: '',
+                    title: '@Localizer.GetString(_ => _.InvariantCultureColumn)',
+                    direction: null,
+                    filterable: true
+                });
+            }
+
+            result.languages.forEach((language) => {
+                this.columns.push({
+                    property: 'translation-' + language.code,
+                    language: language.code,
+                    title: language.titleDisplay,
+                    direction: null,
+                    filterable: true
+                });
+
+                this.slottedColumns.push('translation-' + language.code);
+            });
+
+        }).catch(function(error) { alert('error retrieving resources: ' + error); });
+    },
+
+    methods: {
+        edit(resource, lang, translation) {
+            this.currentResource = {
+                titleKey: resource.titleKey,
+                key: resource.resourceKey,
+                translation: translation,
+                lang: lang,
+                isModified: resource.isModified,
+                _ref: resource
+            };
+
+            this.showModal = true;
+        },
+
+        save() {
+            this.showModal = false;
+            axios.post('../api/service/save', this.currentResource);
+
+            // update viewmodel
+            this.currentResource._ref['translation-' + this.currentResource.lang] = this.currentResource.translation;
+            this.currentResource._ref.isModified = true;
+        },
+
+        remove() {
+            if (confirm('@Localizer.GetString(_ => _.RemoveConfirmation)')) {
+                this.showModal = false;
+                axios.post('../api/service/remove', this.currentResource);
+
+                // update viewmodel
+                this.currentResource._ref['translation-' + this.currentResource.lang] = null;
+            }
+        },
+
+        filterChanged(filter) {
+            this.filter = filter;
+        },
+
+        toggleHiddenResources() {
+
+        },
+
+        toggleEmptyResources() {
+
+        },
+
+        showTableView() {
+            window.location.href = window.location.href.replace('tree/', '');
+        }
+    }
+});
+</script>
+</body>
+</html>

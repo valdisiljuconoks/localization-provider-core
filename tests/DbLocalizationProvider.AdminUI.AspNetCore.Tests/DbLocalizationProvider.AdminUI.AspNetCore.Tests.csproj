@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\lib\localization-provider\strongname.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
