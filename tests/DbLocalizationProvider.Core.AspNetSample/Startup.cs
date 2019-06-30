@@ -70,6 +70,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                           _.AuthorizedAdminRoles.Add("Admin");
                                                           _.ShowInvariantCulture = true;
                                                           _.ShowHiddenResources = false;
+                                                          _.DefaultView = ResourceListView.Tree;
                                                           _.CustomCssPath = "/css/custom-adminui.css";
                                                       });
         }

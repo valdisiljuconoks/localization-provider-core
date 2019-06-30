@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
     /// <summary>
@@ -55,7 +56,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// <summary>
         /// Someone asked me once - "I like tree view, can it be my default preference".
         /// </summary>
-        //public ResourceListView DefaultView { get; set; } = ResourceListView.Table;
+        public ResourceListView DefaultView { get; set; } = ResourceListView.Table;
 
         /// <summary>
         /// If you wanna get rid of some view (table OR tree) this is the method. You cannot disable all views - will receive exception.
@@ -96,7 +97,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public bool ShowInvariantCulture { get; set; } = false;
 
         /// <summary>
-        /// Sometimes it's worth to look for some hidden treasure. This option will show all resources decorated with <see cref="DbLocalizationProvider.Abstractions.HiddenAttribute"/>.
+        /// Sometimes it's worth to look for some hidden treasure. This option will also show resources decorated with <see cref="DbLocalizationProvider.Abstractions.HiddenAttribute"/>.
         /// </summary>
         public bool ShowHiddenResources { get; set; } = false;
 
