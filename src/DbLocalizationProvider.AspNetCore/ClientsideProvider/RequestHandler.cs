@@ -75,7 +75,7 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
             if(!(cache.Get(cacheKey) is string responseObject))
             {
                 responseObject = GetJson(filename, languageName, debugMode, camelCase);
-                cache.Insert(cacheKey, responseObject);
+                cache.Insert(cacheKey, responseObject, false);
             }
 
             if(windowAlias)

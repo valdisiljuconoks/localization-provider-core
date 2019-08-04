@@ -26,6 +26,8 @@ namespace DbLocalizationProvider.AspNetCore.Cache
 {
     public class InMemoryCacheManager : ICacheManager
     {
+        // this is used in cache helper to enumerate over known entries and remove what's needed
+        // implemented because there is no way to enumerate keys using built-in cache provider
         internal static readonly ConcurrentDictionary<string, bool> Entries = new ConcurrentDictionary<string, bool>();
         private readonly IMemoryCache _memCache;
 
@@ -34,7 +36,7 @@ namespace DbLocalizationProvider.AspNetCore.Cache
             _memCache = memCache;
         }
 
-        public void Insert(string key, object value)
+        public void Insert(string key, object value, bool insertIntoKnownResourceKeys)
         {
             _memCache.Set(key, value);
             Entries.TryAdd(key, true);

@@ -39,7 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Admi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AdminUI.AspNetCore.Tests", "tests\DbLocalizationProvider.AdminUI.AspNetCore.Tests\DbLocalizationProvider.AdminUI.AspNetCore.Tests.csproj", "{35692314-A1E9-4A5C-B9AA-562D45BB88AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLocalizationProvider.Core.AspNet.ForeignAssembly", "tests\DbLocalizationProvider.Core.AspNet.ForeignAssembly\DbLocalizationProvider.Core.AspNet.ForeignAssembly.csproj", "{31F14DAD-393F-48F3-89C0-4E5102A5E14B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Core.AspNet.ForeignAssembly", "tests\DbLocalizationProvider.Core.AspNet.ForeignAssembly\DbLocalizationProvider.Core.AspNet.ForeignAssembly.csproj", "{31F14DAD-393F-48F3-89C0-4E5102A5E14B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Tests", "lib\localization-provider\Tests\DbLocalizationProvider.Tests\DbLocalizationProvider.Tests.csproj", "{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{31F14DAD-393F-48F3-89C0-4E5102A5E14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31F14DAD-393F-48F3-89C0-4E5102A5E14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31F14DAD-393F-48F3-89C0-4E5102A5E14B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{A9330AEF-F9AC-44A0-B5B8-B845884F0229} = {F5B8BFCE-3471-4B0F-99F8-BE786AD33B51}
 		{35692314-A1E9-4A5C-B9AA-562D45BB88AB} = {F5B8BFCE-3471-4B0F-99F8-BE786AD33B51}
 		{31F14DAD-393F-48F3-89C0-4E5102A5E14B} = {F5B8BFCE-3471-4B0F-99F8-BE786AD33B51}
+		{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26} = {F5B8BFCE-3471-4B0F-99F8-BE786AD33B51}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0E35C742-F247-48BF-A94F-BA48F1629C9C}

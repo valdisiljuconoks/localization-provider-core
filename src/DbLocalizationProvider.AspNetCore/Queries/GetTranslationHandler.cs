@@ -34,23 +34,20 @@ namespace DbLocalizationProvider.AspNetCore.Queries
                 return query.Key;
 
             var key = query.Key;
-            var language = query.Language;
             var cacheKey = CacheKeyHelper.BuildKey(key);
             var localizationResource = ConfigurationContext.Current.CacheManager.Get(cacheKey) as LocalizationResource;
 
-            if(localizationResource != null)
-                return GetTranslationFromAvailableList(localizationResource.Translations, language, query.UseFallback)?.Value;
+            if(localizationResource == null)
+            {
+                // resource is not found in the cache, let's check database
+                localizationResource = GetResourceFromDb(key) ?? LocalizationResource.CreateNonExisting(key);
+                ConfigurationContext.Current.CacheManager.Insert(cacheKey, localizationResource, true);
+            }
 
-            var resource = GetResourceFromDb(key);
-            LocalizationResourceTranslation localization = null;
-
-            if(resource == null)
-                resource = LocalizationResource.CreateNonExisting(key);
-            else
-                localization = GetTranslationFromAvailableList(resource.Translations, language, query.UseFallback);
-
-            ConfigurationContext.Current.CacheManager.Insert(cacheKey, resource);
-            return localization?.Value;
+            var fallbackCultures = ConfigurationContext.Current.FallbackCultures;
+            return fallbackCultures != null && fallbackCultures.Any()
+                       ? base.GetTranslationWithFallback(localizationResource.Translations, query.Language, fallbackCultures, query.UseFallback)?.Value
+                       : base.GetTranslationFromAvailableList(localizationResource.Translations, query.Language, query.UseFallback)?.Value;
         }
 
         protected virtual LocalizationResource GetResourceFromDb(string key)

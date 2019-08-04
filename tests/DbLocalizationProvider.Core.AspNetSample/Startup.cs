@@ -44,14 +44,15 @@ namespace DbLocalizationProvider.Core.AspNetSample
                     .AddViewLocalization()
                     .AddDataAnnotationsLocalization();
 
+            var supportedCultures = new List<CultureInfo>
+            {
+                new CultureInfo("sv"),
+                new CultureInfo("no"),
+                new CultureInfo("en"),
+            };
+
             services.Configure<RequestLocalizationOptions>(opts =>
                                                            {
-                                                               var supportedCultures = new List<CultureInfo>
-                                                                                       {
-                                                                                           new CultureInfo("en"),
-                                                                                           new CultureInfo("no")
-                                                                                       };
-
                                                                opts.DefaultRequestCulture = new RequestCulture("en");
                                                                opts.SupportedCultures = supportedCultures;
                                                                opts.SupportedUICultures = supportedCultures;
@@ -63,7 +64,13 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                    _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
                                                    _.Connection = "DefaultConnection";
                                                    _.ScanAllAssemblies = true;
+                                                   _.FallbackCultures.Try(supportedCultures);
+
+                                                   //.Try(new CultureInfo("sv"))
+                                                   //.Then(new CultureInfo("no"))
+                                                   //.Then(new CultureInfo("en"));
                                                });
+
             services.AddDbLocalizationProviderAdminUI(_ =>
                                                       {
                                                           _.RootUrl = "/localization-admin";

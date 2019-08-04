@@ -85,7 +85,7 @@ namespace DbLocalizationProvider.AspNetCore.Sync
                 foreach(var resource in allResources)
                 {
                     var key = CacheKeyHelper.BuildKey(resource.ResourceKey);
-                    ConfigurationContext.Current.CacheManager.Insert(key, resource);
+                    ConfigurationContext.Current.CacheManager.Insert(key, resource, true);
                 }
             }
             else
