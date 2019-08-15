@@ -39,8 +39,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
 
             services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            services.AddMvc(_ => _.EnableEndpointRouting = false)
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                     .AddViewLocalization()
                     .AddDataAnnotationsLocalization();
 
@@ -111,6 +111,14 @@ namespace DbLocalizationProvider.Core.AspNetSample
             app.UseDbLocalizationProvider();
             app.UseDbLocalizationClientsideProvider(path: "/jsl10n");
             app.UseDbLocalizationProviderAdminUI();
+
+            app.UseMvc(routes =>
+                           // Enables HTML5 history mode for Vue app
+                           // Ref: https://weblog.west-wind.com/posts/2017/aug/07/handling-html5-client-route-fallbacks-in-aspnet-core
+                           routes.MapRoute(
+                                           name: "catch-all",
+                                           template: "{*url}",
+                                           defaults: new { controller = "Home", action = "Index" }));
         }
     }
 }
