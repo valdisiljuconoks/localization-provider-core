@@ -3,15 +3,12 @@
 
 using System;
 using DbLocalizationProvider.AspNetCore.Cache;
-using DbLocalizationProvider.AspNetCore.Commands;
 using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
 using DbLocalizationProvider.Cache;
-using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
@@ -26,15 +23,15 @@ namespace DbLocalizationProvider.AspNetCore
             // setup default implementations
             var factory = ConfigurationContext.Current.TypeFactory;
 
-            factory.ForQuery<GetAllResources.Query>().SetHandler<GetAllResourcesHandler>();
+            //factory.ForQuery<GetAllResources.Query>().SetHandler<GetAllResourcesHandler>();
             factory.ForQuery<GetAllResources.Query>().DecorateWith<CachedGetAllResourcesHandler>();
-            factory.ForQuery<GetResource.Query>().SetHandler<GetResourceHandler>();
-            factory.ForQuery<GetTranslation.Query>().SetHandler<GetTranslationHandler>();
+            //factory.ForQuery<GetResource.Query>().SetHandler<GetResourceHandler>();
+            //factory.ForQuery<GetTranslation.Query>().SetHandler<GetTranslationHandler>();
             factory.ForQuery<DetermineDefaultCulture.Query>().SetHandler<DetermineDefaultCulture.Handler>();
             factory.ForCommand<ClearCache.Command>().SetHandler<ClearCacheHandler>();
 
-            factory.ForCommand<CreateOrUpdateTranslation.Command>().SetHandler<CreateOrUpdateTranslationHandler>();
-            factory.ForCommand<RemoveTranslation.Command>().SetHandler<RemoveTranslationHandler>();
+            //factory.ForCommand<CreateOrUpdateTranslation.Command>().SetHandler<CreateOrUpdateTranslationHandler>();
+            //factory.ForCommand<RemoveTranslation.Command>().SetHandler<RemoveTranslationHandler>();
 
             var provider = services.BuildServiceProvider();
 
@@ -48,10 +45,6 @@ namespace DbLocalizationProvider.AspNetCore
 
             // run custom configuration setup (if any)
             setup?.Invoke(ConfigurationContext.Current);
-
-            // get connection string from configuration providers
-            var configProvider = provider.GetService<IConfiguration>();
-            ConfigurationContext.Current.DbContextConnectionString = configProvider.GetConnectionString(ConfigurationContext.Current.Connection);
 
             services.AddSingleton<IStringLocalizerFactory, DbStringLocalizerFactory>();
             services.AddSingleton(_ => LocalizationProvider.Current);

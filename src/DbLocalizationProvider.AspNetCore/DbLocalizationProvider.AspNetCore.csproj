@@ -46,6 +46,9 @@
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Abstractions\DbLocalizationProvider.Abstractions.csproj" />
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\" />
+  </ItemGroup>
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <ItemGroup>
       <DocFile Include="bin\$(Configuration)\$(TargetFramework)\*.xml" />

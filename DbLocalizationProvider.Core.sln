@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Tests", "lib\localization-provider\Tests\DbLocalizationProvider.Tests\DbLocalizationProvider.Tests.csproj", "{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLocalizationProvider.NetCore.Storage.SqlServer", "src\DbLocalizationProvider.NetCore.Storage.SqlServer\DbLocalizationProvider.NetCore.Storage.SqlServer.csproj", "{F3BE91FF-1FB7-4A47-94E9-57364CFB526A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A6DBF5B-D5BC-4B60-BFD8-F52A0C56CF26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3BE91FF-1FB7-4A47-94E9-57364CFB526A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3BE91FF-1FB7-4A47-94E9-57364CFB526A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3BE91FF-1FB7-4A47-94E9-57364CFB526A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3BE91FF-1FB7-4A47-94E9-57364CFB526A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,11 +2,11 @@
 using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AspNetCore;
-using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Models;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Core.AspNetSample.Services;
+using DbLocalizationProvider.NetCore.Storage.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -62,13 +62,14 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                {
                                                    _.EnableInvariantCultureFallback = true;
                                                    _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
-                                                   _.Connection = "DefaultConnection";
                                                    _.ScanAllAssemblies = true;
                                                    _.FallbackCultures.Try(supportedCultures);
 
                                                    //.Try(new CultureInfo("sv"))
                                                    //.Then(new CultureInfo("no"))
                                                    //.Then(new CultureInfo("en"));
+
+                                                   _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                                                });
 
             services.AddDbLocalizationProviderAdminUI(_ =>

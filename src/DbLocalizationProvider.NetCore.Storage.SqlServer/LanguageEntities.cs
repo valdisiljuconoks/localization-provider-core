@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using DbLocalizationProvider.NetCore.Storage.SqlServer;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.AspNetCore
@@ -9,7 +10,7 @@ namespace DbLocalizationProvider.AspNetCore
     {
         private readonly string _connectionString;
 
-        public LanguageEntities() : this(ConfigurationContext.Current.DbContextConnectionString)
+        public LanguageEntities() : this(Settings.DbContextConnectionString)
         {
         }
 

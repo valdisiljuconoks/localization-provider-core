@@ -9,78 +9,107 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using DbLocalizationProvider.Abstractions;
+using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.Cache;
-using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Internal;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbLocalizationProvider.AspNetCore.Sync
+namespace DbLocalizationProvider.NetCore.Storage.SqlServer
 {
-    public class ResourceSynchronizer
+    public class ResourceSynchronizer : IQueryHandler<SyncResources.Query, IEnumerable<LocalizationResource>>
     {
-        public void DiscoverAndRegister()
+        public IEnumerable<LocalizationResource> Execute(SyncResources.Query query)
         {
-            if(!ConfigurationContext.Current.DiscoverAndRegisterResources)
-                return;
-
-            var discoveredTypes = TypeDiscoveryHelper.GetTypes(t => t.GetCustomAttribute<LocalizedResourceAttribute>() != null,
-                                                               t => t.GetCustomAttribute<LocalizedModelAttribute>() != null);
-
-            var discoveredResources = discoveredTypes[0];
-            var discoveredModels = discoveredTypes[1];
-            var foreignResources = ConfigurationContext.Current.ForeignResources;
-            if(foreignResources != null && foreignResources.Any())
+            // create db schema
+            using(var ctx = new LanguageEntities())
             {
-                discoveredResources.AddRange(foreignResources.Select(x => x.ResourceType));
+                ctx.Database.Migrate();
             }
+
+            var discoveredResources = query.DiscoveredResources;
+            var discoveredModels = query.DiscoveredModels;
 
             ResetSyncStatus();
-            var allResources = new GetAllResources.Query().Execute();
 
-            Parallel.Invoke(() => RegisterDiscoveredResources(discoveredResources, allResources),
-                            () => RegisterDiscoveredResources(discoveredModels, allResources));
-
-            StoreKnownResourcesAndPopulateCache();
-        }
-
-        public void RegisterManually(IEnumerable<ManualResource> resources)
-        {
-            using(var db = new LanguageEntities())
-            {
-                var defaultCulture = new DetermineDefaultCulture.Query().Execute();
-
-                foreach(var resource in resources)
-                    RegisterIfNotExist(db, resource.Key, resource.Translation, defaultCulture, "manual");
-
-                db.SaveChanges();
-            }
-        }
-
-        private void StoreKnownResourcesAndPopulateCache()
-        {
             var allResources = new GetAllResources.Query(true).Execute();
+            Parallel.Invoke(() => RegisterDiscoveredResources(discoveredResources, allResources), () => RegisterDiscoveredResources(discoveredModels, allResources));
 
-            if(ConfigurationContext.Current.PopulateCacheOnStartup)
+            return MergeLists(allResources, discoveredResources.ToList(), discoveredModels.ToList());
+        }
+
+
+        internal IEnumerable<LocalizationResource> MergeLists(IEnumerable<LocalizationResource> databaseResources, List<DiscoveredResource> discoveredResources, List<DiscoveredResource> discoveredModels)
+        {
+            if(discoveredResources == null || discoveredModels == null || !discoveredResources.Any() || !discoveredModels.Any())
+                return databaseResources;
+
+            var result = new List<LocalizationResource>(databaseResources);
+            var dic = result.ToDictionary(r => r.ResourceKey, r => r);
+
+            // run through resources
+            CompareAndMerge(ref discoveredResources, dic, ref result);
+            CompareAndMerge(ref discoveredModels, dic, ref result);
+
+            return result;
+        }
+
+        private static void CompareAndMerge(ref List<DiscoveredResource> discoveredResources, Dictionary<string, LocalizationResource> dic, ref List<LocalizationResource> result)
+        {
+            while(discoveredResources.Count > 0)
             {
-                new ClearCache.Command().Execute();
-                foreach(var resource in allResources)
+                var discoveredResource = discoveredResources[0];
+                if(!dic.ContainsKey(discoveredResource.Key))
                 {
-                    var key = CacheKeyHelper.BuildKey(resource.ResourceKey);
-                    ConfigurationContext.Current.CacheManager.Insert(key, resource, true);
+                    // there is no resource by this key in db - we can safely insert
+                    result.Add(new LocalizationResource(discoveredResource.Key)
+                    {
+                        Translations = discoveredResource.Translations.Select(t => new LocalizationResourceTranslation { Language = t.Culture, Value = t.Translation }).ToList()
+                    });
                 }
-            }
-            else
-            {
-                // just store known resource keys in cache
-                allResources.ForEach(r => ConfigurationContext.Current.BaseCacheManager.StoreKnownKey(r.ResourceKey));
+                else
+                {
+                    // resource exists in db - we need to merge only unmodified translations
+                    var existingRes = dic[discoveredResource.Key];
+                    if(!existingRes.IsModified.HasValue || !existingRes.IsModified.Value)
+                    {
+                        // resource is unmodified in db - overwrite
+                        foreach(var translation in discoveredResource.Translations)
+                        {
+                            var t = existingRes.Translations.FindByLanguage(translation.Culture);
+                            if(t == null)
+                            {
+                                existingRes.Translations.Add(new LocalizationResourceTranslation { Language = translation.Culture, Value = translation.Translation });
+                            }
+                            else
+                            {
+                                t.Language = translation.Culture;
+                                t.Value = translation.Translation;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // resource exists in db, is modified - we need to update only invariant translation
+                        var t = existingRes.Translations.FindByLanguage(CultureInfo.InvariantCulture);
+                        var invariant = discoveredResource.Translations.FirstOrDefault(t2 => t.Language == string.Empty);
+                        if(t != null && invariant != null)
+                        {
+                            t.Language = invariant.Culture;
+                            t.Value = invariant.Translation;
+                        }
+                    }
+                }
+
+                discoveredResources.Remove(discoveredResource);
             }
         }
 
         private void ResetSyncStatus()
         {
-            using(var conn = new SqlConnection(ConfigurationContext.Current.DbContextConnectionString))
+            using(var conn = new SqlConnection(Settings.DbContextConnectionString))
             {
                 var cmd = new SqlCommand("UPDATE dbo.LocalizationResources SET FromCode = 0", conn);
 
@@ -90,11 +119,8 @@ namespace DbLocalizationProvider.AspNetCore.Sync
             }
         }
 
-        private void RegisterDiscoveredResources(IEnumerable<Type> types, IEnumerable<LocalizationResource> allResources)
+        private void RegisterDiscoveredResources(ICollection<DiscoveredResource> properties, IEnumerable<LocalizationResource> allResources)
         {
-            var helper = new TypeDiscoveryHelper();
-            var properties = types.SelectMany(type => helper.ScanResources(type)).DistinctBy(r => r.Key);
-
             // split work queue by 400 resources each
             var groupedProperties = properties.SplitByCount(400);
 
@@ -159,7 +185,7 @@ namespace DbLocalizationProvider.AspNetCore.Sync
                                      }
                                  }
 
-                                 using(var conn = new SqlConnection(ConfigurationContext.Current.DbContextConnectionString))
+                                 using(var conn = new SqlConnection(Settings.DbContextConnectionString))
                                  {
                                      var cmd = new SqlCommand(sb.ToString(), conn)
                                      {
@@ -251,5 +277,6 @@ namespace DbLocalizationProvider.AspNetCore.Sync
                 db.LocalizationResources.Add(resource);
             }
         }
+
     }
 }

@@ -3,7 +3,6 @@
 
 using DbLocalizationProvider.AspNetCore.Sync;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.AspNetCore
 {
@@ -11,12 +10,16 @@ namespace DbLocalizationProvider.AspNetCore
     {
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
-            // create db schema
-            using(var ctx = new LanguageEntities())
-                ctx.Database.Migrate();
-
-            var synchronizer = new ResourceSynchronizer();
-            synchronizer.DiscoverAndRegister();
+            // if we need to sync - then it's good time to do it now
+            if(ConfigurationContext.Current.DiscoverAndRegisterResources)
+            {
+                var sync = new Synchronizer();
+                sync.SyncResources();
+            }
+            else
+            {
+                // TODO: add logger adapter and write that sync has been skipped
+            }
 
             // in cases when there has been already a call to LocalizationProvider.Current (some static weird things)
             // and only then setup configuration is ran - here we need to reset instance once again with new settings
