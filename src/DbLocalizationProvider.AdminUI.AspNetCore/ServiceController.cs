@@ -36,10 +36,18 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         private LocalizationResourceApiTreeModel PrepareTreeViewModel()
         {
             var (resources, languages, isAdmin) = GetResources();
-            var result = new LocalizationResourceApiTreeModel(resources, languages, _config.MaxResourceKeyPopupTitleLength, _config.MaxResourceKeyDisplayLength)
-                         {
-                             Options = { AdminMode = isAdmin, ShowInvariantCulture = _config.ShowInvariantCulture, ShowHiddenResources = _config.ShowHiddenResources }
-                         };
+            var result = new LocalizationResourceApiTreeModel(resources,
+                languages,
+                _config.MaxResourceKeyPopupTitleLength,
+                _config.MaxResourceKeyDisplayLength)
+            {
+                Options =
+                {
+                    AdminMode = isAdmin,
+                    ShowInvariantCulture = _config.ShowInvariantCulture,
+                    ShowHiddenResources = _config.ShowHiddenResources
+                }
+            };
 
             return result;
         }
@@ -65,17 +73,26 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         private LocalizationResourceApiModel PrepareViewModel()
         {
             var (resources, languages, isAdmin) = GetResources();
-            var result = new LocalizationResourceApiModel(resources, languages, _config.MaxResourceKeyPopupTitleLength, _config.MaxResourceKeyDisplayLength)
-                         {
-                             Options = { AdminMode = isAdmin, ShowInvariantCulture = _config.ShowInvariantCulture, ShowHiddenResources = _config.ShowHiddenResources }
-                         };
+            var result = new LocalizationResourceApiModel(
+                resources,
+                languages,
+                _config.MaxResourceKeyPopupTitleLength,
+                _config.MaxResourceKeyDisplayLength)
+            {
+                Options =
+                {
+                    AdminMode = isAdmin,
+                    ShowInvariantCulture = _config.ShowInvariantCulture,
+                    ShowHiddenResources = _config.ShowHiddenResources
+                }
+            };
 
             return result;
         }
 
         private (List<LocalizationResource>, IEnumerable<CultureInfo>, bool) GetResources()
         {
-            var availableLanguagesQuery = new AvailableLanguages.Query { IncludeInvariant = true };
+            var availableLanguagesQuery = new AvailableLanguages.Query {IncludeInvariant = true};
             var languages = availableLanguagesQuery.Execute();
 
             var getResourcesQuery = new GetAllResources.Query(true);
