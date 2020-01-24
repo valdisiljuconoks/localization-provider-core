@@ -6,16 +6,12 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Abstractions;
-using DbLocalizationProvider.AspNetCore;
-using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Internal;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
-using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.NetCore.Storage.SqlServer
 {
@@ -50,11 +46,11 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
                 };
 
                 var reader = cmd.ExecuteReader();
+                var existsTables = !reader.HasRows;
+                reader.Close();
 
-                if(!reader.HasRows)
+                if(existsTables)
                 {
-                    reader.Close();
-
                     // there is no tables, let's create
                     cmd.CommandText = @"
                         CREATE TABLE [dbo].[LocalizationResources]
@@ -86,9 +82,24 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
                         ON DELETE CASCADE";
                     cmd.ExecuteNonQuery();
                 }
+                else
+                {
+                    // there is something - so we need to check version and append missing stuff
+                    // NOTE: for now assumption is that we start from previous 5.x version
+
+                    // Below is list of additions on top of 5.x in chronological order.
+                    //  #1 addition - notes column for resource
+                    cmd.CommandText = "SELECT COL_LENGTH('dbo.LocalizationResources', 'Notes')";
+                    var result = cmd.ExecuteScalar();
+
+                    if(result == DBNull.Value)
+                    {
+                        cmd.CommandText = "ALTER TABLE dbo.LocalizationResources ADD Notes NVARCHAR(3000) NULL";
+                        cmd.ExecuteNonQuery();
+                    }
+                }
             }
         }
-
 
         internal IEnumerable<LocalizationResource> MergeLists(IEnumerable<LocalizationResource> databaseResources, List<DiscoveredResource> discoveredResources, List<DiscoveredResource> discoveredModels)
         {
@@ -160,7 +171,7 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
         {
             using(var conn = new SqlConnection(Settings.DbContextConnectionString))
             {
-                var cmd = new SqlCommand("UPDATE dbo.LocalizationResources SET FromCode = 0", conn);
+                var cmd = new SqlCommand("UPDATE [dbo].[LocalizationResources] SET FromCode = 0", conn);
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
@@ -254,78 +265,13 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
             if(existingTranslation == null)
             {
                 buffer.Append($@"
-        insert into LocalizationResourceTranslations (ResourceId, [Language], [Value]) values ({existingResource.Id}, '{resource.Culture}', N'{resource.Translation.Replace("'", "''")}')
-        ");
+        INSERT INTO [dbo].[LocalizationResourceTranslations] (ResourceId, [Language], [Value]) VALUES ({existingResource.Id}, '{resource.Culture}', N'{resource.Translation.Replace("'", "''")}')");
             }
             else if(!existingTranslation.Value.Equals(resource.Translation))
             {
                 buffer.Append($@"
-        update LocalizationResourceTranslations set [Value] = N'{resource.Translation.Replace("'", "''")}' where ResourceId={existingResource.Id} and [Language]='{resource.Culture}'
-        ");
+        UPDATE [dbo].[LocalizationResourceTranslations] SET [Value] = N'{resource.Translation.Replace("'", "''")}' WHERE ResourceId={existingResource.Id} and [Language]='{resource.Culture}'");
             }
         }
-
-        private void RegisterIfNotExist(LanguageEntities db, string resourceKey, string resourceValue, string defaultCulture, string author = "type-scanner")
-        {
-            var existingResource = db.LocalizationResources.Include(r => r.Translations).FirstOrDefault(r => r.ResourceKey == resourceKey);
-
-            if(existingResource != null)
-            {
-                existingResource.FromCode = true;
-
-                // if resource is not modified - we can sync default value from code
-                if(existingResource.IsModified.HasValue && !existingResource.IsModified.Value)
-                {
-                    existingResource.ModificationDate = DateTime.UtcNow;
-                    var defaultTranslation = existingResource.Translations.FirstOrDefault(t => t.Language == defaultCulture);
-                    if(defaultTranslation != null)
-                    {
-                        defaultTranslation.Value = resourceValue;
-                    }
-                }
-
-                var fromCodeTranslation = existingResource.Translations.FindByLanguage(CultureInfo.InvariantCulture);
-                if(fromCodeTranslation != null)
-                {
-                    fromCodeTranslation.Value = resourceValue;
-                }
-                else
-                {
-                    fromCodeTranslation = new LocalizationResourceTranslation
-                    {
-                        Language = CultureInfo.InvariantCulture.Name,
-                        Value = resourceValue
-                    };
-
-                    existingResource.Translations.Add(fromCodeTranslation);
-                }
-            }
-            else
-            {
-                // create new resource
-                var resource = new LocalizationResource(resourceKey)
-                {
-                    ModificationDate = DateTime.UtcNow,
-                    Author = author,
-                    FromCode = true,
-                    IsModified = false
-                };
-
-                resource.Translations.Add(new LocalizationResourceTranslation
-                {
-                    Language = defaultCulture,
-                    Value = resourceValue
-                });
-
-                resource.Translations.Add(new LocalizationResourceTranslation
-                {
-                    Language = CultureInfo.InvariantCulture.Name,
-                    Value = resourceValue
-                });
-
-                db.LocalizationResources.Add(resource);
-            }
-        }
-
     }
 }
