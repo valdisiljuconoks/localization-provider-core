@@ -23,11 +23,8 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
     {
         public IEnumerable<LocalizationResource> Execute(SyncResources.Query query)
         {
-            // create db schema
-            using(var ctx = new LanguageEntities())
-            {
-                ctx.Database.Migrate();
-            }
+            // check db schema and update if needed
+            EnsureDatabaseSchema();
 
             var discoveredResources = query.DiscoveredResources;
             var discoveredModels = query.DiscoveredModels;
@@ -38,6 +35,58 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
             Parallel.Invoke(() => RegisterDiscoveredResources(discoveredResources, allResources), () => RegisterDiscoveredResources(discoveredModels, allResources));
 
             return MergeLists(allResources, discoveredResources.ToList(), discoveredModels.ToList());
+        }
+
+        private void EnsureDatabaseSchema()
+        {
+            using(var conn = new SqlConnection(Settings.DbContextConnectionString))
+            {
+                conn.Open();
+
+                var cmd = new SqlCommand(
+                    "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'LocalizationResources'")
+                {
+                    Connection = conn
+                };
+
+                var reader = cmd.ExecuteReader();
+
+                if(!reader.HasRows)
+                {
+                    reader.Close();
+
+                    // there is no tables, let's create
+                    cmd.CommandText = @"
+                        CREATE TABLE [dbo].[LocalizationResources]
+                        (
+                            [Id] [int] IDENTITY(1,1) NOT NULL,
+                            [Author] [nvarchar](100) NULL,
+                            [FromCode] [bit] NOT NULL,
+                            [IsHidden] [bit] NULL,
+                            [IsModified] [bit] NULL,
+                            [ModificationDate] [datetime2](7) NOT NULL,
+                            [ResourceKey] [nvarchar](1000) NOT NULL
+                        CONSTRAINT [PK_LocalizationResources] PRIMARY KEY CLUSTERED ([Id] ASC))";
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = @"
+                        CREATE TABLE [dbo].[LocalizationResourceTranslations]
+                        (
+                            [Id] [INT] IDENTITY(1,1) NOT NULL,
+                            [Language] [NVARCHAR](10) NULL,
+                            [ResourceId] [INT] NOT NULL,
+                            [Value] [NVARCHAR](MAX) NULL,
+                        CONSTRAINT [PK_LocalizationResourceTranslations] PRIMARY KEY CLUSTERED ([Id] ASC))";
+                    cmd.ExecuteNonQuery();
+
+                    cmd.CommandText = @"
+                        ALTER TABLE [dbo].[LocalizationResourceTranslations]
+                        WITH CHECK ADD CONSTRAINT [FK_LocalizationResourceTranslations_LocalizationResources_ResourceId]
+                        FOREIGN KEY([ResourceId]) REFERENCES [dbo].[LocalizationResources] ([Id])
+                        ON DELETE CASCADE";
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
 
