@@ -1,10 +1,9 @@
 ﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
-using System.Linq;
 using DbLocalizationProvider.Abstractions;
+using DbLocalizationProvider.NetCore.Storage.SqlServer;
 using DbLocalizationProvider.Queries;
-using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.AspNetCore.Queries
 {
@@ -12,14 +11,9 @@ namespace DbLocalizationProvider.AspNetCore.Queries
     {
         public LocalizationResource Execute(GetResource.Query query)
         {
-            using(var db = new LanguageEntities())
-            {
-                var resource = db.LocalizationResources
-                                 .Include(r => r.Translations)
-                                 .FirstOrDefault(r => r.ResourceKey == query.ResourceKey);
+            var repository = new ResourceRepository();
 
-                return resource;
-            }
+            return repository.GetByKey(query.ResourceKey);
         }
     }
 }

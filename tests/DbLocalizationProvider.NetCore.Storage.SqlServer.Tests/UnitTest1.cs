@@ -12,5 +12,14 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer.Tests
 
             var resource = repo.GetByKey("DbLocalizationProvider.AdminUI.AspNetCore.Resources.Title");
         }
+
+        [Fact]
+        public void Test2()
+        {
+            Settings.DbContextConnectionString = "Server=.;Database=loc-admin-ui;Trusted_Connection=False;MultipleActiveResultSets=true;User ID=sample-user;Password=P@ssword$$";
+            var repo = new ResourceRepository();
+
+            var resource = repo.GetAll();
+        }
     }
 }

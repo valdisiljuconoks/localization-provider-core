@@ -2,23 +2,18 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System.Collections.Generic;
-using System.Linq;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Queries;
-using Microsoft.EntityFrameworkCore;
 
-namespace DbLocalizationProvider.AspNetCore.Queries
+namespace DbLocalizationProvider.NetCore.Storage.SqlServer
 {
     public class GetAllResourcesHandler : IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>>
     {
         public IEnumerable<LocalizationResource> Execute(GetAllResources.Query query)
         {
-            using(var db = new LanguageEntities())
-            {
-                return db.LocalizationResources.Include(r => r.Translations)
-                    .AsNoTracking()
-                    .ToList();
-            }
+            var repository = new ResourceRepository();
+
+            return repository.GetAll();
         }
     }
 }

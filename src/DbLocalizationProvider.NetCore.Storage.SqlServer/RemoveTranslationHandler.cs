@@ -4,11 +4,12 @@
 using System;
 using System.Linq;
 using DbLocalizationProvider.Abstractions;
+using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Commands;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbLocalizationProvider.AspNetCore.Commands
+namespace DbLocalizationProvider.NetCore.Storage.SqlServer
 {
     public class RemoveTranslationHandler : ICommandHandler<RemoveTranslation.Command>
     {
@@ -16,9 +17,10 @@ namespace DbLocalizationProvider.AspNetCore.Commands
         {
             using(var db = new LanguageEntities())
             {
-                var resource = db.LocalizationResources.Include(r => r.Translations).FirstOrDefault(r => r.ResourceKey == command.Key);
-                if(resource == null)
-                    return;
+                var resource = db.LocalizationResources.Include(r => r.Translations)
+                    .FirstOrDefault(r => r.ResourceKey == command.Key);
+
+                if(resource == null) return;
 
                 if(!resource.IsModified.HasValue || !resource.IsModified.Value)
                     throw new InvalidOperationException($"Cannot delete translation for unmodified resource `{command.Key}`");

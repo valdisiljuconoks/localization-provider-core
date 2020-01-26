@@ -1,10 +1,83 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace DbLocalizationProvider.NetCore.Storage.SqlServer
 {
     public class ResourceRepository
     {
+        public IEnumerable<LocalizationResource> GetAll()
+        {
+            using(var conn = new SqlConnection(Settings.DbContextConnectionString))
+            {
+                conn.Open();
+
+                var cmd = new SqlCommand(@"
+                    SELECT
+                        r.Id,
+                        ResourceKey,
+                        Author,
+                        FromCode,
+                        IsHidden,
+                        IsModified,
+                        ModificationDate,
+                        Notes,
+                        t.Id as TranslationId,
+                        t.Value as Translation,
+                        t.Language
+                    FROM [dbo].[LocalizationResources] r
+                    INNER JOIN [dbo].[LocalizationResourceTranslations] t ON r.Id = t.ResourceId",
+                    conn);
+
+                var reader = cmd.ExecuteReader();
+                var lookup = new Dictionary<string, LocalizationResource>();
+
+                while(reader.Read())
+                {
+                    var key = reader.GetString(reader.GetOrdinal(nameof(LocalizationResource.ResourceKey)));
+                    if(lookup.TryGetValue(key, out var resource))
+                    {
+                        // add translation to already loaded resource
+                        resource.Translations.Add(new LocalizationResourceTranslation
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("TranslationId")),
+                            ResourceId = resource.Id,
+                            Value = reader.GetStringSafe("Translation"),
+                            Language = reader.GetString(reader.GetOrdinal("Language")),
+                            LocalizationResource = resource
+                        });
+                    }
+                    else
+                    {
+                        // create resource
+                        var result = new LocalizationResource(key)
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal(nameof(LocalizationResource.Id))),
+                            Author = reader.GetString(reader.GetOrdinal(nameof(LocalizationResource.Author))),
+                            FromCode = reader.GetBoolean(reader.GetOrdinal(nameof(LocalizationResource.FromCode))),
+                            IsHidden = reader.GetBoolean(reader.GetOrdinal(nameof(LocalizationResource.IsHidden))),
+                            IsModified = reader.GetBoolean(reader.GetOrdinal(nameof(LocalizationResource.IsModified))),
+                            ModificationDate = reader.GetDateTime(reader.GetOrdinal(nameof(LocalizationResource.ModificationDate))),
+                            Notes = reader.GetStringSafe(nameof(LocalizationResource.Notes)),
+                        };
+
+                        result.Translations.Add(new LocalizationResourceTranslation
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("TranslationId")),
+                            ResourceId = result.Id,
+                            Value = reader.GetStringSafe("Translation"),
+                            Language = reader.GetString(reader.GetOrdinal("Language")),
+                            LocalizationResource = result
+                        });
+
+                        lookup.Add(key, result);
+                    }
+                }
+
+                return lookup.Values;
+            }
+        }
+
         public LocalizationResource GetByKey(string resourceKey)
         {
             if(resourceKey == null) throw new ArgumentNullException(nameof(resourceKey));

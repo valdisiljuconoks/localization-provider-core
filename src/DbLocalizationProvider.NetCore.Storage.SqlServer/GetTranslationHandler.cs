@@ -5,16 +5,15 @@ using System.Linq;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Queries;
-using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.AspNetCore.Queries
 {
-    public class GetTranslationHandler : GetTranslation.GetTranslationHandlerBase, IQueryHandler<GetTranslation.Query, string>
+    public class GetTranslationHandler : GetTranslation.GetTranslationHandlerBase,
+        IQueryHandler<GetTranslation.Query, string>
     {
         public string Execute(GetTranslation.Query query)
         {
-            if(!ConfigurationContext.Current.EnableLocalization())
-                return query.Key;
+            if(!ConfigurationContext.Current.EnableLocalization()) return query.Key;
 
             var key = query.Key;
             var cacheKey = CacheKeyHelper.BuildKey(key);
@@ -29,20 +28,21 @@ namespace DbLocalizationProvider.AspNetCore.Queries
 
             var fallbackCultures = ConfigurationContext.Current.FallbackCultures;
             return fallbackCultures != null && fallbackCultures.Any()
-                       ? base.GetTranslationWithFallback(localizationResource.Translations, query.Language, fallbackCultures, query.UseFallback)?.Value
-                       : base.GetTranslationFromAvailableList(localizationResource.Translations, query.Language, query.UseFallback)?.Value;
+                ? base.GetTranslationWithFallback(
+                    localizationResource.Translations,
+                    query.Language,
+                    fallbackCultures,
+                    query.UseFallback)?.Value
+                : base.GetTranslationFromAvailableList(
+                    localizationResource.Translations,
+                    query.Language,
+                    query.UseFallback)?.Value;
         }
 
         protected virtual LocalizationResource GetResourceFromDb(string key)
         {
-            using(var db = new LanguageEntities())
-            {
-                var resource = db.LocalizationResources
-                    .Include(r => r.Translations)
-                    .FirstOrDefault(r => r.ResourceKey == key);
-
-                return resource;
-            }
+            var q = new GetResource.Query(key);
+            return q.Execute();
         }
     }
 }

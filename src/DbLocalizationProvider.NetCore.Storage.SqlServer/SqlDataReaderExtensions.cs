@@ -8,7 +8,7 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
         {
             var colIndex = reader.GetOrdinal(columnName);
 
-            return !reader.IsDBNull(colIndex) ? reader.GetString(reader.GetOrdinal(columnName)) : string.Empty;
+            return !reader.IsDBNull(colIndex) ? reader.GetString(reader.GetOrdinal(columnName)) : null;
         }
     }
 }

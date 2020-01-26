@@ -1,5 +1,4 @@
-﻿using DbLocalizationProvider.AspNetCore.Commands;
-using DbLocalizationProvider.AspNetCore.Queries;
+﻿using DbLocalizationProvider.AspNetCore.Queries;
 using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
