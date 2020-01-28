@@ -8,18 +8,17 @@ using DbLocalizationProvider.Queries;
 
 namespace DbLocalizationProvider.AspNetCore.Queries
 {
-    public class GetTranslationHandler : GetTranslation.GetTranslationHandlerBase,
-        IQueryHandler<GetTranslation.Query, string>
+    public class GetTranslationHandler : GetTranslation.GetTranslationHandlerBase, IQueryHandler<GetTranslation.Query, string>
     {
         public string Execute(GetTranslation.Query query)
         {
-            if(!ConfigurationContext.Current.EnableLocalization()) return query.Key;
+            if (!ConfigurationContext.Current.EnableLocalization()) return query.Key;
 
             var key = query.Key;
             var cacheKey = CacheKeyHelper.BuildKey(key);
             var localizationResource = ConfigurationContext.Current.CacheManager.Get(cacheKey) as LocalizationResource;
 
-            if(localizationResource == null)
+            if (localizationResource == null)
             {
                 // resource is not found in the cache, let's check database
                 localizationResource = GetResourceFromDb(key) ?? LocalizationResource.CreateNonExisting(key);

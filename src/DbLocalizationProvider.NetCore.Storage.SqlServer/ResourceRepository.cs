@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
@@ -145,7 +145,7 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
             }
         }
 
-        public void AddTranslationForResource(LocalizationResource resource, LocalizationResourceTranslation translation)
+        public void AddTranslation(LocalizationResource resource, LocalizationResourceTranslation translation)
         {
             if(resource == null) throw new ArgumentNullException(nameof(resource));
             if(translation == null) throw new ArgumentNullException(nameof(translation));
@@ -180,6 +180,22 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
             }
         }
 
+        public void DeleteTranslation(LocalizationResource resource, LocalizationResourceTranslation translation)
+        {
+            if(resource == null) throw new ArgumentNullException(nameof(resource));
+            if(translation == null) throw new ArgumentNullException(nameof(translation));
+
+            using(var conn = new SqlConnection(Settings.DbContextConnectionString))
+            {
+                conn.Open();
+
+                var cmd = new SqlCommand("DELETE FROM [dbo].[LocalizationResourceTranslations] WHERE [Id] = @id", conn);
+                cmd.Parameters.AddWithValue("id", translation.Id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         public void UpdateResource(LocalizationResource resource)
         {
             if(resource == null) throw new ArgumentNullException(nameof(resource));
@@ -192,7 +208,7 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
                 cmd.Parameters.AddWithValue("id", resource.Id);
                 cmd.Parameters.AddWithValue("modificationDate", resource.ModificationDate);
                 cmd.Parameters.AddWithValue("isModified", resource.IsModified);
-                cmd.Parameters.AddWithValue("notes", resource.Notes);
+                cmd.Parameters.AddWithValue("notes", (object)resource.Notes ?? DBNull.Value);
 
                 cmd.ExecuteNonQuery();
             }

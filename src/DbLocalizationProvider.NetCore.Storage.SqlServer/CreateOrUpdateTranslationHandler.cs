@@ -28,7 +28,7 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
                     ResourceId = resource.Id
                 };
 
-                repository.AddTranslationForResource(resource, newTranslation);
+                repository.AddTranslation(resource, newTranslation);
             }
             else
             {

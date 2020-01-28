@@ -4,10 +4,8 @@
 using System;
 using System.Linq;
 using DbLocalizationProvider.Abstractions;
-using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Commands;
-using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.NetCore.Storage.SqlServer
 {
@@ -15,23 +13,16 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
     {
         public void Execute(RemoveTranslation.Command command)
         {
-            using(var db = new LanguageEntities())
-            {
-                var resource = db.LocalizationResources.Include(r => r.Translations)
-                    .FirstOrDefault(r => r.ResourceKey == command.Key);
+            var repository = new ResourceRepository();
+            var resource = repository.GetByKey(command.Key);
 
-                if(resource == null) return;
+            if (resource == null) return;
+            if (!resource.IsModified.HasValue || !resource.IsModified.Value)
+                throw new InvalidOperationException(
+                    $"Cannot delete translation for not modified resource (key: `{command.Key}`");
 
-                if(!resource.IsModified.HasValue || !resource.IsModified.Value)
-                    throw new InvalidOperationException($"Cannot delete translation for unmodified resource `{command.Key}`");
-
-                var t = resource.Translations.FirstOrDefault(_ => _.Language == command.Language.Name);
-                if(t != null)
-                {
-                    db.LocalizationResourceTranslations.Remove(t);
-                    db.SaveChanges();
-                }
-            }
+            var t = resource.Translations.FirstOrDefault(_ => _.Language == command.Language.Name);
+            if (t != null) repository.DeleteTranslation(resource, t);
 
             ConfigurationContext.Current.CacheManager.Remove(CacheKeyHelper.BuildKey(command.Key));
         }
