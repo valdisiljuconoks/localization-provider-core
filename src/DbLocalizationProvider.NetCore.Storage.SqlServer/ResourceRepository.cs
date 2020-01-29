@@ -213,5 +213,54 @@ namespace DbLocalizationProvider.NetCore.Storage.SqlServer
                 cmd.ExecuteNonQuery();
             }
         }
+
+        public void DeleteResource(LocalizationResource resource)
+        {
+            if (resource == null) throw new ArgumentNullException(nameof(resource));
+
+            using (var conn = new SqlConnection(Settings.DbContextConnectionString))
+            {
+                conn.Open();
+
+                var cmd = new SqlCommand("DELETE FROM [dbo].[LocalizationResources] WHERE [Id] = @id", conn);
+                cmd.Parameters.AddWithValue("id", resource.Id);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteAllResources()
+        {
+            using (var conn = new SqlConnection(Settings.DbContextConnectionString))
+            {
+                conn.Open();
+
+                var cmd = new SqlCommand("DELETE FROM [dbo].[LocalizationResources]", conn);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public void InsertResource(LocalizationResource resource)
+        {
+            if (resource == null) throw new ArgumentNullException(nameof(resource));
+
+            using (var conn = new SqlConnection(Settings.DbContextConnectionString))
+            {
+                conn.Open();
+
+                var cmd = new SqlCommand("INSERT INTO [dbo].[LocalizationResources] ([ResourceKey], [Author], [FromCode], [IsHidden], [IsModified], [ModificationDate], [Notes]) VALUES (@resourceKey, @author, @fromCode, @isHidden, @isModified, @modificationDate, @notes)", conn);
+
+                cmd.Parameters.AddWithValue("resourceKey", resource.ResourceKey);
+                cmd.Parameters.AddWithValue("author", resource.Author);
+                cmd.Parameters.AddWithValue("fromCode", resource.FromCode);
+                cmd.Parameters.AddWithValue("isHidden", resource.IsHidden);
+                cmd.Parameters.AddWithValue("isModified", resource.IsModified);
+                cmd.Parameters.AddWithValue("modificationDate", resource.ModificationDate);
+                cmd.Parameters.AddWithValue("notes", resource.Notes);
+
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }
