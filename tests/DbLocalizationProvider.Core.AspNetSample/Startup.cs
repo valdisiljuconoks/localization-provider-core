@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AspNetCore;
@@ -6,7 +6,7 @@ using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Models;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Core.AspNetSample.Services;
-using DbLocalizationProvider.NetCore.Storage.SqlServer;
+using DbLocalizationProvider.Storage.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
