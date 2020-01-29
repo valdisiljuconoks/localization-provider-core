@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System.Linq;
@@ -43,7 +43,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
         public FileResult OnGetExport(string format = "json")
         {
             var exporter = ConfigurationContext.Current.Export.Providers.FindById(format);
-            var resources = new GetAllResources.Query().Execute();
+            var resources = new GetAllResources.Query(true).Execute();
             var result = exporter.Export(resources.ToList(), null);
 
             return new FileContentResult(Encoding.UTF8.GetBytes(result.SerializedData), result.FileMimeType) { FileDownloadName = result.FileName };

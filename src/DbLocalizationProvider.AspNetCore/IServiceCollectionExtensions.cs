@@ -23,15 +23,9 @@ namespace DbLocalizationProvider.AspNetCore
             // setup default implementations
             var factory = ConfigurationContext.Current.TypeFactory;
 
-            //factory.ForQuery<GetAllResources.Query>().SetHandler<GetAllResourcesHandler>();
             factory.ForQuery<GetAllResources.Query>().DecorateWith<CachedGetAllResourcesHandler>();
-            //factory.ForQuery<GetResource.Query>().SetHandler<GetResourceHandler>();
-            //factory.ForQuery<GetTranslation.Query>().SetHandler<GetTranslationHandler>();
             factory.ForQuery<DetermineDefaultCulture.Query>().SetHandler<DetermineDefaultCulture.Handler>();
             factory.ForCommand<ClearCache.Command>().SetHandler<ClearCacheHandler>();
-
-            //factory.ForCommand<CreateOrUpdateTranslation.Command>().SetHandler<CreateOrUpdateTranslationHandler>();
-            //factory.ForCommand<RemoveTranslation.Command>().SetHandler<RemoveTranslationHandler>();
 
             var provider = services.BuildServiceProvider();
 
