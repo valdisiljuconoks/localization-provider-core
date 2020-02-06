@@ -18,21 +18,21 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             var propertyName = context.Key.Name;
             var containerType = context.Key.ContainerType;
 
-            if(containerType == null)
-                return;
-
-            if(containerType.GetCustomAttribute<LocalizedModelAttribute>() == null)
-                return;
+            if(containerType == null) return;
+            if(containerType.GetCustomAttribute<LocalizedModelAttribute>() == null) return;
 
             var currentMetaData = modelMetadata.DisplayName?.Invoke();
 
-            modelMetadata.DisplayName = () => !ModelMetadataLocalizationHelper.UseLegacyMode(currentMetaData)
+            modelMetadata.DisplayName = () => !ConfigurationContext.Current.ResourceLookupFilter(currentMetaData)
                 ? ModelMetadataLocalizationHelper.GetTranslation(containerType, propertyName)
                 : ModelMetadataLocalizationHelper.GetTranslation(currentMetaData);
 
             var displayAttribute = theAttributes.OfType<DisplayAttribute>().FirstOrDefault();
             if(displayAttribute?.Description != null)
-                modelMetadata.Description = () => ModelMetadataLocalizationHelper.GetTranslation(containerType, $"{propertyName}-Description");
+            {
+                modelMetadata.Description = () =>
+                    ModelMetadataLocalizationHelper.GetTranslation(containerType, $"{propertyName}-Description");
+            }
         }
     }
 }
