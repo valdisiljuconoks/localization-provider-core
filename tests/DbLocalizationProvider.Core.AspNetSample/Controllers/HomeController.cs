@@ -13,9 +13,9 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly LocalizationProvider _provider;
+        private readonly ILocalizationProvider _provider;
 
-        public HomeController(LocalizationProvider provider, IOptions<MvcOptions> options)
+        public HomeController(ILocalizationProvider provider, IOptions<MvcOptions> options)
         {
             _provider = provider;
 

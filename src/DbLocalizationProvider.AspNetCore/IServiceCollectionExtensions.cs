@@ -42,6 +42,7 @@ namespace DbLocalizationProvider.AspNetCore
 
             services.AddSingleton<IStringLocalizerFactory, DbStringLocalizerFactory>();
             services.AddSingleton(_ => LocalizationProvider.Current);
+            services.AddSingleton<ILocalizationProvider>(_ => LocalizationProvider.Current);
 
             // setup model metadata providers
             if(ConfigurationContext.Current.ModelMetadataProviders.ReplaceProviders)
