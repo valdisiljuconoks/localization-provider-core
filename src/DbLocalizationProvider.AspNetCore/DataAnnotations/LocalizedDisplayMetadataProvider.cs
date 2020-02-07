@@ -23,9 +23,9 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
 
             var currentMetaData = modelMetadata.DisplayName?.Invoke();
 
-            modelMetadata.DisplayName = () => !ConfigurationContext.Current.ResourceLookupFilter(currentMetaData)
-                ? ModelMetadataLocalizationHelper.GetTranslation(containerType, propertyName)
-                : ModelMetadataLocalizationHelper.GetTranslation(currentMetaData);
+            modelMetadata.DisplayName = () => ConfigurationContext.Current.ResourceLookupFilter(currentMetaData)
+                ? ModelMetadataLocalizationHelper.GetTranslation(currentMetaData)
+                : ModelMetadataLocalizationHelper.GetTranslation(containerType, propertyName);
 
             var displayAttribute = theAttributes.OfType<DisplayAttribute>().FirstOrDefault();
             if(displayAttribute?.Description != null)
