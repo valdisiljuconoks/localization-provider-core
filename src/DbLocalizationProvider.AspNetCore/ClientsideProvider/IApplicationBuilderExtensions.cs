@@ -18,8 +18,7 @@ namespace DbLocalizationProvider.AspNetCore
 
         public static IApplicationBuilder UseDbLocalizationClientsideProvider(this IApplicationBuilder builder, string path = "jsl10n")
         {
-            if(string.IsNullOrEmpty(path))
-                throw new ArgumentNullException(nameof(path));
+            if(string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
 
             ClientsideConfigurationContext.SetRootPath(path);
             AppContext.Configure(builder.ApplicationServices.GetRequiredService<IHttpContextAccessor>());

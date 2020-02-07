@@ -72,7 +72,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                    _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                                                });
 
-            services.AddDbLocalizationProviderAdminUI(_ =>
+            services
+                .AddDbLocalizationProviderAdminUI(_ =>
                                                       {
                                                           _.RootUrl = "/localization-admin";
                                                           _.AuthorizedAdminRoles.Add("Admin");
@@ -80,7 +81,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                                                           _.ShowHiddenResources = false;
                                                           _.DefaultView = ResourceListView.Tree;
                                                           _.CustomCssPath = "/css/custom-adminui.css";
-                                                      });
+                                                      })
+                .VerifyDbLocalizationProviderAdminUISetup();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -102,12 +104,15 @@ namespace DbLocalizationProvider.Core.AspNetSample
 
             app.UseStaticFiles();
             app.UseAuthentication();
+
             app.UseMvc(routes =>
                        {
                            routes.MapRoute(
                                            name: "default",
                                            template: "{controller=Home}/{action=Index}/{id?}");
                        });
+
+            // app.UseEndpointRouting();
 
             app.UseDbLocalizationProvider();
             app.UseDbLocalizationClientsideProvider(path: "/jsl10n");

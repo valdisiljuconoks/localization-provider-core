@@ -2,8 +2,11 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
+using DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
@@ -38,6 +41,19 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                                                                                      "/AdminUITree",
                                                                                      UiConfigurationContext.Current.RootUrl + "/tree");
                                                   });
+
+            return services;
+        }
+
+        /// <summary>
+        /// Using this method runtime will verify AdminUI setup and will throw up if something is wrong.
+        /// </summary>
+        /// <param name="services">Collection of services</param>
+        /// <returns>The same collection to support fluent approach and you could chain further</returns>
+        public static IServiceCollection VerifyDbLocalizationProviderAdminUISetup(this IServiceCollection services)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Transient<IStartupFilter, AdminUIVerificationStartupFilter>());
+
             return services;
         }
     }
