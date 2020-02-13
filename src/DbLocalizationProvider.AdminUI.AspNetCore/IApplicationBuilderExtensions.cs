@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
@@ -7,7 +7,7 @@ using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Internal;
+//using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -55,14 +55,14 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                                                         });
                                     });
 
-                        var routeBuilder = new RouteBuilder(builder)
-                        {
-                            DefaultHandler = app.ApplicationServices.GetRequiredService<MvcRouteHandler>()
-                        };
+                        //var routeBuilder = new RouteBuilder(builder)
+                        //{
+                        //    DefaultHandler = app.ApplicationServices.GetRequiredService<MvcRouteHandler>()
+                        //};
 
-                        routeBuilder.MapRoute("Admin UI api route", "api/{controller=Service}/{action=Index}");
-                        var apiRoute = routeBuilder.Build();
-                        builder.UseRouter(apiRoute);
+                        //routeBuilder.MapRoute("Admin UI api route", "api/{controller=Service}/{action=Index}");
+                        //var apiRoute = routeBuilder.Build();
+                        //builder.UseRouter(apiRoute);
                     });
 
             // we need to set handlers at this stage as Mvc config might be added to the service collection *after* DbLocalizationProvider

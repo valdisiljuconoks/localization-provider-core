@@ -19,7 +19,7 @@ namespace DbLocalizationProvider.AspNetCore
 
         public void Configure(MvcViewOptions options)
         {
-            options.ClientModelValidatorProviders.Insert(0, new LocalizedClientModelValidator(_validationAttributeAdapterProvider));
+            //options.ClientModelValidatorProviders.Insert(0, new LocalizedClientModelValidator(_validationAttributeAdapterProvider));
         }
     }
 }

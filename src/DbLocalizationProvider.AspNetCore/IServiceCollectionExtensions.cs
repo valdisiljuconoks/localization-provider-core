@@ -50,7 +50,7 @@ namespace DbLocalizationProvider.AspNetCore
                 services.Configure<MvcOptions>(_ =>
                                                {
                                                    _.ModelMetadataDetailsProviders.Add(new LocalizedDisplayMetadataProvider());
-                                                   _.ModelValidatorProviders.Add(new LocalizedValidationMetadataProvider());
+                                                   //_.ModelValidatorProviders.Add(new LocalizedValidationMetadataProvider());
                                                });
 
                 services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
