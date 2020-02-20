@@ -13,7 +13,7 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing
     public static class IEndpointRouteBuilderExtensions
     {
         /// <summary>
-        /// Use this method if you are relying on ASp.NET Core EndpointRouting
+        /// Use this method if you are relying on ASP.NET Core EndpointRouting
         /// </summary>
         /// <param name="builder">EndpointRoute builder</param>
         /// <param name="path">Path on which you want to map client-side provider</param>

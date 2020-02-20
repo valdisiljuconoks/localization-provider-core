@@ -42,7 +42,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services
-                .AddControllersWithViews( opt => opt.EnableEndpointRouting = false  )
+                .AddControllersWithViews( /*opt => opt.EnableEndpointRouting = false*/ )
                 .AddMvcLocalization();
 
             services.AddAuthorization();
