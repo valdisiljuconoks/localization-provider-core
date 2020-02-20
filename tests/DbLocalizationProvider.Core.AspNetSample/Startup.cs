@@ -9,15 +9,13 @@ using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Storage.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using IApplicationBuilderExtensions = DbLocalizationProvider.AdminUI.AspNetCore.IApplicationBuilderExtensions;
 
 namespace DbLocalizationProvider.Core.AspNetSample
 {
@@ -49,6 +47,12 @@ namespace DbLocalizationProvider.Core.AspNetSample
             services.AddRazorPages();
             services.AddRouting();
             services.AddHealthChecks();
+
+            services.AddLogging(c =>
+            {
+                c.AddConsole();
+                c.AddDebug();
+            });
 
             var supportedCultures = new List<CultureInfo> { new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
 

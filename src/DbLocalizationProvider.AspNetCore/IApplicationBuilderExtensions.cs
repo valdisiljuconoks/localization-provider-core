@@ -3,6 +3,8 @@
 
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore
 {
@@ -10,6 +12,9 @@ namespace DbLocalizationProvider.AspNetCore
     {
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
+            var logger = builder.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
+            if (logger != null) ConfigurationContext.Current.Logger = new LoggerAdapter(logger);
+
             // if we need to sync - then it's good time to do it now
             if(ConfigurationContext.Current.DiscoverAndRegisterResources)
             {
@@ -18,7 +23,7 @@ namespace DbLocalizationProvider.AspNetCore
             }
             else
             {
-                // TODO: add logger adapter and write that sync has been skipped
+                ConfigurationContext.Current.Logger?.Info($"{nameof(ConfigurationContext.Current.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
             }
 
             // in cases when there has been already a call to LocalizationProvider.Current (some static weird things)
