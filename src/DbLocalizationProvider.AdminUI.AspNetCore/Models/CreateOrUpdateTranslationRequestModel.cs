@@ -11,7 +11,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
         [JsonProperty("key")]
         public string Key { get; set; }
 
-        [JsonProperty("lang")]
+        [JsonProperty("language")]
         public string Language { get; set; }
 
         [JsonProperty("translation")]

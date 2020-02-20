@@ -295,7 +295,7 @@
                     titleKey: resource.titleKey,
                     key: resource.key,
                     translation: resource[lang],
-                    lang: lang,
+                    language: lang,
                     isModified: resource.isModified
                 };
 
@@ -309,7 +309,7 @@
                 // update viewmodel
                 var editedResource = this.model.resources.find((r) => { return r.key == this.model.currentResource.key; });
                 if (editedResource != null) {
-                    editedResource[this.model.currentResource.lang] = this.model.currentResource.translation;
+                    editedResource[this.model.currentResource.language] = this.model.currentResource.translation;
                     editedResource.isModified = true;
                 }
             },
@@ -320,7 +320,7 @@
                     axios.post('api/service/remove', this.model.currentResource);
                     var editedResource = this.model.resources.find((r) => { return r.key == this.model.currentResource.key; });
                     if (editedResource != null) {
-                        editedResource[this.model.currentResource.lang] = null;
+                        editedResource[this.model.currentResource.language] = null;
                     }
                 }
             },

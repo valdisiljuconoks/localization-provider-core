@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.Json;
 using DbLocalizationProvider.AdminUI.AspNetCore.Models;
 using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
@@ -12,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
     [AuthorizeRoles]
-    public class ServiceController : Controller
+    public class ServiceController : ControllerBase
     {
         private readonly UiConfigurationContext _config;
 
@@ -22,15 +23,15 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         }
 
         [HttpGet]
-        public JsonResult Get()
+        public IActionResult Get()
         {
-            return Json(PrepareViewModel());
+            return new ApiResponse(PrepareViewModel());
         }
 
         [HttpGet]
-        public JsonResult GetTree()
+        public ApiResponse GetTree()
         {
-            return Json(PrepareTreeViewModel());
+            return new ApiResponse(PrepareTreeViewModel());
         }
 
         private LocalizationResourceApiTreeModel PrepareTreeViewModel()

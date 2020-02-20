@@ -16,9 +16,11 @@ namespace DbLocalizationProvider.AspNetCore
     {
         private static ICacheManager _cache;
 
-        public static IApplicationBuilder UseDbLocalizationClientsideProvider(this IApplicationBuilder builder, string path = "jsl10n")
+        public static IApplicationBuilder UseDbLocalizationClientsideProvider(
+            this IApplicationBuilder builder,
+            string path = "jsl10n")
         {
-            if(string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
+            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
 
             ClientsideConfigurationContext.SetRootPath(path);
             AppContext.Configure(builder.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
@@ -26,9 +28,11 @@ namespace DbLocalizationProvider.AspNetCore
 
             var cacheManager = builder.ApplicationServices.GetService<ICacheManager>();
             cacheManager.OnRemove += OnOnRemove;
-            builder.ApplicationServices.GetRequiredService<IApplicationLifetime>().ApplicationStopping.Register(() => cacheManager.OnRemove -= OnOnRemove);
+            builder.ApplicationServices.GetRequiredService<IApplicationLifetime>()
+                .ApplicationStopping
+                .Register(() => cacheManager.OnRemove -= OnOnRemove);
 
-            builder.MapWhen(context => context.Request.Path.ToString().StartsWith(ClientsideConfigurationContext.RootPath),
+            builder.MapWhen(context => context.Request.Path.StartsWithSegments("/" + ClientsideConfigurationContext.RootPath),
                             _ => { _.UseMiddleware<RequestHandler>(); });
 
             return builder;

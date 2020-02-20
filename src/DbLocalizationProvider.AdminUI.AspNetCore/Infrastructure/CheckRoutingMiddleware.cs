@@ -9,22 +9,23 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure
     {
         private readonly RequestDelegate _next;
         private static ConcurrentDictionary<string, object> _middlewareNames = new ConcurrentDictionary<string, object>();
+        private static string markerMiddlewareName = typeof(AdminUIMarkerMiddleware).FullName;
 
         public CheckRoutingMiddleware(RequestDelegate next)
         {
             _next = next;
-            var middlewareName = next.Target.GetType().FullName;
-            _middlewareNames.TryAdd(middlewareName, null);
+            var name = next.Target.GetType().FullName;
+            _middlewareNames.TryAdd(name, null);
 
-            if (middlewareName == "DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure.AdminUIMarkerMiddleware")
+            if (name != markerMiddlewareName) return;
+
+            // if `AdminUIMarkerMiddleware` middleware is registered then
+            // AdminUI has been added - let's check if we have routing (mvc or endpoint) in place already
+            if (_middlewareNames.ContainsKey("Microsoft.AspNetCore.Builder.RouterMiddleware")
+                || _middlewareNames.ContainsKey("Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware"))
             {
-                // AdminUi has been added - let's check if we have routing in place already
-                if (!_middlewareNames.ContainsKey("Microsoft.AspNetCore.Builder.RouterMiddleware")
-                    && !_middlewareNames.ContainsKey("Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware"))
-                {
-                    throw new InvalidOperationException(
-                        "Routing has not been initialized. Invoke 'UseDbLocalizationProviderAdminUI' after routing system setup.");
-                }
+                throw new InvalidOperationException(
+                    "Routing has been already initialized. Invoke 'UseDbLocalizationProviderAdminUI' before routing system setup.");
             }
         }
 

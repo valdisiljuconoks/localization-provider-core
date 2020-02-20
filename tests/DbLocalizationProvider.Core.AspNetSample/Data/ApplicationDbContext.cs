@@ -1,10 +1,11 @@
-﻿using DbLocalizationProvider.Core.AspNetSample.Models;
+using DbLocalizationProvider.Core.AspNetSample.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.Core.AspNetSample.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

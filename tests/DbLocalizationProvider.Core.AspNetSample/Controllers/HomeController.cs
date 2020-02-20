@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using DbLocalizationProvider.Core.AspNetSample.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 {
+    [Authorize(Roles = "Administrators")]
     public class HomeController : Controller
     {
         private readonly ILocalizationProvider _provider;
@@ -47,7 +49,14 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 
         public IActionResult Index()
         {
+            var u = ControllerContext.HttpContext.User?.Identity;
+
             ViewData["TestString"] = _provider.GetString(() => Resources.Shared.CommonResources.Yes);
+            return View();
+        }
+
+        public IActionResult Routes()
+        {
             return View();
         }
 
