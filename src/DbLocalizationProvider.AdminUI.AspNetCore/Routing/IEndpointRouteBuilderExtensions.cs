@@ -16,7 +16,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Routing
         /// </summary>
         /// <param name="builder">EndpointRouting builder</param>
         /// <returns>The same builder to support API call chaining</returns>
-        public static IEndpointRouteBuilder MapAdminUI(this IEndpointRouteBuilder builder)
+        public static IEndpointRouteBuilder MapDbLocalizationAdminUI(this IEndpointRouteBuilder builder)
         {
             builder.MapDynamicControllerRoute<AdminUIDynamicRouteValueTransformer>(
                 UiConfigurationContext.Current.RootUrl + "/api/service/{action}");

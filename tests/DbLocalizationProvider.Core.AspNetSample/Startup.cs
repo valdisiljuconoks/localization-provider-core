@@ -3,6 +3,7 @@ using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AspNetCore;
+using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Storage.SqlServer;
@@ -119,17 +120,19 @@ namespace DbLocalizationProvider.Core.AspNetSample
             //         template: "{controller=Home}/{action=Index}/{id?}");
             // });
 
+            app.UseDbLocalizationClientsideProvider("/jsl10n");
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
 
-                endpoints.MapAdminUI();
+                endpoints.MapDbLocalizationAdminUI();
+                endpoints.MapDbLocalizationClientsideProvider();
 
                 endpoints.MapHealthChecks("healthz");
             });
 
-            app.UseDbLocalizationClientsideProvider("/jsl10n");
 
             // app.UseMvc(routes =>
             //                // Enables HTML5 history mode for Vue app

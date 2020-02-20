@@ -7,6 +7,7 @@ using DbLocalizationProvider.Cache;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using AppContext = DbLocalizationProvider.AspNetCore.ClientsideProvider.AppContext;
 
@@ -32,8 +33,8 @@ namespace DbLocalizationProvider.AspNetCore
                 .ApplicationStopping
                 .Register(() => cacheManager.OnRemove -= OnOnRemove);
 
-            builder.MapWhen(context => context.Request.Path.StartsWithSegments("/" + ClientsideConfigurationContext.RootPath),
-                            _ => { _.UseMiddleware<RequestHandler>(); });
+            // builder.UseWhen(context => context.Request.Path.StartsWithSegments("/" + ClientsideConfigurationContext.RootPath),
+            //                 _ => { _.UseMiddleware<RequestHandler>(); });
 
             return builder;
         }
