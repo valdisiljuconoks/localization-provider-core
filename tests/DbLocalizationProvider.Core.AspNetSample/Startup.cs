@@ -76,7 +76,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
             services.AddDbLocalizationProviderAdminUI(_ =>
             {
                 _.RootUrl = "/localization-admin";
-                _.AuthorizedAdminRoles.Add("Admin");
+                _.AuthorizedAdminRoles.Add("Admins");
+                _.AuthorizedEditorRoles.Add("Translators");
                 _.ShowInvariantCulture = true;
                 _.ShowHiddenResources = false;
                 _.DefaultView = ResourceListView.Tree;
