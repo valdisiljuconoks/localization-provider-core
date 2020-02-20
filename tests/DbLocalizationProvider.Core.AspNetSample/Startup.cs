@@ -110,17 +110,18 @@ namespace DbLocalizationProvider.Core.AspNetSample
 
             app.UseDbLocalizationProvider();
             app.UseDbLocalizationProviderAdminUI();
+            app.UseDbLocalizationClientsideProvider();
 
             // app.UseMvc(routes =>
             // {
-            //     routes.MapAdminUI();
+            //     routes.MapDbLocalizationAdminUI();
+            //     routes.MapDbLocalizationClientsideProvider();
             //
             //     routes.MapRoute(
             //         name: "default",
             //         template: "{controller=Home}/{action=Index}/{id?}");
             // });
 
-            app.UseDbLocalizationClientsideProvider("/jsl10n");
 
             app.UseEndpoints(endpoints =>
             {

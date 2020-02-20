@@ -30,38 +30,40 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
             context.Response.ContentType = "application/javascript";
 
             var languageName = !context.Request.Query.ContainsKey("lang")
-                                   ? CultureInfo.CurrentUICulture.Name
-                                   : context.Request.Query["lang"].ToString();
+                ? CultureInfo.CurrentUICulture.Name
+                : context.Request.Query["lang"].ToString();
 
             var filename = ExtractFileName(context);
 
-            if(filename == ClientsideConfigurationContext.DeepMergeScriptName)
+            if (filename == ClientsideConfigurationContext.DeepMergeScriptName)
                 return
                     "/* https://github.com/KyleAMathews/deepmerge */ var jsResourceHandler=function(){function r(r){return!(c=r,!c||'object'!=typeof c||(t=r,n=Object.prototype.toString.call(t),'[object RegExp]'===n||'[object Date]'===n||(o=t,o.$$typeof===e)));var t,n,o,c}var e='function'==typeof Symbol&&Symbol.for?Symbol.for('react.element'):60103;function t(e,t){var n;return(!t||!1!==t.clone)&&r(e)?o((n=e,Array.isArray(n)?[]:{}),e,t):e}function n(r,e,n){return r.concat(e).map(function(r){return t(r,n)})}function o(e,c,a){var u,f,y,i,b=Array.isArray(c);return b===Array.isArray(e)?b?((a||{arrayMerge:n}).arrayMerge||n)(e,c,a):(f=c,y=a,i={},r(u=e)&&Object.keys(u).forEach(function(r){i[r]=t(u[r],y)}),Object.keys(f).forEach(function(e){r(f[e])&&u[e]?i[e]=o(u[e],f[e],y):i[e]=t(f[e],y)}),i):t(c,a)}return{deepmerge:function(r,e,t){return o(r,e,t)}}}();";
 
             var debugMode = context.Request.Query.ContainsKey("debug");
             var camelCase = context.Request.Query.ContainsKey("camel");
-            var alias = !context.Request.Query.ContainsKey("alias") ? ClientsideConfigurationContext.DefaultAlias : context.Request.Query["alias"].ToString();
+            var alias = !context.Request.Query.ContainsKey("alias")
+                ? ClientsideConfigurationContext.DefaultAlias
+                : context.Request.Query["alias"].ToString();
             var cacheKey = CacheHelper.GenerateKey(filename, languageName, debugMode, camelCase);
             var cache = context.RequestServices.GetService<ICacheManager>();
 
             // trying to detect response format
             var windowAlias = true;
-            if(context.Request.Query.ContainsKey("json"))
+            if (context.Request.Query.ContainsKey("json"))
                 windowAlias = false;
-            else
-                if(context.Request.Headers.ContainsKey("X-Requested-With") && context.Request.Headers["X-Requested-With"].Contains("XMLHttpRequest"))
-                    windowAlias = false;
-                else if(context.Request.GetTypedHeaders().Accept.Contains(new MediaTypeHeaderValue("application/json")))
-                    windowAlias = false;
+            else if (context.Request.Headers.ContainsKey("X-Requested-With") &&
+                     context.Request.Headers["X-Requested-With"].Contains("XMLHttpRequest"))
+                windowAlias = false;
+            else if (context.Request.GetTypedHeaders().Accept.Contains(new MediaTypeHeaderValue("application/json")))
+                windowAlias = false;
 
-            if(!(cache.Get(cacheKey) is string responseObject))
+            if (!(cache.Get(cacheKey) is string responseObject))
             {
                 responseObject = GetJson(filename, languageName, debugMode, camelCase);
                 cache.Insert(cacheKey, responseObject, false);
             }
 
-            if(windowAlias)
+            if (windowAlias)
                 responseObject = $"window.{alias} = jsResourceHandler.deepmerge(window.{alias} || {{}}, {responseObject})";
             else
                 context.Response.ContentType = "application/json";
@@ -74,10 +76,10 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
             var settings = new JsonSerializerSettings();
             var _converter = new JsonConverter();
 
-            if(camelCase)
+            if (camelCase)
                 settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
-            if(debugMode)
+            if (debugMode)
                 settings.Formatting = Formatting.Indented;
 
             return JsonConvert.SerializeObject(_converter.GetJson(filename, languageName, camelCase), settings);

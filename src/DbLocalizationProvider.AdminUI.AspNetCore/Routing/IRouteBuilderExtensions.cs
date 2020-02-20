@@ -16,7 +16,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Routing
         /// </summary>
         /// <param name="builder">Mvc route  builder</param>
         /// <returns><see cref="IRouteBuilder"/> to support API call chaining</returns>
-        public static IRouteBuilder MapAdminUI(this IRouteBuilder builder)
+        public static IRouteBuilder MapDbLocalizationAdminUI(this IRouteBuilder builder)
         {
             builder.MapRoute("AdminUI API Route",
                              UiConfigurationContext.Current.RootUrl + "/api/{controller=Service}/{action=Index}");
