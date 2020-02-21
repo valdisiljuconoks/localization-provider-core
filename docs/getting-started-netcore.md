@@ -17,18 +17,16 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        // add basic localization support
-        services.AddLocalization();
-
         // add localization to Mvc
-        services.AddMvc()
-                .AddViewLocalization()
-                .AddDataAnnotationsLocalization();
+        services.AddControllersWithViews()
+                .AddMvcLocalization();
 
         services.AddDbLocalizationProvider(cfg =>
         {
             cfg...
         });
+
+        services.AddRouting();
     }
 }
 ```
@@ -46,6 +44,7 @@ Following configuration options are available:
 | EnableInvariantCultureFallback | Gets or sets flag to enable or disable invariant culture fallback (to use resource values discovered & registered from code). |
 | EnableLocalization | Gets or sets the callback function for enabling or disabling localization. If this returns `false` - requested resource key will be returned as translation. |
 | Export | Gets or sets settings used for export of the resources. |
+| FallbackCultures | Using this list you can configure language fallback settings. |
 | ForeignResources | Gets or sets collection of foreign resources. Foreign resource descriptors are used to include classes without `[LocalizedResource]` or `[LocalizedModel]` attributes. |
 | Import | Gets or sets settings to be used during resource import. |
 | ModelMetadataProviders | Settings for model metadata providers. |
@@ -63,7 +62,6 @@ Following `ModelMetadataProviders` configuration options are available:
 | ReplaceProviders | Gets or sets a value to replace ModelMetadataProvider to use new db localization system. |
 | RequiredFieldResource | If `MarkRequiredFields` is set to `true`, return of this method will be used to indicate required fields (added at the end of label). |
 | UseCachedProviders | Gets or sets a value to use cached version of ModelMetadataProvider. |
-
 
 
 After then you will need to make sure that you start using the provider:

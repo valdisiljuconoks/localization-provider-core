@@ -12,7 +12,7 @@ namespace DbLocalizationProvider.AspNetCore
     {
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
-            var logger = builder.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
+            var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
             if (logger != null) ConfigurationContext.Current.Logger = new LoggerAdapter(logger);
 
             // if we need to sync - then it's good time to do it now

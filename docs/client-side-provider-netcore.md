@@ -1,10 +1,9 @@
 # Client-side Localization
 
 Starting with v5.4.1 version of the [LocalizationProvider package for .NET Core](https://www.nuget.org/packages/LocalizationProvider.AspNetCore/), it's now possible to work with translations also on client-side.
+In version v6 some of the additional features have been introduced.
 
 ## Getting Started
-
-Let's get started.
 
 First of all you need to initialize and add client-side resource handler to your application. As usual in .NET Core apps this done via `Startup.cs` file:
 
@@ -24,8 +23,59 @@ public class Startup
         app.UseDbLocalizationProvider();
         app.UseDbLocalizationClientsideProvider();
     }
+}
+```
 
+Next step is to map middleware on particular path (by default `/jsl10n`).
+Depending on your routing system (either old school Mvc router or Endpoint routing) different methods needs to be called.
+
+For **old MVC Routing**:
+
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+   services
+       .AddControllersWithViews(opt => opt.EnableEndpointRouting = false)
+       .AddMvcLocalization();
+       
+   services.AddRouting();
+   ...
+}
+
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
     ...
+    app.UseMvc(routes =>
+    {
+        routes.MapDbLocalizationClientsideProvider();
+
+        routes.MapRoute(
+            name: "default",
+            template: "{controller=Home}/{action=Index}/{id?}");
+    });
+}
+```
+
+For **Endpoint routing**:
+
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+   services.AddRouting();
+   ...
+}
+
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    app.UseRouting();
+    ...
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+        ...
+
+        endpoints.MapDbLocalizationClientsideProvider();
+    });
 }
 ```
 
@@ -103,7 +153,3 @@ For example, issuing request straight to resource endpoint and providing `json` 
 ![2019-03-09_09-05-30](https://blog.tech-fellow.net/content/images/2019/03/2019-03-09_09-05-30.png)
 
 Or you can just fire any standard XHR request and localization provider will try its best to detect that request is of ajax type. If so - translations will be served in JSON format by default.
-
-```
-
-```
