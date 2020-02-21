@@ -18,7 +18,7 @@ Giving you main following features:
 * Supports hierarchical resources (with help of child classes)
 
 ## What's new in v6?
-Please [refer to this post]() to read more about new features in v6.
+Please [refer to this post](https://blog.tech-fellow.net/2020/02/21/localization-provider-major-6/) to read more about new features in v6.
 
 ## Project Structure
 
