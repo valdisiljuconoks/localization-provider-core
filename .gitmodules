@@ -1,5 +1,4 @@
 [submodule "lib/localization-provider"]
 	path = lib/localization-provider
 	url = https://github.com/valdisiljuconoks/LocalizationProvider.git
-	branch = 6.0
-
+	branch = master
