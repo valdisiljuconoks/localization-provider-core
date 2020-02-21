@@ -340,7 +340,7 @@ new Vue({
                 titleKey: resource.titleKey,
                 key: resource.resourceKey,
                 translation: translation,
-                lang: lang,
+                language: lang,
                 isModified: resource.isModified,
                 _ref: resource
             };
@@ -353,7 +353,7 @@ new Vue({
             axios.post('../api/service/save', this.currentResource);
 
             // update viewmodel
-            this.currentResource._ref['translation-' + this.currentResource.lang] = this.currentResource.translation;
+            this.currentResource._ref['translation-' + this.currentResource.language] = this.currentResource.translation;
             this.currentResource._ref.isModified = true;
         },
 
@@ -363,7 +363,7 @@ new Vue({
                 axios.post('../api/service/remove', this.currentResource);
 
                 // update viewmodel
-                this.currentResource._ref['translation-' + this.currentResource.lang] = null;
+                this.currentResource._ref['translation-' + this.currentResource.language] = null;
             }
         },
 

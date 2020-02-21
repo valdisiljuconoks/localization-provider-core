@@ -1,20 +1,20 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
+using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AspNetCore;
-using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
+using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
 using DbLocalizationProvider.Core.AspNetSample.Data;
-using DbLocalizationProvider.Core.AspNetSample.Models;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
-using DbLocalizationProvider.Core.AspNetSample.Services;
+using DbLocalizationProvider.Storage.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.Core.AspNetSample
@@ -31,79 +31,122 @@ namespace DbLocalizationProvider.Core.AspNetSample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(
+                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                    .AddEntityFrameworkStores<ApplicationDbContext>()
-                    .AddDefaultTokenProviders();
+            services
+                .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddTransient<IEmailSender, EmailSender>();
+            services
+                .AddControllersWithViews( /*opt => opt.EnableEndpointRouting = false*/ )
+                .AddMvcLocalization();
 
-            services.AddMvc()
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                    .AddViewLocalization()
-                    .AddDataAnnotationsLocalization();
+            services.AddAuthorization();
+            services.AddRazorPages();
+            services.AddRouting();
+            services.AddHealthChecks();
+
+            services.AddLogging(c =>
+            {
+                c.AddConsole();
+                c.AddDebug();
+            });
+
+            var supportedCultures = new List<CultureInfo> { new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
 
             services.Configure<RequestLocalizationOptions>(opts =>
-                                                           {
-                                                               var supportedCultures = new List<CultureInfo>
-                                                                                       {
-                                                                                           new CultureInfo("en"),
-                                                                                           new CultureInfo("no")
-                                                                                       };
-
-                                                               opts.DefaultRequestCulture = new RequestCulture("en");
-                                                               opts.SupportedCultures = supportedCultures;
-                                                               opts.SupportedUICultures = supportedCultures;
-                                                           });
+            {
+                opts.DefaultRequestCulture = new RequestCulture("en");
+                opts.SupportedCultures = supportedCultures;
+                opts.SupportedUICultures = supportedCultures;
+            });
 
             services.AddDbLocalizationProvider(_ =>
-                                               {
-                                                   _.EnableInvariantCultureFallback = true;
-                                                   _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
-                                                   _.Connection = "DefaultConnection";
-                                                   _.ScanAllAssemblies = true;
-                                               });
+            {
+                _.EnableInvariantCultureFallback = true;
+                _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
+                _.ScanAllAssemblies = true;
+                _.FallbackCultures.Try(supportedCultures);
+
+                //.Try(new CultureInfo("sv"))
+                //.Then(new CultureInfo("no"))
+                //.Then(new CultureInfo("en"));
+
+                _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
             services.AddDbLocalizationProviderAdminUI(_ =>
-                                                      {
-                                                          _.RootUrl = "/localization-admin";
-                                                          _.AuthorizedAdminRoles.Add("Admin");
-                                                          _.ShowInvariantCulture = true;
-                                                          _.ShowHiddenResources = false;
-                                                          _.DefaultView = ResourceListView.Tree;
-                                                          _.CustomCssPath = "/css/custom-adminui.css";
-                                                      });
+            {
+                _.RootUrl = "/localization-admin";
+                _.AuthorizedAdminRoles.Add("Admins");
+                _.AuthorizedEditorRoles.Add("Translators");
+                _.ShowInvariantCulture = true;
+                _.ShowHiddenResources = false;
+                _.DefaultView = ResourceListView.Tree;
+                _.CustomCssPath = "/css/custom-adminui.css";
+            });
+
+            //.VerifyDbLocalizationProviderAdminUISetup();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if(env.IsDevelopment())
+            if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
             var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(options.Value);
 
+            app.UseRouting();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();
-            app.UseMvc(routes =>
-                       {
-                           routes.MapRoute(
-                                           name: "default",
-                                           template: "{controller=Home}/{action=Index}/{id?}");
-                       });
+            app.UseAuthorization();
 
             app.UseDbLocalizationProvider();
-            app.UseDbLocalizationClientsideProvider(path: "/jsl10n");
             app.UseDbLocalizationProviderAdminUI();
+            app.UseDbLocalizationClientsideProvider();
+
+            // app.UseMvc(routes =>
+            // {
+            //     routes.MapDbLocalizationAdminUI();
+            //     routes.MapDbLocalizationClientsideProvider();
+            //
+            //     routes.MapRoute(
+            //         name: "default",
+            //         template: "{controller=Home}/{action=Index}/{id?}");
+            // });
+
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
+
+                endpoints.MapDbLocalizationAdminUI();
+                endpoints.MapDbLocalizationClientsideProvider();
+
+                endpoints.MapHealthChecks("healthz");
+            });
+
+
+            // app.UseMvc(routes =>
+            //                // Enables HTML5 history mode for Vue app
+            //                // Ref: https://weblog.west-wind.com/posts/2017/aug/07/handling-html5-client-route-fallbacks-in-aspnet-core
+            //                routes.MapRoute(
+            //                    name: "catch-all",
+            //                    template: "{*url}",
+            //                    defaults: new { controller = "Home", action = "Index" }));
         }
     }
 }

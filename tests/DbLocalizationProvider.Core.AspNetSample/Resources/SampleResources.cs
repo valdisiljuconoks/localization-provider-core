@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DbLocalizationProvider;
+using DbLocalizationProvider.Abstractions;
 
 namespace MyProject
 {
@@ -7,6 +8,19 @@ namespace MyProject
     public class SampleResources
     {
         public static string PageHeader => "This is page header";
+    }
+
+    [LocalizedResource]
+    public class ResourcesForFallback
+    {
+        [TranslationForCulture("Det er på norsk", "no")]
+        public static string OnlyInNorwegian => "Only in Norwegian (Invariant)";
+
+        public static string OnlyInInvariant => "Only in Invariant";
+
+        [TranslationForCulture("In Swedish and English (SV)", "sv")]
+        [TranslationForCulture("In Swedish and English (EN)", "en")]
+        public static string InSwedishAndEnglishInvariant => "In Swedish and English (INV)";
     }
 
 

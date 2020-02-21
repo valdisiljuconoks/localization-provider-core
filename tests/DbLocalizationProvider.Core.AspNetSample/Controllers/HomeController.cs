@@ -1,23 +1,28 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using DbLocalizationProvider.Core.AspNetSample.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 {
+    [Authorize(Roles = "Administrators")]
     public class HomeController : Controller
     {
-        private readonly LocalizationProvider _provider;
+        private readonly ILocalizationProvider _provider;
+        private readonly ILogger _logger;
 
-        public HomeController(LocalizationProvider provider, IOptions<MvcOptions> options)
+        public HomeController(ILocalizationProvider provider, IOptions<MvcOptions> options, ILogger<HomeController> logger)
         {
             _provider = provider;
+            _logger = logger;
 
             var asms = GetAssemblies().Where(a => a.FullName.Contains("DbLocalizationProvider"));
         }
@@ -47,7 +52,14 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 
         public IActionResult Index()
         {
+            var u = ControllerContext.HttpContext.User?.Identity;
+
             ViewData["TestString"] = _provider.GetString(() => Resources.Shared.CommonResources.Yes);
+            return View();
+        }
+
+        public IActionResult Routes()
+        {
             return View();
         }
 

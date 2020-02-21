@@ -5,6 +5,8 @@
 @using DbLocalizationProvider.Core.AspNetSample.Resources
 @using Microsoft.AspNetCore.Localization
 @using Microsoft.AspNetCore.Mvc.Localization
+@using MyProject
+@using SampleResources = DbLocalizationProvider.Core.AspNetSample.Resources.SampleResources
 @model UserViewModel
 @inject IViewLocalizer Localizer
 @inject LocalizationProvider Provider
@@ -39,9 +41,6 @@
 
 <div>Translate&lt;SampleResources&gt;(PageHeader2) - @localized.PageHeader2</div>
 <div>ViewData["TestString"] ("Shared.Yes") = @ViewData["TestString"]</div>
-<div>ViewData["TestString2"] = @ViewData["TestString2"]</div>
-<div>ViewData["TestString3"] (injected LocalizationProvider) = @ViewData["TestString3"]</div>
-<div>ViewData["TestString4"] (IHtmlLocalizer) = @ViewData["TestString4"]</div>
 <div>IViewLocalizer.GetString() = @Localizer.GetString(() => SampleResources.PageHeader)</div>
 <div>IViewLocalizer["..."] = @Localizer["DbLocalizationProvider.Core.AspNetSample.Resources.SampleResources.PageHeader"]</div>
 <div>IHtmlLocalizer&lt;T&gt;.GetString() = @Localizer2.GetString(r => r.PageHeader2)</div>
@@ -94,6 +93,18 @@
 </div>
 <div>
     <span>This is coming from AJAX call to jsl10n endpoint with JSON parameter (MyProject.ContainerClass+NestedClass+TheResourceClass.SomeKey):</span><span id="theJsPlaceholder5"></span>
+</div>
+
+<hr/>
+
+<div>
+    Requesting translation in Swedish (should be in norsk) - @Localizer.GetStringByCulture(() => ResourcesForFallback.OnlyInNorwegian, new CultureInfo("sv"))
+</div>
+<div>
+    Requesting translation in non existing language (should be in invariant) - @Localizer.GetStringByCulture(() => ResourcesForFallback.OnlyInInvariant, new CultureInfo("ee"))
+</div>
+<div>
+    Requesting translation in norsk (should be swedish) - @Localizer.GetStringByCulture(() => ResourcesForFallback.InSwedishAndEnglishInvariant, new CultureInfo("no"))
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>

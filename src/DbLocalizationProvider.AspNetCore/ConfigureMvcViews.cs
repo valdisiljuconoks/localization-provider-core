@@ -1,3 +1,6 @@
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Licensed under Apache-2.0. See the LICENSE file in the project root for more information
+
 using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
@@ -16,7 +19,7 @@ namespace DbLocalizationProvider.AspNetCore
 
         public void Configure(MvcViewOptions options)
         {
-            options.ClientModelValidatorProviders.Insert(0, new LocalizedClientModelValidator(_validationAttributeAdapterProvider));
+            //options.ClientModelValidatorProviders.Insert(0, new LocalizedClientModelValidator(_validationAttributeAdapterProvider));
         }
     }
 }
