@@ -26,10 +26,6 @@ namespace DbLocalizationProvider.AspNetCore
                 ConfigurationContext.Current.Logger?.Info($"{nameof(ConfigurationContext.Current.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
             }
 
-            // in cases when there has been already a call to LocalizationProvider.Current (some static weird things)
-            // and only then setup configuration is ran - here we need to reset instance once again with new settings
-            LocalizationProvider.Initialize();
-
             return builder;
         }
     }
