@@ -13,17 +13,17 @@ namespace DbLocalizationProvider.AspNetCore
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
             var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
-            if (logger != null) ConfigurationContext.Current.Logger = new LoggerAdapter(logger);
+            var context = ConfigurationContext.Current;
+
+            if (logger != null) context.Logger = new LoggerAdapter(logger);
 
             // if we need to sync - then it's good time to do it now
-            if(ConfigurationContext.Current.DiscoverAndRegisterResources)
+            var sync = new Synchronizer();
+            sync.SyncResources(context.DiscoverAndRegisterResources);
+
+            if (!context.DiscoverAndRegisterResources)
             {
-                var sync = new Synchronizer();
-                sync.SyncResources();
-            }
-            else
-            {
-                ConfigurationContext.Current.Logger?.Info($"{nameof(ConfigurationContext.Current.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
+                context.Logger?.Info($"{nameof(context.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
             }
 
             return builder;
