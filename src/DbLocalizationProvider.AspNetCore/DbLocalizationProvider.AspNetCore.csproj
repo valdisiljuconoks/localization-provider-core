@@ -8,6 +8,7 @@
     <Authors>Valdis Iljuconoks, https://tech-fellow.net</Authors>
     <Company>Valdis Iljuconoks, https://tech-fellow.net</Company>
     <Product>DbLocalizationProvider</Product>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Database driven localization provider. Asp.Net Core support package</Description>
     <Copyright>Tech Fellow Consulting, Copyright © 2020</Copyright>
     <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
