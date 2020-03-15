@@ -8,8 +8,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore
 {
-    public static class IApplicationBuilderExtensions
+    /// <summary>
+    /// Extension points
+    /// </summary>
+    public static class InitializationExtensions
     {
+        /// <summary>
+        /// Synchronizes resources with underlying storage
+        /// </summary>
+        public static void UseDbLocalizationProvider()
+        {
+            UseDbLocalizationProvider(null);
+        }
+
+        /// <summary>
+        /// Synchronizes resources with underlying storage
+        /// </summary>
+        /// <param name="builder">ASP.NET Core application builder</param>
+        /// <returns>ASP.NET Core application builder to enable fluent API call chains</returns>
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
             var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();

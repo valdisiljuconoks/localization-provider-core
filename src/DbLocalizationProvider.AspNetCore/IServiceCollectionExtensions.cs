@@ -16,8 +16,17 @@ using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AspNetCore
 {
+    /// <summary>
+    /// Extension for adding localization provider services to the collection
+    /// </summary>
     public static class IServiceCollectionExtensions
     {
+        /// <summary>
+        /// Adds the database localization provider.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        /// <param name="setup">The setup.</param>
+        /// <returns></returns>
         public static IServiceCollection AddDbLocalizationProvider(this IServiceCollection services, Action<ConfigurationContext> setup = null)
         {
             // setup default implementations
