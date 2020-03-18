@@ -26,10 +26,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{07147348-CBC2-45C3-800B-5D970EF005D2}"
 	ProjectSection(SolutionItems) = preProject
 		docs\client-side-provider-netcore.md = docs\client-side-provider-netcore.md
-		getting-started-adminui.md = getting-started-adminui.md
 		docs\getting-started-netcore.md = docs\getting-started-netcore.md
 		docs\localizing-content-netcore.md = docs\localizing-content-netcore.md
 		docs\localizing-viewmodel-netcore.md = docs\localizing-viewmodel-netcore.md
+		docs\getting-started-adminui.md = docs\getting-started-adminui.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AdminUI.AspNetCore", "src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj", "{EFBEF627-654F-4A18-B9FA-4F4486539C06}"
