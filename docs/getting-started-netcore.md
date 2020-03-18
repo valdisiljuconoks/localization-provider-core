@@ -2,7 +2,7 @@
 ## Install Package
 
 ```
-PM> Install-Package LocalizationProvider.AspNetCore
+> dotnet add package LocalizationProvider.AspNetCore
 ```
 
 ## Configure Services

@@ -1,104 +1,140 @@
-## Installation
+# Getting Started with AdminUI for Asp.Net Core
 
-The only thing you need to do to get started is to install following package.
+## Install Package
 
 ```
-PM> Install-Package LocalizationProvider.AdminUI.AspNetCore
+> dotnet add package LocalizationProvider.AdminUI.AspNetCore
 ```
 
-It will also bring down all the other necessary packages for library to work correctly.
+## Configure Services
 
-## Setup & Customization
+In order to add AdminUI module to your Asp.Net Core Mvc application you have to first add services to dependency container (service collection) via `services.AddDbLocalizationProviderAdminUI()` method:
 
-Essentially there are 2 parts of the whole setup process:
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddControllersWithViews()
+            .AddMvcLocalization();
+    
+        services.AddRazorPages();
+        services.AddRouting();
 
-* Configure Services
-* Configure Library
+        ...
 
-Configuration of the services is part of the Asp.Net Core dependency injection process setup. So to add AdminUI to you application you need (in `Startup.cs`):
+        services.AddDbLocalizationProvider(cfg =>
+        {
+            cfg...
+        });
 
-### Configure Localization Provider Services
+        services.AddDbLocalizationProviderAdminUI(c =>
+        {
+            ...
+            c.ShowInvariantCulture = true;
+        });
+    }
+}
+```
+
+You can also configure AdminUI according to your requirements by using passed in UI configuration context (`UiConfigurationContext`).
+When you are done with adding these services, next you need to map AdminUI module under some path.
+
+Starting from v6 there are few changes how AdminUI is mapped.
+
+For **old MVC Routing**:
+
+```csharp
+public class Startup
+{
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationProviderAdminUI();
+
+        ...
+        app.UseMvc(routes =>
+        {
+            routes.MapDbLocalizationAdminUI();
+        });
+    }
+}
+```
+
+For **Endpoint routing**:
+
+```csharp
+public class Startup
+{
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationProviderAdminUI();
+
+        ...
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            ...
+
+            endpoints.MapDbLocalizationAdminUI();
+        });
+    }
+}
+```
+
+## Accessing AdminUI
+
+By default administration UI is mapped on `/localization-admin` path. You can customize path via `app.AddDbLocalizationProviderAdminUI();`. For example to map to `/loc-admin-ui`, you have to:
+
+```
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddDbLocalizationProviderAdminUI(_ =>
+        {
+            _.RootUrl = "/loc-admin-ui";
+        });
+    }
+}
+```
+
+## Securing Admin UI
+
+AdminUI by default is secured via roles which you can configure yourself via `Configure` method on startup:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddLocalization();
-    services.AddMvc()
-        .AddViewLocalization()
-        .AddDataAnnotationsLocalization();
-
-    // just adding English and Norwegian support
-    services.Configure<RequestLocalizationOptions>(opts =>
+    services.AddDbLocalizationProviderAdminUI(_ =>
     {
-        var supportedCultures = new List<CultureInfo>
-                                {
-                                    new CultureInfo("en"),
-                                    new CultureInfo("no")
-                                };
-
-        opts.DefaultRequestCulture = new RequestCulture("en");
-        opts.SupportedCultures = supportedCultures;
-        opts.SupportedUICultures = supportedCultures;
+        ...
+        _.AuthorizedAdminRoles.Add("Admins");
+        _.AuthorizedEditorRoles.Add("Translators");
     });
 }
-
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-    var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
-    app.UseRequestLocalization(options.Value);
-
-}
 ```
 
-### Setup Library
-
-And when built-in support is configured, you can now add support for DbLocalizationProvider library (again in `Startup.cs`):
+In order for you to get this working, if you are using ASP.NET Identity infrastructure - you need to enable roles based access in your setup:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-   services.AddDbLocalizationProvider(_ =>
-   {
-       ...
-   });
-   
-   services.AddDbLocalizationProviderAdminUI(_ =>
-   {
-       ...
-   });
-}
-```
-
-Through these methods you can customize behavior for the library and AdminUI component.
-
-And when you are done with customization, you need to add those to the application:
-
-```csharp
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-   app.UseDbLocalizationProvider();
-   app.UseDbLocalizationProviderAdminUI();
-}
-```
-
-## Accessing UI
-
-When everything is setup correctly and Asp.Net Core runtime does not blame you for incorrect configuration, you may access AdminUI via `.../localization-admin` url (by default).
-
-![](aspnetcore-admin-ui.jpg)
-
-### Change Default Route for AdminUI
-
-By default AdminUI is mapped to `/localization-admin` url. If you want to change url for the AdminUI application -> just specify if via `AddDbLocalizationProviderAdminUI` configuration method:
-
-```
-public void ConfigureServices(IServiceCollection services)
-{
-    ...
-    services.AddDbLocalizationProviderAdminUI(_ =>
-                                              {
-                                                  _.RootUrl = "/localization-admin";
-                                                  ...
-                                              });
+    services.AddDbContext<...>(...);
+    
+    services
+        .AddDefaultIdentity<...>(...)
+        .AddRoles<IdentityRole>();
 }
 ```
