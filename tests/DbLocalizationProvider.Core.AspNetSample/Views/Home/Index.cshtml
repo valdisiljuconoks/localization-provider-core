@@ -98,13 +98,16 @@
 <hr/>
 
 <div>
-    Requesting translation in Swedish (should be in norsk) - @Localizer.GetStringByCulture(() => ResourcesForFallback.OnlyInNorwegian, new CultureInfo("sv"))
+    Requesting translation (Key: `ResourcesForFallback.OnlyInNorwegian`) in Swedish (should be in norsk) - @Localizer.GetStringByCulture(() => ResourcesForFallback.OnlyInNorwegian, new CultureInfo("sv"))
 </div>
 <div>
     Requesting translation in non existing language (should be in invariant) - @Localizer.GetStringByCulture(() => ResourcesForFallback.OnlyInInvariant, new CultureInfo("ee"))
 </div>
 <div>
-    Requesting translation in norsk (should be swedish) - @Localizer.GetStringByCulture(() => ResourcesForFallback.InSwedishAndEnglishInvariant, new CultureInfo("no"))
+    Requesting translation in norsk (should be english - as english is closer to the end of the fallback languages) - @Localizer.GetStringByCulture(() => ResourcesForFallback.InSwedishAndEnglishInvariant, new CultureInfo("no"))
+</div>
+<div>
+    Requesting translation in swedish (should be invariant- as there is no translation at all) - @Provider.GetStringByCulture(() => ResourcesForFallback.OnlyInInvariant, new CultureInfo("sv"))
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>

@@ -66,6 +66,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
             services.AddDbLocalizationProvider(_ =>
             {
                 _.EnableInvariantCultureFallback = true;
+                _.DefaultResourceCulture = CultureInfo.InvariantCulture;
                 _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
                 _.ScanAllAssemblies = true;
                 _.FallbackCultures.Try(supportedCultures);

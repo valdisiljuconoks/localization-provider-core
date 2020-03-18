@@ -2,6 +2,8 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
+using System.Globalization;
+using System.Linq;
 using DbLocalizationProvider.AspNetCore.Cache;
 using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
@@ -29,9 +31,10 @@ namespace DbLocalizationProvider.AspNetCore
         /// <returns></returns>
         public static IServiceCollection AddDbLocalizationProvider(this IServiceCollection services, Action<ConfigurationContext> setup = null)
         {
-            // setup default implementations
-            var factory = ConfigurationContext.Current.TypeFactory;
+            var ctx = ConfigurationContext.Current;
+            var factory = ctx.TypeFactory;
 
+            // setup default implementations
             factory.ForQuery<GetAllResources.Query>().DecorateWith<CachedGetAllResourcesHandler>();
             factory.ForQuery<DetermineDefaultCulture.Query>().SetHandler<DetermineDefaultCulture.Handler>();
             factory.ForCommand<ClearCache.Command>().SetHandler<ClearCacheHandler>();
@@ -42,24 +45,30 @@ namespace DbLocalizationProvider.AspNetCore
             var cache = provider.GetService<IMemoryCache>();
             if(cache != null)
             {
-                ConfigurationContext.Current.CacheManager = new InMemoryCacheManager(cache);
-                services.AddSingleton(ConfigurationContext.Current.CacheManager);
+                ctx.CacheManager = new InMemoryCacheManager(cache);
+                services.AddSingleton(ctx.CacheManager);
             }
 
             // run custom configuration setup (if any)
-            setup?.Invoke(ConfigurationContext.Current);
+            setup?.Invoke(ctx);
 
+            // adding mvc localization stuff
             services.AddSingleton<IStringLocalizerFactory, DbStringLocalizerFactory>();
             services.AddSingleton(_ => LocalizationProvider.Current);
             services.AddSingleton<ILocalizationProvider>(_ => LocalizationProvider.Current);
 
+            // we need to check whether invariant fallback is correctly configured
+            if (ctx.EnableInvariantCultureFallback && !ctx.FallbackCultures.Contains(CultureInfo.InvariantCulture))
+            {
+                ctx.FallbackCultures.Then(CultureInfo.InvariantCulture);
+            }
+
             // setup model metadata providers
-            if(ConfigurationContext.Current.ModelMetadataProviders.ReplaceProviders)
+            if(ctx.ModelMetadataProviders.ReplaceProviders)
             {
                 services.Configure<MvcOptions>(_ =>
                                                {
                                                    _.ModelMetadataDetailsProviders.Add(new LocalizedDisplayMetadataProvider());
-                                                   //_.ModelValidatorProviders.Add(new LocalizedValidationMetadataProvider());
                                                });
 
                 services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
