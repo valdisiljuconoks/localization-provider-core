@@ -13,13 +13,15 @@ In order to add AdminUI module to your Asp.Net Core Mvc application you have to 
 ```csharp
 public class Startup
 {
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
     public void ConfigureServices(IServiceCollection services)
     {
+        services
+            .AddControllersWithViews()
+            .AddMvcLocalization();
+    
+        services.AddRazorPages();
+        services.AddRouting();
+
         ...
 
         services.AddDbLocalizationProvider(cfg =>
@@ -36,59 +38,58 @@ public class Startup
 }
 ```
 
-You can also configure AdminUI according to your requirements by using passed in UI configuration context.
-When you are done with adding of the services, next you need to map AdminUI module under path:
-Starting from v6 there are changes now AdminUI is mapped.
+You can also configure AdminUI according to your requirements by using passed in UI configuration context (`UiConfigurationContext`).
+When you are done with adding these services, next you need to map AdminUI module under some path.
+
+Starting from v6 there are few changes how AdminUI is mapped.
 
 For **old MVC Routing**:
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
+public class Startup
 {
-   services
-       .AddControllersWithViews(opt => opt.EnableEndpointRouting = false)
-       .AddMvcLocalization();
-
-    services.AddRouting();
-}
-
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-    ...
-    app.UseMvc(routes =>
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-        routes.MapDbLocalizationAdminUI();
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-        routes.MapRoute(
-            name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
-    });
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationProviderAdminUI();
+
+        ...
+        app.UseMvc(routes =>
+        {
+            routes.MapDbLocalizationAdminUI();
+        });
+    }
 }
 ```
 
 For **Endpoint routing**:
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
+public class Startup
 {
-   services
-       .AddControllersWithViews()
-       .AddMvcLocalization();
-
-   services.AddRouting();
-}
-
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-    app.UseRouting();
-    ...
-    app.UseEndpoints(endpoints =>
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-        endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationProviderAdminUI();
+
         ...
-        
-        endpoints.MapDbLocalizationAdminUI();
-    });
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            ...
+
+            endpoints.MapDbLocalizationAdminUI();
+        });
+    }
 }
 ```
 
@@ -99,11 +100,6 @@ By default administration UI is mapped on `/localization-admin` path. You can cu
 ```
 public class Startup
 {
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddDbLocalizationProviderAdminUI(_ =>
@@ -130,7 +126,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-In order for you to get this working, you need to enable roles based access in your ASP.NET identity setup:
+In order for you to get this working, if you are using ASP.NET Identity infrastructure - you need to enable roles based access in your setup:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)

@@ -39,11 +39,11 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            // mvc stuff
             services
                 .AddControllersWithViews( /*opt => opt.EnableEndpointRouting = false*/ )
                 .AddMvcLocalization();
 
-            services.AddAuthorization();
             services.AddRazorPages();
             services.AddRouting();
             services.AddHealthChecks();

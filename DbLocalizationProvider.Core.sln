@@ -17,11 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "soluition-items", "soluitio
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
-		.travis.yml = .travis.yml
 		_config.yml = _config.yml
-		appveyor.yml = appveyor.yml
 		build-packages.ps1 = build-packages.ps1
-		global.json = global.json
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection

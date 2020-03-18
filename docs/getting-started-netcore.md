@@ -1,5 +1,4 @@
 # Getting Started (Asp.Net Core)
-
 ## Install Package
 
 ```
@@ -17,16 +16,19 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        // add localization to Mvc
-        services.AddControllersWithViews()
-                .AddMvcLocalization();
-
+        // add your authorization provider (asp.net identity, identity server, which ever..)
+    
+        services
+            .AddControllersWithViews()
+            .AddMvcLocalization();
+    
+        services.AddRouting();
+    
         services.AddDbLocalizationProvider(cfg =>
         {
-            cfg...
+            cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            ...
         });
-
-        services.AddRouting();
     }
 }
 ```
@@ -35,33 +37,48 @@ Following configuration options are available:
 
 | Option | Description |
 |------|------|
-| CacheManager | Gets or sets cache manager used to store resources and translations (`InMemory` by default) |
-| Connection | Gets or sets the *name* of the database connection (e.g. `"DefaultConnection"`). |
-| CustomAttributes | Gets or sets list of custom attributes that should be discovered and registered during startup scanning. |
-| DefaultResourceCulture | Gets or sets the default resource culture to register translations for newly discovered resources. |
-| DiagnosticsEnabled | Gets or sets value enabling or disabling diagnostics for localization provider (e.g. missing keys will be written to log file). |
-| DiscoverAndRegisterResources | Gets or sets the flag to control localized models discovery and registration during app startup. |
-| EnableInvariantCultureFallback | Gets or sets flag to enable or disable invariant culture fallback (to use resource values discovered & registered from code). |
-| EnableLocalization | Gets or sets the callback function for enabling or disabling localization. If this returns `false` - requested resource key will be returned as translation. |
-| Export | Gets or sets settings used for export of the resources. |
-| FallbackCultures | Using this list you can configure language fallback settings. |
-| ForeignResources | Gets or sets collection of foreign resources. Foreign resource descriptors are used to include classes without `[LocalizedResource]` or `[LocalizedModel]` attributes. |
-| Import | Gets or sets settings to be used during resource import. |
-| ModelMetadataProviders | Settings for model metadata providers. |
-| PopulateCacheOnStartup | Gets or sets a value indicating whether cache should be populated during startup (default = `true`). |
-| ScanAllAssemblies | Forces type scanner to load all referenced assemblies. When enabled, scanner is not relying on current `AppDomain.GetAssemblies` but checks referenced assemblies recursively (default `false`). |
-| TypeFactory | Returns type factory used internally for creating new services or handlers for commands. |
-| TypeScanners | Gets list of all known type scanners. |
+| `AssemblyScanningFilter` | You can specify what assemblies needs to be scanned. By default some of the system ones are excluded (no need to waste time) |
+| `CacheManager` | Gets or sets cache manager used to store resources and translations (`InMemory` by default) |
+| `CustomAttributes` | Gets or sets list of custom attributes that should be discovered and registered during startup scanning. |
+| `DefaultResourceCulture` | Gets or sets the default resource culture to register translations for newly discovered resources. |
+| `DiagnosticsEnabled` | Gets or sets value enabling or disabling diagnostics for localization provider (e.g. missing keys will be written to log file). |
+| `DiscoverAndRegisterResources` | Gets or sets the flag to control localized models discovery and registration during app startup. |
+| `EnableInvariantCultureFallback` | Gets or sets flag to enable or disable invariant culture fallback (to use resource values discovered & registered from code). |
+| `EnableLegacyMode` | Gets or sets the callback function to check if legacy mode is enabled. Legacy mode is special treatment of old XML file based resources (like resource key `/component/properties/property1`). If legacy mode is enabled and XML based resource is requested, additional lookup will be performed to resolve translation for these resources. |
+| `EnableLocalization` | Gets or sets the callback function for enabling or disabling localization. If this returns `false` - requested resource key will be returned as translation. |
+| `Export` | Gets or sets settings used for export of the resources. |
+| `FallbackCultures` | Using this list you can configure language fallback settings. |
+| `ForeignResources` | Gets or sets collection of foreign resources. Foreign resource descriptors are used to include classes without `[LocalizedResource]` or `[LocalizedModel]` attributes. |
+| `Import` | Gets or sets settings to be used during resource import. |
+| `Logger` | Gets or sets abstract logger which can bridge log entries down to underlying host/runtime logging infrastructure. |
+| `ModelMetadataProviders` | Settings for model metadata providers. |
+| `PopulateCacheOnStartup` | Gets or sets a value indicating whether cache should be populated during startup (default = `true`). |
+| `ResourceLookupFilter` | Callback function to check whether resource lookup should be performed (based on resource key). Use this with precaution or avoid usage at all. |
+| `ScanAllAssemblies` | Forces type scanner to load all referenced assemblies. When enabled, scanner is not relying on current `AppDomain.GetAssemblies` but checks referenced assemblies recursively (default `false`). |
+| `TypeFactory` | Returns type factory used internally for creating new services or handlers for commands. |
+| `TypeScanners` | Gets list of all known type scanners. |
 
+Following `ImportSettings` configuration options are available:
+
+| Option | Description |
+|------|------|
+| `Providers` | Gets or sets list of known import handlers. Handlers are based on file format (handles specific file extension). |
+
+Following `ExportSettings` configuration options are available:
+
+| Option | Description |
+|------|------|
+| `Providers` | Gets or sets list of known export handlers. Handlers are based on file format/extension. |
 
 Following `ModelMetadataProviders` configuration options are available:
 
 | Option | Description |
 |------|------|
-| MarkRequiredFields | Set `true` to add translation returned from `RequiredFieldResource` for required fields. |
-| ReplaceProviders | Gets or sets a value to replace ModelMetadataProvider to use new db localization system. |
-| RequiredFieldResource | If `MarkRequiredFields` is set to `true`, return of this method will be used to indicate required fields (added at the end of label). |
-| UseCachedProviders | Gets or sets a value to use cached version of ModelMetadataProvider. |
+| `MarkRequiredFields` | Set `true` to add translation returned from `RequiredFieldResource` for required fields. |
+| `ReplaceProviders` | Gets or sets a value to replace ModelMetadataProvider to use new db localization system. |
+| `RequiredFieldResource` | If `MarkRequiredFields` is set to `true`, return of this method will be used to indicate required fields (added at the end of label). |
+| `SetupCallback` | If callback action is supplied it's invoked instead of default  model medata data providers setup. This is required in cases when model metadata provider infrastructure is different between runtimes. |
+| `UseCachedProviders` | Gets or sets a value to use cached version of ModelMetadataProvider. |
 
 
 After then you will need to make sure that you start using the provider:

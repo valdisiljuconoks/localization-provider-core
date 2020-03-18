@@ -1,58 +1,63 @@
 # Client-side Localization
 
-Starting with v5.4.1 version of the [LocalizationProvider package for .NET Core](https://www.nuget.org/packages/LocalizationProvider.AspNetCore/), it's now possible to work with translations also on client-side.
-In version v6 some of the additional features have been introduced.
+It's possible to localize strings also in frontend using [LocalizationProvider package for .NET Core](https://www.nuget.org/packages/LocalizationProvider.AspNetCore/).
 
 ## Getting Started
 
-First of all you need to initialize and add client-side resource handler to your application. As usual in .NET Core apps this done via `Startup.cs` file:
+You have to setup middleware on particular path (by default `/jsl10n`). You will have possibility to customize Url when url mapping is done.
 
 ```csharp
 public class Startup
 {
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
-    public IConfiguration Configuration { get; }
-
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-        ...
         app.UseDbLocalizationProvider();
-        app.UseDbLocalizationClientsideProvider();
+        app.UseDbLocalizationClientsideProvider(); //assuming that you like also Javascript
+
+        ...
     }
 }
 ```
 
-Next step is to map middleware on particular path (by default `/jsl10n`).
-Depending on your routing system (either old school Mvc router or Endpoint routing) different methods needs to be called.
+Depending on your routing system (either old school Mvc router or Endpoint routing) different methods should be called.
 
 For **old MVC Routing**:
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
+public class Startup
 {
-   services
-       .AddControllersWithViews(opt => opt.EnableEndpointRouting = false)
-       .AddMvcLocalization();
-       
-   services.AddRouting();
-   ...
-}
-
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-{
-    ...
-    app.UseMvc(routes =>
+    public void ConfigureServices(IServiceCollection services)
     {
-        routes.MapDbLocalizationClientsideProvider();
-
-        routes.MapRoute(
-            name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
-    });
+       services
+           .AddControllersWithViews(opt => opt.EnableEndpointRouting = false)
+           .AddMvcLocalization();
+           
+       services.AddRouting();
+    
+        services.AddDbLocalizationProvider(_ =>
+        {
+            _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            ...
+        });
+    
+       ...
+    }
+    
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationClientsideProvider(); //assuming that you like also Javascript
+    
+        ...
+        app.UseMvc(routes =>
+        {
+            routes.MapDbLocalizationClientsideProvider(path: "/jsl10n"); // assuming that you are mapping on /jsl10n/...
+    
+            routes.MapRoute(
+                name: "default",
+                template: "{controller=Home}/{action=Index}/{id?}");
+        });
+    }
 }
 ```
 
@@ -61,6 +66,10 @@ For **Endpoint routing**:
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
+   services
+       .AddControllersWithViews()
+       .AddMvcLocalization();
+
    services.AddRouting();
    ...
 }
@@ -69,12 +78,11 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 {
     app.UseRouting();
     ...
+
     app.UseEndpoints(endpoints =>
     {
-        endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
         ...
-
-        endpoints.MapDbLocalizationClientsideProvider();
+        endpoints.MapDbLocalizationClientsideProvider(path: "/jsl01n"); // assuming that you are mapping on /jsl10n/...
     });
 }
 ```

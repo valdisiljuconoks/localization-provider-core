@@ -32,11 +32,71 @@ Below are code fragments that are essential to get started with localization pro
 Install required packages:
 
 ```
+> dotnet add package LocalizationProvider.AspNetCore
 > dotnet add package LocalizationProvider.AdminUI.AspNetCore
 > dotnet add package LocalizationProvider.Storage.SqlServer
 ```
 
-Following `Startup.cs` file seems to be working OK as starting point for your app (based ASP.NET Core 3.1):
+Following service configuration (usually in `Startup.cs`) is required to get localization provider working:
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // add your authorization provider (asp.net identity, identity server, which ever..)
+    
+        services
+            .AddControllersWithViews()
+            .AddMvcLocalization();
+    
+        services.AddRazorPages();
+        services.AddRouting();
+    
+        services.AddDbLocalizationProvider(_ =>
+        {
+            _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            ...
+        });
+    
+        services.AddDbLocalizationProviderAdminUI(_ =>
+        {
+            ...
+        });
+    }
+
+    ...
+}
+```
+
+And following setup of the application is required as minimum (also usually located in `Startup.cs`):
+
+```csharp
+public class Startup
+{
+    ...
+
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+    
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationProviderAdminUI();
+        app.UseDbLocalizationClientsideProvider(); //assuming that you like also Javascript
+    
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapRazorPages();
+            endpoints.MapDbLocalizationAdminUI();
+            endpoints.MapDbLocalizationClientsideProvider();
+        });
+    }
+}
+```
+
+You can grab some snippets form this sample `Startup.cs` file (based ASP.NET Core 3.1):
 
 ```csharp
 using System.Collections.Generic;
@@ -83,7 +143,6 @@ namespace SampleApp
                 .AddControllersWithViews()
                 .AddMvcLocalization();
 
-            services.AddAuthorization();
             services.AddRazorPages();
             services.AddRouting();
 
