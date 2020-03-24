@@ -53,6 +53,7 @@ Following configuration options are available:
 | `Logger` | Gets or sets abstract logger which can bridge log entries down to underlying host/runtime logging infrastructure. |
 | `ModelMetadataProviders` | Settings for model metadata providers. |
 | `PopulateCacheOnStartup` | Gets or sets a value indicating whether cache should be populated during startup (default = `true`). |
+| `ResourceKeyNameFilter` | If you are looking for a way to allow other characters in resource key name - this is the property to set. |
 | `ResourceLookupFilter` | Callback function to check whether resource lookup should be performed (based on resource key). Use this with precaution or avoid usage at all. |
 | `ScanAllAssemblies` | Forces type scanner to load all referenced assemblies. When enabled, scanner is not relying on current `AppDomain.GetAssemblies` but checks referenced assemblies recursively (default `false`). |
 | `TypeFactory` | Returns type factory used internally for creating new services or handlers for commands. |
