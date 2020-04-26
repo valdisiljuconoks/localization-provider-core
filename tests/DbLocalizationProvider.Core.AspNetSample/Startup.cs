@@ -128,6 +128,10 @@ namespace DbLocalizationProvider.Core.AspNetSample
             //         template: "{controller=Home}/{action=Index}/{id?}");
             // });
 
+            using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                scope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
+            }
 
             app.UseEndpoints(endpoints =>
             {
