@@ -4,6 +4,7 @@ using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
+using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Storage.SqlServer;
@@ -70,7 +71,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
                 _.ScanAllAssemblies = true;
                 _.FallbackCultures.Try(supportedCultures);
-
+                _.ForeignResources.Add<SomeForeignViewModel>();
                 //.Try(new CultureInfo("sv"))
                 //.Then(new CultureInfo("no"))
                 //.Then(new CultureInfo("en"));

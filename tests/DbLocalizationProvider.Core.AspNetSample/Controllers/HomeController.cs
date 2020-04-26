@@ -67,6 +67,11 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
             return View();
         }
 
+        public IActionResult ForeignModel()
+        {
+            return View();
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
