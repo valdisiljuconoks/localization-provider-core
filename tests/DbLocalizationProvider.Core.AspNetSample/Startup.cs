@@ -88,6 +88,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 _.ShowHiddenResources = false;
                 _.DefaultView = ResourceListView.Tree;
                 _.CustomCssPath = "/css/custom-adminui.css";
+                _.HideDeleteButton = false;
             });
 
             //.VerifyDbLocalizationProviderAdminUISetup();

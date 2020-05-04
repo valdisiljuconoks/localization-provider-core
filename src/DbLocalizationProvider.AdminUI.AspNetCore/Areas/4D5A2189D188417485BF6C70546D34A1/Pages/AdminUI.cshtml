@@ -8,6 +8,8 @@
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUIViewModel
 
 @inject IHtmlLocalizer<Resources> Localizer
+@inject UiConfigurationContext Config
+
 @{
     Layout = null;
 }
@@ -210,6 +212,11 @@
                 <th v-if="model.options.showInvariantCulture">@Localizer.GetString(_ => _.InvariantCultureColumn)</th>
                 <th v-for="lang in model.supportedLanguages" scope="col">{{lang.titleDisplay}}</th>
                 <th>@Localizer.GetString(_ => _.HiddenColumn)</th>
+                <th>@Localizer.GetString(_ => _.FromCodeColumn)</th>
+                @if (!Config.HideDeleteButton)
+                {
+                    <th>@Localizer.GetString(_ => _.DeleteColumn)</th>
+                }
             </tr>
             </thead>
             <tr v-for="resource in filteredResources">
@@ -225,6 +232,11 @@
                     <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] == null">N/A</span>
                 </td>
                 <td>{{ resource.isHidden }}</td>
+                <td>{{ resource.isFromCode }}</td>
+                @if (!Config.HideDeleteButton)
+                {
+                    <td><a href="#" class="btn" v-bind:class="{ disabled: resource.isFromCode }" @@click="deleteResource(resource)"><i class="fas fa-trash"></i></a></td>
+                }
             </tr>
         </table>
     </div>
@@ -270,7 +282,8 @@
         options: {
             showInvariantCulture: false,
             showHiddenResources: false,
-            showOnlyEmptyResources: false
+            showOnlyEmptyResources: false,
+            showDeleteButton: true
         }
     };
 
@@ -322,6 +335,14 @@
                     if (editedResource != null) {
                         editedResource[this.model.currentResource.language] = null;
                     }
+                }
+            },
+
+            deleteResource(resource) {
+                if(confirm('@Localizer.GetString(_ => _.DeleteConfirmation)')) {
+                    axios.post('api/service/delete', resource).then(() => {
+                        this.model.resources.splice(this.model.resources.indexOf(resource), 1);
+                    });
                 }
             },
 

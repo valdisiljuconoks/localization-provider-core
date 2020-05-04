@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
@@ -98,6 +98,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// </summary>
         /// <remarks>This is Url how editors or even maybe admins will be able to access admin panel and mess around with translations. Needs to start with `/` otherwise runtime will blow up.</remarks>
         public string RootUrl { get; set; } = "/localization-admin";
+
+        /// <summary>
+        /// If you don't need to remove resource ever - set this to <code>true</code>
+        /// </summary>
+        public bool HideDeleteButton { get; set; } = false;
 
         //internal bool IsTreeViewDisabled { get; set; }
 

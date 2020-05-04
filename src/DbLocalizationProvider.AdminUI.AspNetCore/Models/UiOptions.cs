@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
@@ -12,5 +12,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
         public bool ShowHiddenResources { get; set; }
 
         public bool ShowOnlyEmptyResources { get; set; }
+
+        public bool ShowDeleteButton { get; set; }
     }
 }

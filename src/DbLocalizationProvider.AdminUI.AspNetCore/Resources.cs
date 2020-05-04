@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using DbLocalizationProvider.Abstractions;
@@ -26,6 +26,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string ResourceKeyColumn = "Key";
         public string InvariantCultureColumn = "Invariant Language (Invariant Country)";
         public string HiddenColumn = "Is Hidden?";
+        public string FromCodeColumn = "From code?";
+        public string DeleteColumn = "Delete?";
+        public string DeleteConfirmation = "Do you want to throw out this resource?";
         public string ShowOnlyEmptyResources = "Show Only Empty Resources";
         public string EmptyTranslation = "Empty";
     }

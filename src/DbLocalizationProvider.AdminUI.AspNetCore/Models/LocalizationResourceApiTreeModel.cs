@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
@@ -20,11 +20,13 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
             List<LocalizationResource> resources,
             IEnumerable<CultureInfo> languages,
             int popupTitleLength,
-            int listDisplayLength) : base(languages)
+            int listDisplayLength,
+            UiOptions options) : base(languages)
         {
             _popupTitleLength = popupTitleLength;
             _listDisplayLength = listDisplayLength;
             Resources = ConvertToApiModel(resources);
+            Options = options;
         }
 
         internal List<JObject> ConvertToApiModel(List<LocalizationResource> resources)
@@ -54,8 +56,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
                                 el["isModified"] = localizationResource.IsModified;
                                 el["allowDelete"] = !localizationResource.FromCode;
                                 el["translation"] = localizationResource.Translations.FindByLanguage(CultureInfo.InvariantCulture)?.Value;
-                                foreach(var language in Languages)
-                                    el["translation-" + language.Code] = localizationResource.Translations.FindByLanguage(language.Code)?.Value;
+                                foreach(var language in Languages) el["translation-" + language.Code] = localizationResource.Translations.FindByLanguage(language.Code)?.Value;
                             }
                             else
                             {
@@ -78,8 +79,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
                     }
                 }
 
-                if(segments.Any())
-                    AddChildrenNodes(result, segments, resource, 0, segments.Count - 1);
+                if(segments.Any()) AddChildrenNodes(result, segments, resource, 0, segments.Count - 1);
             }
 
             return result.Cast<JObject>().ToList();

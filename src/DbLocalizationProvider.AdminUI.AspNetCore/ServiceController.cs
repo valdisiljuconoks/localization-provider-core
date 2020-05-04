@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System.Collections.Generic;
@@ -40,15 +40,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             var result = new LocalizationResourceApiTreeModel(resources,
                 languages,
                 _config.MaxResourceKeyPopupTitleLength,
-                _config.MaxResourceKeyDisplayLength)
-            {
-                Options =
-                {
-                    AdminMode = isAdmin,
-                    ShowInvariantCulture = _config.ShowInvariantCulture,
-                    ShowHiddenResources = _config.ShowHiddenResources
-                }
-            };
+                _config.MaxResourceKeyDisplayLength,
+                BuildOptions(isAdmin));
 
             return result;
         }
@@ -71,6 +64,18 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             return ServiceOperationResult.Ok;
         }
 
+        [HttpPost]
+        public JsonResult Delete([FromBody] DeleteResourceRequestModel model)
+        {
+            if (!_config.HideDeleteButton)
+            {
+                var cmd = new DeleteResource.Command(model.Key);
+                cmd.Execute();
+            }
+
+            return ServiceOperationResult.Ok;
+        }
+
         private LocalizationResourceApiModel PrepareViewModel()
         {
             var (resources, languages, isAdmin) = GetResources();
@@ -78,15 +83,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                 resources,
                 languages,
                 _config.MaxResourceKeyPopupTitleLength,
-                _config.MaxResourceKeyDisplayLength)
-            {
-                Options =
-                {
-                    AdminMode = isAdmin,
-                    ShowInvariantCulture = _config.ShowInvariantCulture,
-                    ShowHiddenResources = _config.ShowHiddenResources
-                }
-            };
+                _config.MaxResourceKeyDisplayLength,
+                BuildOptions(isAdmin));
 
             return result;
         }
@@ -107,5 +105,17 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
             return (resources, languages, isAdmin);
         }
+
+        private UiOptions BuildOptions(bool isAdmin)
+        {
+            return new UiOptions
+            {
+                AdminMode = isAdmin,
+                ShowInvariantCulture = _config.ShowInvariantCulture,
+                ShowHiddenResources = _config.ShowHiddenResources,
+                ShowDeleteButton = !_config.HideDeleteButton
+            };
+        }
+
     }
 }

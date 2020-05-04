@@ -6,12 +6,9 @@ using Newtonsoft.Json;
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Models
 {
     [JsonObject]
-    public class RemoveTranslationRequestModel
+    public class DeleteResourceRequestModel
     {
         [JsonProperty("key")]
         public string Key { get; set; }
-
-        [JsonProperty("language")]
-        public string Language { get; set; }
     }
 }
