@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
@@ -19,8 +19,7 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
 
         public static string GetContainerName(string key)
         {
-            if(key == null)
-                throw new ArgumentNullException(nameof(key));
+            if(key == null) throw new ArgumentNullException(nameof(key));
 
             return !key.Contains(_separator) ? null : key.Substring(0, key.IndexOf(_separator, StringComparison.Ordinal));
         }
@@ -36,11 +35,12 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
                     var key = CacheKeyHelper.GetResourceKeyFromCacheKey(existingKeys.Current.Key);
                     var containerName = GetContainerName(key);
                     if(containerName != null && args.ResourceKey.StartsWith(containerName))
+                    {
                         entriesToRemove.Add(existingKeys.Current.Key);
+                    }
                 }
 
-                foreach(var entry in entriesToRemove)
-                    cache.Remove(entry);
+                foreach(var entry in entriesToRemove) cache.Remove(entry);
             }
         }
     }

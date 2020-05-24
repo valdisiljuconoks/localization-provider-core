@@ -24,15 +24,15 @@ namespace DbLocalizationProvider.AspNetCore
             _cache = builder.ApplicationServices.GetRequiredService<ICacheManager>();
 
             var cacheManager = builder.ApplicationServices.GetService<ICacheManager>();
-            cacheManager.OnRemove += OnOnRemove;
+            cacheManager.OnRemove += OnRemove;
             builder.ApplicationServices.GetRequiredService<IApplicationLifetime>()
                 .ApplicationStopping
-                .Register(() => cacheManager.OnRemove -= OnOnRemove);
+                .Register(() => cacheManager.OnRemove -= OnRemove);
 
             return builder;
         }
 
-        private static void OnOnRemove(CacheEventArgs args)
+        private static void OnRemove(CacheEventArgs args)
         {
             CacheHelper.CacheManagerOnOnRemove(args, _cache);
         }
