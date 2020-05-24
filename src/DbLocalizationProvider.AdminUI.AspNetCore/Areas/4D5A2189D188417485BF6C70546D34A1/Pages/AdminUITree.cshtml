@@ -200,6 +200,7 @@
         <div class="col-lg-6">
             <div class="float-right">
                 <a href="?handler=Export&format=json" role="button" class="btn btn-light">@Localizer.GetString(_ => _.Export)</a>
+                <a href="?handler=CleanCache" onclick="return confirm('@Localizer.GetString(_ => _.CleanCacheConfirmation)');" role="button" class="btn btn-light">@Localizer.GetString(_ => _.CleanCache)</a>
                 <div class="btn-group dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@Localizer.GetString(_ => _.Settings)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">

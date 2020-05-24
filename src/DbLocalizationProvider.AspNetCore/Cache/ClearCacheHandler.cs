@@ -11,7 +11,9 @@ namespace DbLocalizationProvider.AspNetCore.Cache
         public void Execute(ClearCache.Command command)
         {
             foreach(var itemToRemove in InMemoryCacheManager.Entries)
+            {
                 ConfigurationContext.Current.CacheManager.Remove(itemToRemove.Key);
+            }
         }
     }
 }
