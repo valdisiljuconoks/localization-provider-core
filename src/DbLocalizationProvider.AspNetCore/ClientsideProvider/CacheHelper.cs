@@ -24,7 +24,7 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
             return !key.Contains(_separator) ? null : key.Substring(0, key.IndexOf(_separator, StringComparison.Ordinal));
         }
 
-        public static void CacheManagerOnOnRemove(CacheEventArgs args, ICacheManager cache)
+        public static void CacheManagerOnRemove(CacheEventArgs args, ICacheManager cache)
         {
             // TODO: implement IEnumerable on cache manager
             using(var existingKeys = InMemoryCacheManager.Entries.GetEnumerator())
@@ -34,6 +34,7 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
                 {
                     var key = CacheKeyHelper.GetResourceKeyFromCacheKey(existingKeys.Current.Key);
                     var containerName = GetContainerName(key);
+
                     if(containerName != null && args.ResourceKey.StartsWith(containerName))
                     {
                         entriesToRemove.Add(existingKeys.Current.Key);

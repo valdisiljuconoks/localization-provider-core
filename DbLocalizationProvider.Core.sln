@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F5B8BFCE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Core.AspNetSample", "tests\DbLocalizationProvider.Core.AspNetSample\DbLocalizationProvider.Core.AspNetSample.csproj", "{A9330AEF-F9AC-44A0-B5B8-B845884F0229}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "soluition-items", "soluition-items", "{45DBFA30-8F60-4D5A-8437-2BAE3976594F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution-items", "solution-items", "{45DBFA30-8F60-4D5A-8437-2BAE3976594F}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
@@ -26,10 +26,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{07147348-CBC2-45C3-800B-5D970EF005D2}"
 	ProjectSection(SolutionItems) = preProject
 		docs\client-side-provider-netcore.md = docs\client-side-provider-netcore.md
+		docs\getting-started-adminui.md = docs\getting-started-adminui.md
 		docs\getting-started-netcore.md = docs\getting-started-netcore.md
 		docs\localizing-content-netcore.md = docs\localizing-content-netcore.md
 		docs\localizing-viewmodel-netcore.md = docs\localizing-viewmodel-netcore.md
-		docs\getting-started-adminui.md = docs\getting-started-adminui.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AdminUI.AspNetCore", "src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj", "{EFBEF627-654F-4A18-B9FA-4F4486539C06}"
@@ -44,7 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{AD9CAF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Storage.SqlServer", "lib\localization-provider\src\DbLocalizationProvider.Storage.SqlServer\DbLocalizationProvider.Storage.SqlServer.csproj", "{EB65FE28-A09C-4F3C-8F01-7C2721A96B5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLocalizationProvider.Core.AzFuncSample", "tests\DbLocalizationProvider.Core.AzFuncSample\DbLocalizationProvider.Core.AzFuncSample.csproj", "{130B3299-0685-4A94-9F77-2982657B7D3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Core.AzFuncSample", "tests\DbLocalizationProvider.Core.AzFuncSample\DbLocalizationProvider.Core.AzFuncSample.csproj", "{130B3299-0685-4A94-9F77-2982657B7D3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
