@@ -234,6 +234,10 @@ Forking and cloning repo is first step you do. Keep in mind that provider is spl
 git clone --recurse-submodules git://github.com/...
 ```
 
+## Building AdminUI.AspNetCore Project
+You will need to run `npm install` at root of the project to get some of the dependencies downloaded to get started.
+Some files from these packages are embedded as part of the AdminUI - therefore compilation will fail without those files.
+
 # More Info
 
 * [Part 1: Resources and Models](http://blog.tech-fellow.net/2016/03/16/db-localization-provider-part-1-resources-and-models/)
