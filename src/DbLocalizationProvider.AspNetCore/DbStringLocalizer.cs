@@ -1,4 +1,4 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace DbLocalizationProvider.AspNetCore
 
         public DbStringLocalizer()
         {
-            _culture = CultureInfo.CurrentUICulture;
+
         }
 
         public DbStringLocalizer(CultureInfo culture) : this()
@@ -36,7 +36,7 @@ namespace DbLocalizationProvider.AspNetCore
         {
             get
             {
-                var value = LocalizationProvider.Current.GetStringByCulture(name, _culture);
+                var value = _culture != null ? LocalizationProvider.Current.GetStringByCulture(name, _culture) : LocalizationProvider.Current.GetStringByCulture(name, CultureInfo.CurrentUICulture);
                 return new LocalizedString(name, value ?? name, value == null);
             }
         }
@@ -45,7 +45,7 @@ namespace DbLocalizationProvider.AspNetCore
         {
             get
             {
-                var value = LocalizationProvider.Current.GetStringByCulture(name, _culture, arguments);
+                var value = _culture != null ? LocalizationProvider.Current.GetStringByCulture(name, _culture) : LocalizationProvider.Current.GetStringByCulture(name, CultureInfo.CurrentUICulture);
                 return new LocalizedString(name, value ?? name, value == null);
             }
         }
