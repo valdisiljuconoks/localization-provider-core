@@ -47,7 +47,9 @@
             border-width: 1px;
         }
 
-
+        .error {
+            color: red;
+        }
 
         .full-width-tooltip {
             max-width: 1200px;
@@ -204,6 +206,7 @@
             <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@Localizer.GetString(_ => _.SearchPlaceholder)"/>
         </div>
     </div>
+    <span class="error">{{model.error}}</span>
     <div classs="table-responsive">
         <table v-show="!model.loading" class="table table-bordered table-hover table-sm">
             <thead class="thead-dark">
@@ -279,6 +282,7 @@
         showModal: false,
         currentResource: {},
         searchKeyword: '',
+        error: '',
         options: {
             showInvariantCulture: false,
             showHiddenResources: false,
@@ -295,11 +299,16 @@
         methods: {
             loadData() {
                 axios.get('api/service/get').then((response) => {
-                    var result = response.data;
-                    this.model.resources = result.resources;
-                    this.model.supportedLanguages = result.languages;
-                    this.model.loading = false;
-                    this.model.options = result.options;
+                    if (response.headers['content-type'] !== 'application/json') {
+                        this.model.error = '@Localizer.GetString(_ => _.ErrorLoadingResources)';
+                    } else {
+                        var result = response.data;
+                        this.model.resources = result.resources;
+                        this.model.supportedLanguages = result.languages;
+                        this.model.loading = false;
+                        this.model.error = '';
+                        this.model.options = result.options;
+                    }
                 }).catch(function(error) { alert('error retrieving resources: ' + error); });
             },
 

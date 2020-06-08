@@ -33,5 +33,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string EmptyTranslation = "Empty";
         public string CleanCache = "Clean Cache";
         public string CleanCacheConfirmation = "Wanna start with clean cache state?";
+        public string ErrorLoadingResources = "There was an error while loading resources. Please check logs for more details!";
     }
 }
