@@ -45,7 +45,7 @@ namespace DbLocalizationProvider.AspNetCore
         {
             get
             {
-                var value = _culture != null ? LocalizationProvider.Current.GetStringByCulture(name, _culture) : LocalizationProvider.Current.GetStringByCulture(name, CultureInfo.CurrentUICulture);
+                var value = _culture != null ? LocalizationProvider.Current.GetStringByCulture(name, _culture, arguments) : LocalizationProvider.Current.GetStringByCulture(name, CultureInfo.CurrentUICulture, arguments);
                 return new LocalizedString(name, value ?? name, value == null);
             }
         }
