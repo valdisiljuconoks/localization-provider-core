@@ -84,7 +84,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 _.RootUrl = "/localization-admin";
 
                 _.AuthorizedAdminRoles.Clear();
-                _.AuthorizedAdminRoles.Add("Admins");
+                _.AuthorizedAdminRoles.Add("Administrators");
 
                 _.AuthorizedEditorRoles.Clear();
                 _.AuthorizedEditorRoles.Add("Translators");

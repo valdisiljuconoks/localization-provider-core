@@ -299,15 +299,15 @@
         methods: {
             loadData() {
                 axios.get('api/service/get').then((response) => {
-                    if (response.headers['content-type'] !== 'application/json') {
-                        this.model.error = '@Localizer.GetString(_ => _.ErrorLoadingResources)';
-                    } else {
+                    if (isObject(response.data)) {
                         var result = response.data;
                         this.model.resources = result.resources;
                         this.model.supportedLanguages = result.languages;
                         this.model.loading = false;
                         this.model.error = '';
                         this.model.options = result.options;
+                    } else {
+                        this.model.error = '@Localizer.GetString(_ => _.ErrorLoadingResources)';
                     }
                 }).catch(function(error) { alert('error retrieving resources: ' + error); });
             },
@@ -385,6 +385,11 @@
             }
         }
     });
+
+    function isObject(obj)
+    {
+        return obj !== undefined && obj !== null && obj.constructor == Object;
+    }
 
     document.onreadystatechange = function() {
         if (document.readyState == 'interactive') {

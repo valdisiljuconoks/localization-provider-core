@@ -45,6 +45,10 @@
             border-width: 1px;
         }
 
+        .error {
+            color: red;
+        }
+
         .full-width-tooltip {
             max-width: 1200px;
         }
@@ -214,6 +218,7 @@
         </div>
     </div>
     <div>
+        <span class="error">{{error}}</span>
         <modal v-if="showModal" @@save="save" @@remove="remove" @@close="showModal = false" :model="currentResource"></modal>
         <vue-ads-table-tree
             :columns="columns"
@@ -245,146 +250,156 @@
 <script src="../res/node_modules.vue_ads_table_tree.dist.vue-ads-table-tree.umd.min.js"></script>
 
 <script type="text/javascript">
-const VueAdsTableTree = window["vue-ads-table-tree"].default;
-const defaultColumn = [
-    {
-        property: 'segmentKey',
-        title: 'Key',
-        direction: null,
-        filterable: true,
-        collapseIcon: true
-    }];
+    const VueAdsTableTree = window["vue-ads-table-tree"].default;
+    const defaultColumn = [
+        {
+            property: 'segmentKey',
+            title: 'Key',
+            direction: null,
+            filterable: true,
+            collapseIcon: true
+        }];
 
-const VueModal = Vue.component('modal', {
-    template: '#modal-template',
-    props: {
-        model: Object
-    },
-    data() {
-        return {
-            open: false
-        };
-    },
-    mounted: function() {
-        this.$refs.translationEditor.focus();
-    }
-});
-
-new Vue({
-    el: "#app",
-
-    components: {
-        VueAdsTableTree,
-        VueModal
-    },
-
-    data() {
-        return {
-            page: 0,
-            filter: '',
-            slottedColumns: [],
-            columns: defaultColumn,
-            rows: [],
-            classes: {
-                '0': {
-                    'vue-ads-bg-gray-lighter': false,
-                    'vue-ads-bg-blue-dark': true,
-                    'vue-ads-text-white': true,
-                    'vue-ads-font-bold': true
-                },
-                '1_/': {
-                    'hover:vue-ads-bg-red-lighter': true
-                }
-            },
-            options: {
-                showHiddenResources: false,
-                showOnlyEmptyResources: false
-            },
-            showModal: false,
-            currentResource: {}
-        };
-    },
-
-    mounted: function() {
-        axios.get('../api/service/gettree').then((response) => {
-            var result = response.data;
-            this.rows = result.resources;
-
-            if (result.options.showInvariantCulture) {
-                this.columns.push({
-                    property: 'translation',
-                    language: '',
-                    title: '@Localizer.GetString(_ => _.InvariantCultureColumn)',
-                    direction: null,
-                    filterable: true
-                });
-            }
-
-            result.languages.forEach((language) => {
-                this.columns.push({
-                    property: 'translation-' + language.code,
-                    language: language.code,
-                    title: language.titleDisplay,
-                    direction: null,
-                    filterable: true
-                });
-
-                this.slottedColumns.push('translation-' + language.code);
-            });
-
-        }).catch(function(error) { alert('error retrieving resources: ' + error); });
-    },
-
-    methods: {
-        edit(resource, lang, translation) {
-            this.currentResource = {
-                titleKey: resource.titleKey,
-                key: resource.resourceKey,
-                translation: translation,
-                language: lang,
-                isModified: resource.isModified,
-                _ref: resource
+    const VueModal = Vue.component('modal', {
+        template: '#modal-template',
+        props: {
+            model: Object
+        },
+        data() {
+            return {
+                open: false
             };
+        },
+        mounted: function() {
+            this.$refs.translationEditor.focus();
+        }
+    });
 
-            this.showModal = true;
+    new Vue({
+        el: "#app",
+
+        components: {
+            VueAdsTableTree,
+            VueModal
         },
 
-        save() {
-            this.showModal = false;
-            axios.post('../api/service/save', this.currentResource);
-
-            // update viewmodel
-            this.currentResource._ref['translation-' + this.currentResource.language] = this.currentResource.translation;
-            this.currentResource._ref.isModified = true;
+        data() {
+            return {
+                page: 0,
+                filter: '',
+                slottedColumns: [],
+                columns: defaultColumn,
+                error: '',
+                rows: [],
+                classes: {
+                    '0': {
+                        'vue-ads-bg-gray-lighter': false,
+                        'vue-ads-bg-blue-dark': true,
+                        'vue-ads-text-white': true,
+                        'vue-ads-font-bold': true
+                    },
+                    '1_/': {
+                        'hover:vue-ads-bg-red-lighter': true
+                    }
+                },
+                options: {
+                    showHiddenResources: false,
+                    showOnlyEmptyResources: false
+                },
+                showModal: false,
+                currentResource: {}
+            };
         },
 
-        remove() {
-            if (confirm('@Localizer.GetString(_ => _.RemoveConfirmation)')) {
+        mounted: function() {
+            axios.get('../api/service/gettree').then((response) => {
+                if (isObject(response.data)) {
+                    var result = response.data;
+                    this.rows = result.resources;
+
+                    if (result.options.showInvariantCulture) {
+                        this.columns.push({
+                            property: 'translation',
+                            language: '',
+                            title: '@Localizer.GetString(_ => _.InvariantCultureColumn)',
+                            direction: null,
+                            filterable: true
+                        });
+                    }
+
+                    result.languages.forEach((language) => {
+                        this.columns.push({
+                            property: 'translation-' + language.code,
+                            language: language.code,
+                            title: language.titleDisplay,
+                            direction: null,
+                            filterable: true
+                        });
+
+                        this.slottedColumns.push('translation-' + language.code);
+                    });
+                } else {
+                    this.error = '@Localizer.GetString(_ => _.ErrorLoadingResources)';
+                }
+
+            }).catch(function(error) { alert('error retrieving resources: ' + error); });
+        },
+
+        methods: {
+            edit(resource, lang, translation) {
+                this.currentResource = {
+                    titleKey: resource.titleKey,
+                    key: resource.resourceKey,
+                    translation: translation,
+                    language: lang,
+                    isModified: resource.isModified,
+                    _ref: resource
+                };
+
+                this.showModal = true;
+            },
+
+            save() {
                 this.showModal = false;
-                axios.post('../api/service/remove', this.currentResource);
+                axios.post('../api/service/save', this.currentResource);
 
                 // update viewmodel
-                this.currentResource._ref['translation-' + this.currentResource.language] = null;
+                this.currentResource._ref['translation-' + this.currentResource.language] = this.currentResource.translation;
+                this.currentResource._ref.isModified = true;
+            },
+
+            remove() {
+                if (confirm('@Localizer.GetString(_ => _.RemoveConfirmation)')) {
+                    this.showModal = false;
+                    axios.post('../api/service/remove', this.currentResource);
+
+                    // update viewmodel
+                    this.currentResource._ref['translation-' + this.currentResource.language] = null;
+                }
+            },
+
+            filterChanged(filter) {
+                this.filter = filter;
+            },
+
+            toggleHiddenResources() {
+
+            },
+
+            toggleEmptyResources() {
+
+            },
+
+            showTableView() {
+                window.location.href = window.location.href.replace('tree/', '');
             }
-        },
-
-        filterChanged(filter) {
-            this.filter = filter;
-        },
-
-        toggleHiddenResources() {
-
-        },
-
-        toggleEmptyResources() {
-
-        },
-
-        showTableView() {
-            window.location.href = window.location.href.replace('tree/', '');
         }
+    });
+
+    function isObject(obj)
+    {
+        return obj !== undefined && obj !== null && obj.constructor == Object;
     }
-});
 </script>
 </body>
 </html>
