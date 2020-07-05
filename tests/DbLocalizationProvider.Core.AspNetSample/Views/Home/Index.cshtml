@@ -47,7 +47,15 @@
 
 
 <div>
-    <div>IHtmlLocalizer.WithCulture() = @(Localizer2.WithCulture(new CultureInfo("no")).GetString(() => SampleResources.PageHeader))</div>
+    <div>IHtmlLocalizer.WithCulture("no") = @(Localizer2.WithCulture(new CultureInfo("no")).GetString(() => SampleResources.PageHeader))</div>
+</div>
+
+<hr/>
+
+<h2>Case Sensitivity</h2>
+
+<div>
+    Provider.GetString("MYPROJECT.RESOURCESFORFALLBACK.INSWEDISHANDENGLISHINVARIANT") - @Provider.GetString("MYPROJECT.RESOURCESFORFALLBACK.INSWEDISHANDENGLISHINVARIANT");
 </div>
 
 <hr/>

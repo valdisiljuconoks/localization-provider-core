@@ -35,7 +35,7 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
                     var key = CacheKeyHelper.GetResourceKeyFromCacheKey(existingKeys.Current.Key);
                     var containerName = GetContainerName(key);
 
-                    if(containerName != null && args.ResourceKey.StartsWith(containerName))
+                    if(containerName != null && args.ResourceKey.StartsWith(containerName, StringComparison.InvariantCultureIgnoreCase))
                     {
                         entriesToRemove.Add(existingKeys.Current.Key);
                     }
