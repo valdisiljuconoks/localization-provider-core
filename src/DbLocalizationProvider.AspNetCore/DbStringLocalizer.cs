@@ -24,7 +24,9 @@ namespace DbLocalizationProvider.AspNetCore
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            return Enumerable.Empty<LocalizedString>();
+            var values = _culture != null ? LocalizationProvider.Current.GetStringsByCulture(_culture) : LocalizationProvider.Current.GetStringsByCulture(CultureInfo.CurrentUICulture);
+
+            return values.Select(value => new LocalizedString(value.Key, value.Value??value.Key, value.Value == null));
         }
 
         public IStringLocalizer WithCulture(CultureInfo culture)
