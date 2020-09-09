@@ -103,6 +103,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.AdminUI.Models\DbLocalizationProvider.AdminUI.Models.csproj" />
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Abstractions\DbLocalizationProvider.Abstractions.csproj" />
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
     <ProjectReference Include="..\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj" />

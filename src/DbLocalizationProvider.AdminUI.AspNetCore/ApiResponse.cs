@@ -2,7 +2,7 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System.Threading.Tasks;
-using DbLocalizationProvider.AdminUI.AspNetCore.Models;
+using DbLocalizationProvider.AdminUI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
