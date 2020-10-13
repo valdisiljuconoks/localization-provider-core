@@ -1,38 +1,55 @@
 ﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
-    public class AuthorizeRolesAttribute : AuthorizeAttribute, IFilterFactory
+    public class AuthorizeRolesAttribute : TypeFilterAttribute
     {
-        public AuthorizeRolesAttribute() : this(null)
+        public AuthorizeRolesAttribute()
+            : base(typeof(RoleRequirementFilter))
         {
-            // this constructor is needed to apply attribute to controller or method without supplying arguments
-            // instance will be still created via `IFilterFactory` interface - going through service provider
+            var config = UiConfigurationContext.Current;
+
+            var roles = config.AuthorizedAdminRoles.Distinct().ToArray();
+
+            Arguments = roles;
+        }
+    }
+
+    public class RoleRequirementFilter : IAuthorizationFilter
+    {
+        readonly IEnumerable<string> _roles;
+
+        public RoleRequirementFilter()
+        {
+            var config = UiConfigurationContext.Current;
+
+            var roles = config.AuthorizedAdminRoles.Distinct().ToArray();
+
+            this._roles = roles;
         }
 
-        public AuthorizeRolesAttribute(UiConfigurationContext config)
+        public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if(config == null)
+            var hasRole = false;
+
+            foreach (var role in this._roles)
             {
-                config = UiConfigurationContext.Current;
+                if (context.HttpContext.User.IsInRole(role))
+                {
+                    hasRole = true;
+                }
             }
 
-            Roles = string.Join(",", config.AuthorizedAdminRoles.Concat(config.AuthorizedEditorRoles).Distinct());
-            IsReusable = false;
+            if (!hasRole)
+            {
+                context.Result = new ForbidResult();
+            }
         }
-
-        public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
-        {
-            return serviceProvider.GetService<AuthorizeRolesAttribute>();
-        }
-
-        public bool IsReusable { get; }
     }
 }
