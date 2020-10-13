@@ -12,13 +12,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
     {
         public AuthorizeRolesAttribute()
             : base(typeof(RoleRequirementFilter))
-        {
-            var config = UiConfigurationContext.Current;
-
-            var roles = config.AuthorizedAdminRoles.Distinct().ToArray();
-
-            Arguments = roles;
-        }
+        { }
     }
 
     public class RoleRequirementFilter : IAuthorizationFilter
