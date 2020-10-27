@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using DbLocalizationProvider;
 using DbLocalizationProvider.Abstractions;
 
@@ -51,6 +51,8 @@ namespace DbLocalizationProvider.Core.AspNetSample.Resources
 
         [WeirdCustom("Weird enum attribute value")]
         public static SomeEnum SomeEnumProperty => SomeEnum.ValueOne;
+
+        public static string PropertyWithPlaceholders => "This is a text with some place holders: `{0}`.";
 
         public static string ThisIsPrettyLongResourceKeyNameJustToTestHowBadItLooksInAdministrativeUserInterfaceResourceListPageTable => "This is pretty long";
     }
