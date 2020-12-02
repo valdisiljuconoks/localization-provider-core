@@ -3,10 +3,10 @@
 
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore.Extensions
 {
     /// <summary>
     /// Extension points

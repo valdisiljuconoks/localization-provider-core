@@ -15,6 +15,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
@@ -27,6 +28,11 @@
     <ProjectReference Include="..\..\src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj" />
     <ProjectReference Include="..\DbLocalizationProvider.Core.AspNet.ForeignAssembly\DbLocalizationProvider.Core.AspNet.ForeignAssembly.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Factories\" />
   </ItemGroup>
 
 </Project>

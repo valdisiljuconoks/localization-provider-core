@@ -3,9 +3,13 @@ using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AspNetCore;
+using DbLocalizationProvider.AspNetCore.ClientsideProvider;
 using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
+using DbLocalizationProvider.AspNetCore.Extensions;
+using DbLocalizationProvider.AspNetCore.Storage.Extensions;
 using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Data;
+using DbLocalizationProvider.Core.AspNetSample.Extensions;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Storage.SqlServer;
 using Microsoft.AspNetCore.Builder;
@@ -33,7 +37,12 @@ namespace DbLocalizationProvider.Core.AspNetSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options =>
+                {
+                   // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                   options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"));
+                   options.UseLocalizationProvider();
+                });
 
             services
                 .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -75,8 +84,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //.Try(new CultureInfo("sv"))
                 //.Then(new CultureInfo("no"))
                 //.Then(new CultureInfo("en"));
-
-                _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                _.UseEntityFramework<ApplicationDbContext>(services);
             });
 
             services.AddDbLocalizationProviderAdminUI(_ =>
@@ -111,6 +119,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
+
+            app.ApplyMigrations();
 
             var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(options.Value);

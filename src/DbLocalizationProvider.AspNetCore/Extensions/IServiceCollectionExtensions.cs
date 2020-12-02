@@ -16,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore.Extensions
 {
     /// <summary>
     /// Extension for adding localization provider services to the collection

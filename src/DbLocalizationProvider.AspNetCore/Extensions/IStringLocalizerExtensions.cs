@@ -1,47 +1,57 @@
-﻿// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
 using System.Globalization;
 using System.Linq.Expressions;
 using DbLocalizationProvider.Internal;
-using Microsoft.AspNetCore.Mvc.Localization;
+using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore.Extensions
 {
-    public static class IHtmlLocalizerExtensions
+    public static class IStringLocalizerExtensions
     {
-        public static LocalizedHtmlString GetString(this IHtmlLocalizer target, Expression<Func<object>> model, params object[] formatArguments)
+        public static LocalizedString GetString(
+            this IStringLocalizer target,
+            Expression<Func<object>> model,
+            params object[] formatArguments)
         {
             return target[ExpressionHelper.GetFullMemberName(model), formatArguments];
         }
 
-        public static LocalizedHtmlString GetStringByCulture(this IHtmlLocalizer target, Expression<Func<object>> model, CultureInfo language, params object[] formatArguments)
+        public static LocalizedString GetStringByCulture(
+            this IStringLocalizer target,
+            Expression<Func<object>> model,
+            CultureInfo language,
+            params object[] formatArguments)
         {
-            if(model == null)
+            if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            if(language == null)
+            if (language == null)
                 throw new ArgumentNullException(nameof(language));
 
             return target.WithCulture(language)[ExpressionHelper.GetFullMemberName(model), formatArguments];
         }
 
-        public static LocalizedHtmlString GetString<T>(this IHtmlLocalizer<T> target, Expression<Func<T, object>> model, params object[] formatArguments)
+        public static LocalizedString GetString<T>(
+            this IStringLocalizer<T> target,
+            Expression<Func<T, object>> model,
+            params object[] formatArguments)
         {
             return target[ExpressionHelper.GetFullMemberName(model), formatArguments];
         }
 
-        public static LocalizedHtmlString GetStringByCulture<T>(
-            this IHtmlLocalizer<T> target,
+        public static LocalizedString GetStringByCulture<T>(
+            this IStringLocalizer<T> target,
             Expression<Func<T, object>> model,
             CultureInfo language,
             params object[] formatArguments)
         {
-            if(model == null)
+            if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            if(language == null)
+            if (language == null)
                 throw new ArgumentNullException(nameof(language));
 
             return target.WithCulture(language)[ExpressionHelper.GetFullMemberName(model), formatArguments];
