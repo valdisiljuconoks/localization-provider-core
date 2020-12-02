@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DbLocalizationProvider.AspNetCore.Storage.Entities
 {
     public class LocalizationResourceEntity
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         public string Author { get; set; }
         public bool FromCode { get; set; }

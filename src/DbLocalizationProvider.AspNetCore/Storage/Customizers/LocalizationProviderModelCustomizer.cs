@@ -19,6 +19,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Customizers
             {
                 entity.ToTable("LocalizationResources");
                 entity.HasKey(p => p.Id);
+                entity.Property(p => p.Id);
                 entity.Property(p => p.Author)
                     .HasMaxLength(100)
                     .IsRequired();
