@@ -5,7 +5,7 @@ using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Queries;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
     /// <summary>
     /// Gets translation handler

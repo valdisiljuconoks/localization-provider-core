@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Entities
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Entities
 {
     public class LocalizationResourceEntity
     {

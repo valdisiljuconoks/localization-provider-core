@@ -48,6 +48,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AdminUI.Models", "lib\localization-provider\src\DbLocalizationProvider.AdminUI.Models\DbLocalizationProvider.AdminUI.Models.csproj", "{88AC8F93-6600-4506-A447-4FC9CE7A0376}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AspNetCore.EntityFramework", "src\DbLocalizationProvider.AspNetCore.EntityFramework\DbLocalizationProvider.AspNetCore.EntityFramework.csproj", "{0E89504D-4012-4176-A2C4-8978392BC7C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,10 @@ Global
 		{88AC8F93-6600-4506-A447-4FC9CE7A0376}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88AC8F93-6600-4506-A447-4FC9CE7A0376}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88AC8F93-6600-4506-A447-4FC9CE7A0376}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E89504D-4012-4176-A2C4-8978392BC7C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E89504D-4012-4176-A2C4-8978392BC7C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E89504D-4012-4176-A2C4-8978392BC7C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E89504D-4012-4176-A2C4-8978392BC7C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

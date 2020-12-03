@@ -5,11 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using DbLocalizationProvider.AspNetCore.Storage.Entities;
-using DbLocalizationProvider.AspNetCore.Storage.Locators;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
 {
     /// <summary>
     /// Repository for working with underlying MSSQL storage
@@ -18,7 +17,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
     {
         private DbContext GetDbContextInstance()
         {
-            var result = ServiceLocator.ServiceProvider.GetService(StorageSettings.ContextType) as DbContext;
+            var result = ServiceLocator.ServiceLocator.ServiceProvider.GetService(StorageSettings.ContextType) as DbContext;
             return result;
         }
         /// <summary>

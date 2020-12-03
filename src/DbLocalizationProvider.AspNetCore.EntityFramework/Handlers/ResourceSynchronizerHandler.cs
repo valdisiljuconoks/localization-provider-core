@@ -13,7 +13,7 @@ using DbLocalizationProvider.Internal;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
     public class ResourceSynchronizerHandler : IQueryHandler<SyncResources.Query, IEnumerable<LocalizationResource>>
     {

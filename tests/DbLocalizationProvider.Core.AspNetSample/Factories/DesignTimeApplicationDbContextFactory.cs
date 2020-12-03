@@ -1,5 +1,5 @@
 using System.IO;
-using DbLocalizationProvider.AspNetCore.Storage.Extensions;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Extensions;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;

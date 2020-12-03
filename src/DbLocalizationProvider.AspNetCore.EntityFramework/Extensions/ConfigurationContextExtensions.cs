@@ -1,13 +1,13 @@
 // Copyright (c) Valdis Iljuconoks, Andriy S'omak. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
-using DbLocalizationProvider.AspNetCore.Storage.Handlers;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Handlers;
 using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Extensions
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Extensions
 {
     /// <summary>
     /// Extension method to provide nice way to configure EntityFramework as resource storage.

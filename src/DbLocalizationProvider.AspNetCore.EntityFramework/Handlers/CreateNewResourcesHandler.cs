@@ -4,10 +4,10 @@
 using System;
 using System.Linq;
 using DbLocalizationProvider.Abstractions;
-using DbLocalizationProvider.AspNetCore.Storage.Repositories;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Repositories;
 using DbLocalizationProvider.Commands;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
     /// <summary>
     /// Implementation of the command to create new resources

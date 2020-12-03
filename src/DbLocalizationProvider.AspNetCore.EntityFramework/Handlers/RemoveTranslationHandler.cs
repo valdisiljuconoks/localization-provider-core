@@ -4,11 +4,11 @@
 using System;
 using System.Linq;
 using DbLocalizationProvider.Abstractions;
-using DbLocalizationProvider.AspNetCore.Storage.Repositories;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Repositories;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Commands;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
     /// <summary>
     /// Removes single translation

@@ -2,7 +2,7 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
-using DbLocalizationProvider.AspNetCore.Storage.Locators;
+using DbLocalizationProvider.AspNetCore.ServiceLocator;
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,9 +30,9 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
         /// <returns>ASP.NET Core application builder to enable fluent API call chains</returns>
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
-            // Initialize ServiceProviderProxy
+            // Initialize ServiceLocator hack
             var serviceProvider =  builder.ApplicationServices.GetRequiredService<IServiceProvider>();
-            ServiceLocator.Initialize(serviceProvider.GetService<IServiceProviderProxy>());
+            ServiceLocator.ServiceLocator.Initialize(serviceProvider.GetService<IServiceProviderProxy>());
             
 
             var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
@@ -40,6 +40,7 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
 
             if (logger != null) context.Logger = new LoggerAdapter(logger);
 
+            // TODO Andriy: bad idea to sync here cuz HttpContext does not exists, so Service locator will not work. It could be changed when TypeFactory get redesigned for DI support
             // if we need to sync - then it's good time to do it now
             //var sync = new Synchronizer();
             //sync.SyncResources(context.DiscoverAndRegisterResources);

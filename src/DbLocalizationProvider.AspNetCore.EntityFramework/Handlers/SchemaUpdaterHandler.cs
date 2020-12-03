@@ -4,7 +4,7 @@
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Sync;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
     public class SchemaUpdaterHandler : ICommandHandler<UpdateSchema.Command>
     {

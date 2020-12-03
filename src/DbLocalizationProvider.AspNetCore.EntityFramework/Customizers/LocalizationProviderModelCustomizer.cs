@@ -1,11 +1,11 @@
 // Copyright (c) Valdis Iljuconoks, Andriy S'omak. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
-using DbLocalizationProvider.AspNetCore.Storage.Entities;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Customizers
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Customizers
 {
     public class LocalizationProviderModelCustomizer : RelationalModelCustomizer
     {

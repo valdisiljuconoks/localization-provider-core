@@ -2,10 +2,10 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using DbLocalizationProvider.Abstractions;
-using DbLocalizationProvider.AspNetCore.Storage.Repositories;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Repositories;
 using DbLocalizationProvider.Commands;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
+namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
     /// <summary>
     /// Astalavista all resources

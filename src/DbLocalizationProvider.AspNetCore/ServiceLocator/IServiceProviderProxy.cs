@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Locators
+namespace DbLocalizationProvider.AspNetCore.ServiceLocator
 {
     public interface IServiceProviderProxy
     {

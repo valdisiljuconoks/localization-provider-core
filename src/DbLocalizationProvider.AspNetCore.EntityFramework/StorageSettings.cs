@@ -3,7 +3,7 @@
 
 using System;
 
-namespace DbLocalizationProvider.AspNetCore.Storage
+namespace DbLocalizationProvider.AspNetCore.EntityFramework
 {
     internal class StorageSettings
     {

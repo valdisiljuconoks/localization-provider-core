@@ -7,7 +7,7 @@ using System.Linq;
 using DbLocalizationProvider.AspNetCore.Cache;
 using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
-using DbLocalizationProvider.AspNetCore.Storage.Locators;
+using DbLocalizationProvider.AspNetCore.ServiceLocator;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +76,8 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
             }
 
             services.AddHttpContextAccessor();
+
+            // registering ServiceLocator hack types
             services.AddSingleton<IServiceProviderProxy, HttpContextServiceProviderProxy>();
 
             return services;

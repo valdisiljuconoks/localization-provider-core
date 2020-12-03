@@ -1,6 +1,6 @@
 using System;
 
-namespace DbLocalizationProvider.AspNetCore.Storage.Locators
+namespace DbLocalizationProvider.AspNetCore.ServiceLocator
 {
     public class ServiceLocator
     {
