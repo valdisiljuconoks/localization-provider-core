@@ -35,7 +35,7 @@ Install required packages:
 ```
 > dotnet add package LocalizationProvider.AspNetCore
 > dotnet add package LocalizationProvider.AdminUI.AspNetCore
-> dotnet add package LocalizationProvider.AspNetCore.EntityFrameWork
+> dotnet add package LocalizationProvider.AspNetCore.EntityFramework
 ```
 
 Following service configuration (usually in `Startup.cs`) is required to get localization provider working:
