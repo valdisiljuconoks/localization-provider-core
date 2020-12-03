@@ -38,7 +38,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
             services.AddDbContext<ApplicationDbContext>(
                 options =>
                 {
-                   // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                   // options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection"));
                    options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"));
                    options.UseLocalizationProvider();
                 });
@@ -120,6 +120,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
             }
 
             app.ApplyMigrations();
+            app.SeedUserData("test@test.com","Test@123", "Administrators");
 
             var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(options.Value);
