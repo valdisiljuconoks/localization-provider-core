@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.ServiceLocator
 {
-    public class HttpContextServiceProviderProxy : IServiceProviderProxy
+    internal class HttpContextServiceProviderProxy : IServiceProviderProxy
     {
         private readonly IHttpContextAccessor _contextAccessor;
 

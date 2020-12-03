@@ -17,7 +17,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
     {
         private DbContext GetDbContextInstance()
         {
-            var result = ServiceLocator.ServiceLocator.ServiceProvider.GetService(StorageSettings.ContextType) as DbContext;
+            var result = ServiceLocator.ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
             return result;
         }
         /// <summary>

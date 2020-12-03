@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DbLocalizationProvider.AspNetCore.ServiceLocator
 {
-    public interface IServiceProviderProxy
+    internal interface IServiceProviderProxy
     {
         T GetService<T>();
         IEnumerable<T> GetServices<T>();

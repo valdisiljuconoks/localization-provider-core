@@ -2,7 +2,7 @@ using System;
 
 namespace DbLocalizationProvider.AspNetCore.ServiceLocator
 {
-    public class ServiceLocator
+    internal class ServiceLocator
     {
         private static IServiceProviderProxy _proxy;
 

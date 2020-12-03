@@ -22,7 +22,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Extensions
         public static ConfigurationContext UseEntityFramework<T>(this ConfigurationContext context)
             where T : DbContext
         {
-            StorageSettings.ContextType = typeof(T);
+            Settings.ContextType = typeof(T);
 
             ConfigurationContext.Current.TypeFactory.ForQuery<UpdateSchema.Command>()
                 .SetHandler<SchemaUpdaterHandler>();

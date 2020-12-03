@@ -6,6 +6,12 @@ copy .\bin\Release\LocalizationProvider.AspNetCore.*.nupkg .\..\..\.nuget\
 copy .\bin\Release\LocalizationProvider.AspNetCore.*.snupkg .\..\..\.nuget\
 cd .\..\..\.nuget\
 
+cd .\..\src\DbLocalizationProvider.AspNetCore.EntityFramework\
+dotnet pack -c Release
+copy .\bin\Release\LocalizationProvider.AspNetCore.EntityFramework.*.nupkg .\..\..\.nuget\
+copy .\bin\Release\LocalizationProvider.AspNetCore.EntityFramework.*.snupkg .\..\..\.nuget\
+cd .\..\..\.nuget\
+
 cd .\..\src\DbLocalizationProvider.AdminUI.AspNetCore\
 dotnet pack -c Release
 copy .\bin\Release\LocalizationProvider.AdminUI.AspNetCore.*.nupkg .\..\..\.nuget\

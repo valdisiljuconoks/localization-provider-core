@@ -5,7 +5,7 @@ using System;
 
 namespace DbLocalizationProvider.AspNetCore.EntityFramework
 {
-    internal class StorageSettings
+    internal class Settings
     {
         public static Type ContextType { get; set; }
     }

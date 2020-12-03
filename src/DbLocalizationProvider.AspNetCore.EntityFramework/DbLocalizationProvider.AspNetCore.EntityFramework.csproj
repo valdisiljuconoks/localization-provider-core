@@ -2,6 +2,33 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>LocalizationProvider.AspNetCore.EntityFramework</PackageId>
+    <Version>6.4.0</Version>
+    <AssemblyVersion>6.4.0.0</AssemblyVersion>
+    <FileVersion>6.4.0.0</FileVersion>
+    <Authors>Valdis Iljuconoks (https://tech-fellow.net), Andriy S'omak (https://somak.rocks)</Authors>
+    <Company>>Valdis Iljuconoks (https://tech-fellow.net), Andriy S'omak (https://somak.rocks)</Company>
+    <Product>DbLocalizationProvider</Product>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Database driven localization provider. Asp.Net Core EntityFramework support package</Description>
+    <Copyright>Tech Fellow Consulting, Copyright © 2020</Copyright>
+    <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
+    <PackageTags>Localization Provider DbLocalization DbLocalizationProvider LocalizationProvider Database Driven AspNetCore NetCore EntityFramework</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\lib\localization-provider\strongname.snk</AssemblyOriginatorKeyFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp3.1\DbLocalizationProvider.AspNetCore.EntityFramework.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp3.1\DbLocalizationProvider.AspNetCore.EntityFramework.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -13,5 +40,11 @@
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
     <ProjectReference Include="..\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj" />
   </ItemGroup>
+  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+    <ItemGroup>
+      <DocFile Include="bin\$(Configuration)\$(TargetFramework)\*.xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DocFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
+  </Target>
 
 </Project>
