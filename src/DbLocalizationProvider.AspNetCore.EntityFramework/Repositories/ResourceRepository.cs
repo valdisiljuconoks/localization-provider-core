@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
+using DbLocalizationProvider.Internal;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
@@ -27,8 +28,10 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         public IEnumerable<LocalizationResource> GetAll()
         {
             var context = GetDbContextInstance();
+
             var result = context.Set<LocalizationResourceEntity>()
             .Select(r => new LocalizationResource());
+
             return result;
 
 
@@ -185,7 +188,6 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
-
             var context = GetDbContextInstance();
 
             var entity = new LocalizationResourceTranslationEntity
@@ -195,8 +197,8 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
                 Value = translation.Value,
                 ModificationDate = translation.ModificationDate
             };
-
             context.Add(entity);
+
             context.SaveChanges();
         }
 
@@ -216,12 +218,14 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
             var context = GetDbContextInstance();
+
             var entity = context.Find<LocalizationResourceTranslationEntity>(translation.Id);
             if (entity != null)
             {
                 entity.Value = translation.Value;
                 entity.ModificationDate = translation.ModificationDate;
 
+                context.SaveChanges();
             }
         }
 
@@ -241,12 +245,13 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
             var context = GetDbContextInstance();
+
             var entity = context.Find<LocalizationResourceTranslationEntity>(translation.Id);
             if (entity != null)
             {
                 context.Remove(entity);
-                context.SaveChanges();
 
+                context.SaveChanges();
             }
         }
 
@@ -260,6 +265,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
 
             var context = GetDbContextInstance();
+
             var entity = context.Find<LocalizationResourceEntity>();
             if (entity != null)
             {
@@ -282,10 +288,13 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
 
             var context = GetDbContextInstance();
+
             var entity = context.Find<LocalizationResourceEntity>(resource.Id);
+
             if (entity != null)
             {
                 context.Remove(entity);
+
                 context.SaveChanges();
             }
         }
@@ -296,7 +305,9 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         public void DeleteAllResources()
         {
             var context = GetDbContextInstance();
+
             context.RemoveRange(context.Set<LocalizationResourceEntity>());
+
             context.SaveChanges();
         }
 
@@ -307,42 +318,36 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         /// <exception cref="ArgumentNullException">resource</exception>
         public void InsertResource(LocalizationResource resource)
         {
-            //if (resource == null) throw new ArgumentNullException(nameof(resource));
+            if (resource == null) throw new ArgumentNullException(nameof(resource));
 
-            //using (var conn = new NpgsqlConnection(Settings.DbContextConnectionString))
-            //{
-            //    conn.Open();
+            var context = GetDbContextInstance();
 
-            //    var cmd = new NpgsqlCommand(
-            //        @"INSERT INTO public.""LocalizationResources"" (""ResourceKey"", ""Author"", ""FromCode"", ""IsHidden"", ""IsModified"", ""ModificationDate"", ""Notes"") OUTPUT INSERTED.ID VALUES (@resourceKey, @author, @fromCode, @isHidden, @isModified, @modificationDate, @notes)",
-            //        conn);
+            var entity = new LocalizationResourceEntity
+            {
+                ResourceKey = resource.ResourceKey,
+                Author = resource.Author,
+                FromCode = resource.FromCode,
+                IsHidden = resource.IsHidden ?? false,
+                IsModified = resource.IsModified ?? false,
+                ModificationDate = resource.ModificationDate,
+                Notes = resource.Notes,
+                Translations = new List<LocalizationResourceTranslationEntity>()
+            };
 
-            //    cmd.Parameters.AddWithValue("resourceKey", resource.ResourceKey);
-            //    cmd.Parameters.AddWithValue("author", resource.Author ?? "unknown");
-            //    cmd.Parameters.AddWithValue("fromCode", resource.FromCode);
-            //    cmd.Parameters.AddWithValue("isHidden", resource.IsHidden);
-            //    cmd.Parameters.AddWithValue("isModified", resource.IsModified);
-            //    cmd.Parameters.AddWithValue("modificationDate", resource.ModificationDate);
-            //    cmd.Parameters.AddSafeWithValue("notes", resource.Notes);
+            resource.Translations.ForEach(translation =>
+            {
+                var item = new LocalizationResourceTranslationEntity
+                {
+                    Language = translation.Language,
+                    Value = translation.Value,
+                    ModificationDate = translation.ModificationDate
+                };
+                entity.Translations.Add(item);
+            });
 
-            //    // get inserted resource ID
-            //    var resourcePk = (int) cmd.ExecuteScalar();
+            context.Add(entity);
 
-            //    // if there are also provided translations - execute those in the same connection also
-            //    if (resource.Translations.Any())
-            //        foreach (var translation in resource.Translations)
-            //        {
-            //            cmd = new NpgsqlCommand(
-            //                @"INSERT INTO public.""LocalizationResourceTranslations"" (""Language"", ""ResourceId"", ""Value"", ""ModificationDate"") VALUES (@language, @resourceId, @translation, @modificationDate)",
-            //                conn);
-            //            cmd.Parameters.AddWithValue("language", translation.Language);
-            //            cmd.Parameters.AddWithValue("resourceId", resourcePk);
-            //            cmd.Parameters.AddWithValue("translation", translation.Value);
-            //            cmd.Parameters.AddWithValue("modificationDate", resource.ModificationDate);
-
-            //            cmd.ExecuteNonQuery();
-            //        }
-            //}
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -353,6 +358,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         public IEnumerable<CultureInfo> GetAvailableLanguages(bool includeInvariant)
         {
             var context = GetDbContextInstance();
+
             var result = context.Set<LocalizationResourceTranslationEntity>()
                 .Where(p => p.Language != string.Empty)
                 .Distinct()

@@ -10,7 +10,6 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
     /// <summary>
     /// Astalavista all resources
     /// </summary>
-    /// <seealso
     public class DeleteAllResourcesHandler : ICommandHandler<DeleteAllResources.Command>
     {
         /// <summary>
