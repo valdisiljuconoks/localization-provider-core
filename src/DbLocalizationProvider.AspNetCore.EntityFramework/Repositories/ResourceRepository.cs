@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
 using DbLocalizationProvider.Internal;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
@@ -22,6 +21,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             var result = ServiceLocator.ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
             return result;
         }
+
         /// <summary>
         /// Gets all resources.
         /// </summary>
@@ -31,68 +31,31 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             var context = GetDbContextInstance();
 
             var result = context.Set<LocalizationResourceEntity>()
+                .Include(p => p.Translations)
                 .AsNoTracking()
-            .Select(r => new LocalizationResource());
+                .Select(p => new LocalizationResource
+                {
+                    Id = (int)p.Id,
+                    Author = p.Author ?? "unknown",
+                    FromCode = p.FromCode,
+                    ResourceKey = p.ResourceKey,
+                    IsHidden = p.IsHidden,
+                    IsModified = p.IsModified,
+                    ModificationDate = p.ModificationDate,
+                    Notes = p.Notes,
+                    Translations = p.Translations.Select(t => new LocalizationResourceTranslation
+                    {
+                        Id = (int)t.Id,
+                        Language = t.Language ?? string.Empty,
+                        ResourceId = (int)t.ResourceId,
+                        ModificationDate = t.ModificationDate,
+                        Value = t.Value
+                    }).ToList()
+                }).ToList();
+
+            result.ForEach(p => p.Translations.ForEach(t => t.LocalizationResource = p));
 
             return result;
-
-
-            //using (var conn = new NpgsqlConnection(Settings.DbContextConnectionString))
-            //{
-            //    conn.Open();
-
-            //    var cmd = new NpgsqlCommand(@"SELECT
-            //            r.""Id"",
-            //            r.""ResourceKey"",
-            //            r.""Author"",
-            //            r.""FromCode"",
-            //            r.""IsHidden"",
-            //            r.""IsModified"",
-            //            r.""ModificationDate"",
-            //            r.""Notes"",
-            //            t.""Id"" as ""TranslationId"",
-            //            t.""Value"" as ""Translation"",
-            //            t.""Language"",
-            //            t.""ModificationDate"" as ""TranslationModificationDate""
-            //            FROM public.""LocalizationResources"" r
-            //        LEFT JOIN public.""LocalizationResourceTranslations"" t ON r.""Id"" = t.""ResourceId""",
-            //        conn);
-
-            //    var reader = cmd.ExecuteReader();
-            //    var lookup = new Dictionary<string, LocalizationResource>();
-
-            //    void CreateTranslation(NpgsqlDataReader sqlDataReader, LocalizationResource localizationResource)
-            //    {
-            //        if (!sqlDataReader.IsDBNull(sqlDataReader.GetOrdinal("TranslationId")))
-            //            localizationResource.Translations.Add(new LocalizationResourceTranslation
-            //            {
-            //                Id = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("TranslationId")),
-            //                ResourceId = localizationResource.Id,
-            //                Value = sqlDataReader.GetStringSafe("Translation"),
-            //                Language = sqlDataReader.GetStringSafe("Language") ?? string.Empty,
-            //                ModificationDate = reader.GetDateTime(reader.GetOrdinal("TranslationModificationDate")),
-            //                LocalizationResource = localizationResource
-            //            });
-            //    }
-
-            //    while (reader.Read())
-            //    {
-            //        var key = reader.GetString(reader.GetOrdinal(nameof(LocalizationResource.ResourceKey)));
-            //        if (lookup.TryGetValue(key, out var resource))
-            //        {
-            //            CreateTranslation(reader, resource);
-            //        }
-            //        else
-            //        {
-            //            var result = CreateResourceFromSqlReader(key, reader);
-            //            CreateTranslation(reader, result);
-            //            lookup.Add(key, result);
-            //        }
-            //    }
-
-            //    return lookup.Values;
-            //}
-            return new List<LocalizationResource>();
         }
 
         /// <summary>
@@ -111,7 +74,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
                 .Include(p => p.Translations)
                 .AsNoTracking()
                 .Where(p => p.ResourceKey == resourceKey)
-                .Select(p => new LocalizationResource()
+                .Select(p => new LocalizationResource
                 {
                     Id = (int)p.Id,
                     Author = p.Author ?? "unknown",
@@ -124,7 +87,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
                     Translations = p.Translations.Select(t => new LocalizationResourceTranslation
                     {
                         Id = (int)t.Id,
-                        Language = t.Language,
+                        Language = t.Language ?? string.Empty,
                         ResourceId = (int)t.ResourceId,
                         ModificationDate = t.ModificationDate,
                         Value = t.Value

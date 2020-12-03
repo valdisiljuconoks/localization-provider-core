@@ -36,8 +36,10 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Abstractions\DbLocalizationProvider.Abstractions.csproj" />
-    <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
+    <ProjectReference
+      Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Abstractions\DbLocalizationProvider.Abstractions.csproj" />
+    <ProjectReference
+      Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
     <ProjectReference Include="..\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj" />
   </ItemGroup>
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
