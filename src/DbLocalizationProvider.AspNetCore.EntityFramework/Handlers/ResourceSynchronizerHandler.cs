@@ -12,11 +12,18 @@ using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Internal;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
+using Microsoft.EntityFrameworkCore;
 
 namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
     public class ResourceSynchronizerHandler : IQueryHandler<SyncResources.Query, IEnumerable<LocalizationResource>>
-    {
+    { 
+        private DbContext GetDbContextInstance()
+        {
+            var result = ServiceLocator.ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
+            return result;
+        }
+
         public IEnumerable<LocalizationResource> Execute(SyncResources.Query query)
         {
             ConfigurationContext.Current.Logger?.Debug("Starting to sync resources...");
@@ -125,14 +132,13 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 
         private void ResetSyncStatus()
         {
-            //using (var conn = new NpgsqlConnection(Settings.DbContextConnectionString))
-            //{
-            //    var cmd = new NpgsqlCommand(@"UPDATE public.""LocalizationResources"" SET ""FromCode"" = '0'", conn);
+            var context = GetDbContextInstance();
 
-            //    conn.Open();
-            //    cmd.ExecuteNonQuery();
-            //    conn.Close();
-            //}
+            context.Set<LocalizationResource>()
+                .Where(p => p.FromCode)
+                .AsEnumerable().ForEach(p => p.FromCode = false);
+
+            context.SaveChanges();
         }
 
         private void RegisterDiscoveredResources(
