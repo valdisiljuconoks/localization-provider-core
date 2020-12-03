@@ -7,7 +7,7 @@ using System.Linq;
 using DbLocalizationProvider.AspNetCore.Cache;
 using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
-using DbLocalizationProvider.AspNetCore.ServiceLocator;
+using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Mvc;

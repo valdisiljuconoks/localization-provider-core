@@ -1,6 +1,6 @@
 using System;
 
-namespace DbLocalizationProvider.AspNetCore.ServiceLocator
+namespace DbLocalizationProvider.AspNetCore.ServiceLocators
 {
     // TODO: Hack! This class should be removed after making library DI compatible.
     internal class ServiceLocator

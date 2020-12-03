@@ -2,7 +2,7 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
-using DbLocalizationProvider.AspNetCore.ServiceLocator;
+using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +32,7 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
         {
             // TODO: Hack! This code should be removed after making library DI compatible.
             var serviceProvider =  builder.ApplicationServices.GetRequiredService<IServiceProvider>();
-            ServiceLocator.ServiceLocator.Initialize(serviceProvider.GetService<IServiceProviderProxy>());
+            ServiceLocator.Initialize(serviceProvider.GetService<IServiceProviderProxy>());
             // --
 
             var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
