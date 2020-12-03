@@ -23,6 +23,9 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
     <Content Remove="package-lock.json" />
