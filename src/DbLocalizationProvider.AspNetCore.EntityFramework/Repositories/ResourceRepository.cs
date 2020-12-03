@@ -30,30 +30,11 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             var context = GetDbContextInstance();
 
-            var result = context.Set<LocalizationResourceEntity>()
+            var query = context.Set<LocalizationResourceEntity>()
                 .Include(p => p.Translations)
-                .AsNoTracking()
-                .Select(p => new LocalizationResource
-                {
-                    Id = (int)p.Id,
-                    Author = p.Author ?? "unknown",
-                    FromCode = p.FromCode,
-                    ResourceKey = p.ResourceKey,
-                    IsHidden = p.IsHidden,
-                    IsModified = p.IsModified,
-                    ModificationDate = p.ModificationDate,
-                    Notes = p.Notes,
-                    Translations = p.Translations.Select(t => new LocalizationResourceTranslation
-                    {
-                        Id = (int)t.Id,
-                        Language = t.Language ?? string.Empty,
-                        ResourceId = (int)t.ResourceId,
-                        ModificationDate = t.ModificationDate,
-                        Value = t.Value
-                    }).ToList()
-                }).ToList();
+                .AsNoTracking();
 
-            result.ForEach(p => p.Translations.ForEach(t => t.LocalizationResource = p));
+            var result = ToLocalizationResource(query);
 
             return result;
         }
@@ -70,31 +51,40 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
 
             var context = GetDbContextInstance();
 
-            var result = context.Set<LocalizationResourceEntity>()
+            var query = context.Set<LocalizationResourceEntity>()
                 .Include(p => p.Translations)
                 .AsNoTracking()
-                .Where(p => p.ResourceKey == resourceKey)
-                .Select(p => new LocalizationResource
-                {
-                    Id = (int)p.Id,
-                    Author = p.Author ?? "unknown",
-                    FromCode = p.FromCode,
-                    ResourceKey = p.ResourceKey,
-                    IsHidden = p.IsHidden,
-                    IsModified = p.IsModified,
-                    ModificationDate = p.ModificationDate,
-                    Notes = p.Notes,
-                    Translations = p.Translations.Select(t => new LocalizationResourceTranslation
-                    {
-                        Id = (int)t.Id,
-                        Language = t.Language ?? string.Empty,
-                        ResourceId = (int)t.ResourceId,
-                        ModificationDate = t.ModificationDate,
-                        Value = t.Value
-                    }).ToList()
-                }).SingleOrDefault();
+                .Where(p => p.ResourceKey == resourceKey);
 
-            result?.Translations.ForEach(t => t.LocalizationResource = result);
+            var result = ToLocalizationResource(query)
+                .SingleOrDefault();
+
+            return result;
+        }
+
+        private IEnumerable<LocalizationResource> ToLocalizationResource(IQueryable<LocalizationResourceEntity> query)
+        {
+            var result = query.Select(p => new LocalizationResource
+            {
+                Id = (int)p.Id,
+                Author = p.Author ?? "unknown",
+                FromCode = p.FromCode,
+                ResourceKey = p.ResourceKey,
+                IsHidden = p.IsHidden,
+                IsModified = p.IsModified,
+                ModificationDate = p.ModificationDate,
+                Notes = p.Notes,
+                Translations = p.Translations.Select(t => new LocalizationResourceTranslation
+                {
+                    Id = (int)t.Id,
+                    Language = t.Language ?? string.Empty,
+                    ResourceId = (int)t.ResourceId,
+                    ModificationDate = t.ModificationDate,
+                    Value = t.Value
+                }).ToList()
+            })
+                .AsEnumerable()
+                .ForEach(p => p.Translations.ForEach(t => t.LocalizationResource = p));
 
             return result;
         }
