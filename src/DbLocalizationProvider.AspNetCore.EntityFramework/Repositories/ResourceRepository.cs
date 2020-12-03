@@ -35,7 +35,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
                 .Include(p => p.Translations)
                 .AsNoTracking();
 
-            var result = ToLocalizationResource(query);
+            var result = ToLocalizationResources(query);
 
             return result;
         }
@@ -57,13 +57,13 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
                 .AsNoTracking()
                 .Where(p => p.ResourceKey == resourceKey);
 
-            var result = ToLocalizationResource(query)
+            var result = ToLocalizationResources(query)
                 .SingleOrDefault();
 
             return result;
         }
 
-        private IEnumerable<LocalizationResource> ToLocalizationResource(IQueryable<LocalizationResourceEntity> query)
+        private IEnumerable<LocalizationResource> ToLocalizationResources(IQueryable<LocalizationResourceEntity> query)
         {
             var result = query.Select(p => new LocalizationResource
                 {
