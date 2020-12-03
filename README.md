@@ -58,9 +58,7 @@ public class Startup
         {
             // options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection")); 
             options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"));
-            ````diff
-            + options.UseLocalizationProvider();
-            
+            options.UseLocalizationProvider();
          });
                 
         services.AddDbLocalizationProvider(_ =>
