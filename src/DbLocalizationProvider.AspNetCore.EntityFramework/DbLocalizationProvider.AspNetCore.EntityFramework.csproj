@@ -7,7 +7,7 @@
     <AssemblyVersion>6.4.0.0</AssemblyVersion>
     <FileVersion>6.4.0.0</FileVersion>
     <Authors>Valdis Iljuconoks (https://tech-fellow.net), Andriy S'omak (https://somak.rocks)</Authors>
-    <Company>>Valdis Iljuconoks (https://tech-fellow.net), Andriy S'omak (https://somak.rocks)</Company>
+    <Company>Valdis Iljuconoks (https://tech-fellow.net), Andriy S'omak (https://somak.rocks)</Company>
     <Product>DbLocalizationProvider</Product>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Database driven localization provider. Asp.Net Core EntityFramework support package</Description>
