@@ -30,10 +30,10 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
         /// <returns>ASP.NET Core application builder to enable fluent API call chains</returns>
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
-            // Initialize ServiceLocator hack
+            // TODO: Hack! This code should be removed after making library DI compatible.
             var serviceProvider =  builder.ApplicationServices.GetRequiredService<IServiceProvider>();
             ServiceLocator.ServiceLocator.Initialize(serviceProvider.GetService<IServiceProviderProxy>());
-            
+            // --
 
             var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
             var context = ConfigurationContext.Current;

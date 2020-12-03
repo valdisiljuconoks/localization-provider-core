@@ -2,6 +2,7 @@ using System;
 
 namespace DbLocalizationProvider.AspNetCore.ServiceLocator
 {
+    // TODO: Hack! This class should be removed after making library DI compatible.
     internal class ServiceLocator
     {
         private static IServiceProviderProxy _proxy;

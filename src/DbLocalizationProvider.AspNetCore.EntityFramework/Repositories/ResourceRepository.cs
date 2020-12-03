@@ -26,7 +26,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         /// <returns>List of resources</returns>
         public IEnumerable<LocalizationResource> GetAll()
         {
-            using var context = GetDbContextInstance();
+            var context = GetDbContextInstance();
             var result = context.Set<LocalizationResourceEntity>()
             .Select(r => new LocalizationResource());
             return result;

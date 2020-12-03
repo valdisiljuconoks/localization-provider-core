@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.ServiceLocator
 {
+
+    // TODO: Hack! This class should be removed after making library DI compatible.
     internal class HttpContextServiceProviderProxy : IServiceProviderProxy
     {
         private readonly IHttpContextAccessor _contextAccessor;

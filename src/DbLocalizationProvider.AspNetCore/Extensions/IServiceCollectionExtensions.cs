@@ -77,8 +77,9 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
 
             services.AddHttpContextAccessor();
 
-            // registering ServiceLocator hack types
+            // TODO: Hack! This code should be removed after making library DI compatible.
             services.AddSingleton<IServiceProviderProxy, HttpContextServiceProviderProxy>();
+            // -
 
             return services;
         }

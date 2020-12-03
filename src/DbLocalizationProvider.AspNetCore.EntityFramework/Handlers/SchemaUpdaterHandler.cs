@@ -16,7 +16,8 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 
         private void EnsureDatabaseSchema()
         {
-            // There is MOCK. Nothing to do for EntityFramework implementation
+            // There is MOCK. Nothing to do for EntityFramework implementation.
+            // Applying migrations should be on a application side.
         }
     }
 }
