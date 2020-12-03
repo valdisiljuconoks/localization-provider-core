@@ -11,7 +11,6 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Extensions
     {
         public static DbContextOptionsBuilder UseLocalizationProvider(this DbContextOptionsBuilder builder)
         {
-            // Settings.ContextType = builder.Options.ContextType;
             builder.ReplaceService<IModelCustomizer, LocalizationProviderModelCustomizer>();
             return builder;
         }

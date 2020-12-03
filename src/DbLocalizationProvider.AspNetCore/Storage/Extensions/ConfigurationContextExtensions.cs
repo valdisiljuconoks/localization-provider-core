@@ -6,26 +6,23 @@ using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.Storage.Extensions
 {
     /// <summary>
-    ///     Extension method to provide nice way to configure EntityFramework as resource storage.
+    /// Extension method to provide nice way to configure EntityFramework as resource storage.
     /// </summary>
     public static class ConfigurationContextExtensions
     {
         /// <summary>
-        ///     If you can afford EntityFramework - this method is for you.
+        /// If you can afford EntityFramework - this method is for you.
         /// </summary>
         /// <param name="context">The context.</param>
         /// <returns></returns>
-        public static ConfigurationContext UseEntityFramework<T>(this ConfigurationContext context,
-            IServiceCollection services) 
+        public static ConfigurationContext UseEntityFramework<T>(this ConfigurationContext context)
             where T : DbContext
         {
-            Settings.ContextType = typeof(T);
-            Settings.Services = services;
+            StorageSettings.ContextType = typeof(T);
 
             ConfigurationContext.Current.TypeFactory.ForQuery<UpdateSchema.Command>()
                 .SetHandler<SchemaUpdaterHandler>();

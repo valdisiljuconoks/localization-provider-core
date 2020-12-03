@@ -10,12 +10,12 @@ using DbLocalizationProvider.Commands;
 namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
 {
     /// <summary>
-    ///     Implementation for creating or updating existing translation
+    /// Implementation for creating or updating existing translation
     /// </summary>
     public class CreateOrUpdateTranslationHandler : ICommandHandler<CreateOrUpdateTranslation.Command>
     {
         /// <summary>
-        ///     Handles the command. Actual instance of the command being executed is passed-in as argument
+        /// Handles the command. Actual instance of the command being executed is passed-in as argument
         /// </summary>
         /// <param name="command">Actual command instance being executed</param>
         public void Execute(CreateOrUpdateTranslation.Command command)

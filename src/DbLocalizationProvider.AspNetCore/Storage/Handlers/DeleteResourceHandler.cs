@@ -10,12 +10,12 @@ using DbLocalizationProvider.Commands;
 namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
 {
     /// <summary>
-    ///     Removes single resource
+    /// Removes single resource
     /// </summary>
     public class DeleteResourceHandler : ICommandHandler<DeleteResource.Command>
     {
         /// <summary>
-        ///     Handles the command. Actual instance of the command being executed is passed-in as argument
+        /// Handles the command. Actual instance of the command being executed is passed-in as argument
         /// </summary>
         /// <param name="command">Actual command instance being executed</param>
         /// <exception cref="ArgumentNullException">Key</exception>

@@ -8,17 +8,17 @@ using DbLocalizationProvider.Queries;
 namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
 {
     /// <summary>
-    ///     Retrieves single resource
+    /// Retrieves single resource
     /// </summary>
     public class GetResourceHandler : IQueryHandler<GetResource.Query, LocalizationResource>
     {
         /// <summary>
-        ///     Place where query handling happens
+        /// Place where query handling happens
         /// </summary>
         /// <param name="query">This is the query instance</param>
         /// <returns>
-        ///     You have to return something from the query execution. Of course you can return <c>null</c> as well if you
-        ///     will.
+        /// You have to return something from the query execution. Of course you can return <c>null</c> as well if you
+        /// will.
         /// </returns>
         public LocalizationResource Execute(GetResource.Query query)
         {

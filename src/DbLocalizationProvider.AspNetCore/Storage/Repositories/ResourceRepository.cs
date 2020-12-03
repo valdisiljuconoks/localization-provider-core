@@ -6,35 +6,30 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AspNetCore.Storage.Entities;
+using DbLocalizationProvider.AspNetCore.Storage.Locators;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
 {
     /// <summary>
-    ///     Repository for working with underlying MSSQL storage
+    /// Repository for working with underlying MSSQL storage
     /// </summary>
     public class ResourceRepository
     {
-//        private readonly ServiceProvider _provider;
-        private readonly DbContext _context;
-
-        public ResourceRepository()
+        private DbContext GetDbContextInstance()
         {
-            var _provider = Settings.Services.BuildServiceProvider();
-            _context = (DbContext)_provider.GetService(Settings.ContextType);
+            var result = ServiceLocator.ServiceProvider.GetService(StorageSettings.ContextType) as DbContext;
+            return result;
         }
         /// <summary>
-        ///     Gets all resources.
+        /// Gets all resources.
         /// </summary>
         /// <returns>List of resources</returns>
         public IEnumerable<LocalizationResource> GetAll()
         {
-            var result = _context.Set<LocalizationResourceEntity>()
-                .Select(r => new LocalizationResource
-                {
-
-                });
+            using var context = GetDbContextInstance();
+            var result = context.Set<LocalizationResourceEntity>()
+            .Select(r => new LocalizationResource());
             return result;
 
 
@@ -97,7 +92,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         }
 
         /// <summary>
-        ///     Gets resource by the key.
+        /// Gets resource by the key.
         /// </summary>
         /// <param name="resourceKey">The resource key.</param>
         /// <returns>Localized resource if found by given key</returns>
@@ -177,14 +172,14 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         //}
 
         /// <summary>
-        ///     Adds the translation for the resource.
+        /// Adds the translation for the resource.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <param name="translation">The translation.</param>
         /// <exception cref="ArgumentNullException">
-        ///     resource
-        ///     or
-        ///     translation
+        /// resource
+        /// or
+        /// translation
         /// </exception>
         public void AddTranslation(LocalizationResource resource, LocalizationResourceTranslation translation)
         {
@@ -208,14 +203,14 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         }
 
         /// <summary>
-        ///     Updates the translation for the resource.
+        /// Updates the translation for the resource.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <param name="translation">The translation.</param>
         /// <exception cref="ArgumentNullException">
-        ///     resource
-        ///     or
-        ///     translation
+        /// resource
+        /// or
+        /// translation
         /// </exception>
         public void UpdateTranslation(LocalizationResource resource, LocalizationResourceTranslation translation)
         {
@@ -238,14 +233,14 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         }
 
         /// <summary>
-        ///     Deletes the translation.
+        /// Deletes the translation.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <param name="translation">The translation.</param>
         /// <exception cref="ArgumentNullException">
-        ///     resource
-        ///     or
-        ///     translation
+        /// resource
+        /// or
+        /// translation
         /// </exception>
         public void DeleteTranslation(LocalizationResource resource, LocalizationResourceTranslation translation)
         {
@@ -265,7 +260,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         }
 
         /// <summary>
-        ///     Updates the resource.
+        /// Updates the resource.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <exception cref="ArgumentNullException">resource</exception>
@@ -290,7 +285,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         }
 
         /// <summary>
-        ///     Deletes the resource.
+        /// Deletes the resource.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <exception cref="ArgumentNullException">resource</exception>
@@ -310,7 +305,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         }
 
         /// <summary>
-        ///     Deletes all resources. DANGEROUS!
+        /// Deletes all resources. DANGEROUS!
         /// </summary>
         public void DeleteAllResources()
         {
@@ -325,7 +320,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         }
 
         /// <summary>
-        ///     Inserts the resource in database.
+        /// Inserts the resource in database.
         /// </summary>
         /// <param name="resource">The resource.</param>
         /// <exception cref="ArgumentNullException">resource</exception>
@@ -370,7 +365,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Repositories
         }
 
         /// <summary>
-        ///     Gets the available languages (reads in which languages translations are added).
+        /// Gets the available languages (reads in which languages translations are added).
         /// </summary>
         /// <param name="includeInvariant">if set to <c>true</c> ""include invariant"".</param>
         /// <returns></returns>

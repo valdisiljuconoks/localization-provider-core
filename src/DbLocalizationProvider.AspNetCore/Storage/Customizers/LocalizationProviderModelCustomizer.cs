@@ -42,7 +42,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Customizers
                 entity.HasOne(p => p.Resource)
                     .WithMany(p => p.Translations)
                     .HasForeignKey(p => p.ResourceId);
-                entity.HasIndex(p => new {p.Language, p.ResourceId})
+                entity.HasIndex(p => new { p.Language, p.ResourceId })
                     .IsUnique();
             });
 

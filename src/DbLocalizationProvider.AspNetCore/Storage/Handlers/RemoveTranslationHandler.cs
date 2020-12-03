@@ -11,12 +11,12 @@ using DbLocalizationProvider.Commands;
 namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
 {
     /// <summary>
-    ///     Removes single translation
+    /// Removes single translation
     /// </summary>
     public class RemoveTranslationHandler : ICommandHandler<RemoveTranslation.Command>
     {
         /// <summary>
-        ///     Handles the command. Actual instance of the command being executed is passed-in as argument
+        /// Handles the command. Actual instance of the command being executed is passed-in as argument
         /// </summary>
         /// <param name="command">Actual command instance being executed</param>
         /// <exception cref="InvalidOperationException">Cannot delete translation for not modified resource (key: `{command.Key}`</exception>

@@ -11,6 +11,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Entities
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
+
         public string Author { get; set; }
         public bool FromCode { get; set; }
         public bool IsHidden { get; set; }

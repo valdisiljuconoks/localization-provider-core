@@ -10,12 +10,12 @@ using DbLocalizationProvider.Commands;
 namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
 {
     /// <summary>
-    ///     Implementation of the command to create new resources
+    /// Implementation of the command to create new resources
     /// </summary>
     public class CreateNewResourcesHandler : ICommandHandler<CreateNewResources.Command>
     {
         /// <summary>
-        ///     Handles the command. Actual instance of the command being executed is passed-in as argument
+        /// Handles the command. Actual instance of the command being executed is passed-in as argument
         /// </summary>
         /// <param name="command">Actual command instance being executed</param>
         /// <exception cref="InvalidOperationException">Resource with key `{resource.ResourceKey}` already exists</exception>
@@ -39,11 +39,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
                 if (resource.Translations.Count == 1 && resource.Translations.InvariantTranslation() == null)
                 {
                     var t = resource.Translations.First();
-                    resource.Translations.Add(new LocalizationResourceTranslation
-                    {
-                        Value = t.Value,
-                        Language = string.Empty
-                    });
+                    resource.Translations.Add(new LocalizationResourceTranslation { Value = t.Value, Language = string.Empty });
                 }
 
                 repository.InsertResource(resource);

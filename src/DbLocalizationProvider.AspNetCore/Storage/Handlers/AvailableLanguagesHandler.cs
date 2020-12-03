@@ -11,17 +11,17 @@ using DbLocalizationProvider.Queries;
 namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
 {
     /// <summary>
-    ///     Reads all available languages form database (in which translations are added).
+    /// Reads all available languages form database (in which translations are added).
     /// </summary>
     public class AvailableLanguagesHandler : IQueryHandler<AvailableLanguages.Query, IEnumerable<CultureInfo>>
     {
         /// <summary>
-        ///     Place where query handling happens
+        /// Place where query handling happens
         /// </summary>
         /// <param name="query">This is the query instance</param>
         /// <returns>
-        ///     You have to return something from the query execution. Of course you can return <c>null</c> as well if you
-        ///     will.
+        /// You have to return something from the query execution. Of course you can return <c>null</c> as well if you
+        /// will.
         /// </returns>
         public IEnumerable<CultureInfo> Execute(AvailableLanguages.Query query)
         {

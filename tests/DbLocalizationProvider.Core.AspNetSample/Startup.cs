@@ -84,7 +84,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //.Try(new CultureInfo("sv"))
                 //.Then(new CultureInfo("no"))
                 //.Then(new CultureInfo("en"));
-                _.UseEntityFramework<ApplicationDbContext>(services);
+                _.UseEntityFramework<ApplicationDbContext>();
             });
 
             services.AddDbLocalizationProviderAdminUI(_ =>

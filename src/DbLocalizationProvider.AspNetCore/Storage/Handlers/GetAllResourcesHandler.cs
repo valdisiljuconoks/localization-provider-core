@@ -9,17 +9,17 @@ using DbLocalizationProvider.Queries;
 namespace DbLocalizationProvider.AspNetCore.Storage.Handlers
 {
     /// <summary>
-    ///     Reads all resources from underlying storage
+    /// Reads all resources from underlying storage
     /// </summary>
     public class GetAllResourcesHandler : IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>>
     {
         /// <summary>
-        ///     Place where query handling happens
+        /// Place where query handling happens
         /// </summary>
         /// <param name="query">This is the query instance</param>
         /// <returns>
-        ///     You have to return something from the query execution. Of course you can return <c>null</c> as well if you
-        ///     will.
+        /// You have to return something from the query execution. Of course you can return <c>null</c> as well if you
+        /// will.
         /// </returns>
         public IEnumerable<LocalizationResource> Execute(GetAllResources.Query query)
         {

@@ -10,6 +10,7 @@ namespace DbLocalizationProvider.AspNetCore.Storage.Entities
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
+
         public string Language { get; set; }
         public long ResourceId { get; set; }
         public string Value { get; set; }

@@ -1,6 +1,8 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using System;
+using DbLocalizationProvider.AspNetCore.Storage.Locators;
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +30,11 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
         /// <returns>ASP.NET Core application builder to enable fluent API call chains</returns>
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
+            // Initialize ServiceProviderProxy
+            var serviceProvider =  builder.ApplicationServices.GetRequiredService<IServiceProvider>();
+            ServiceLocator.Initialize(serviceProvider.GetService<IServiceProviderProxy>());
+            
+
             var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
             var context = ConfigurationContext.Current;
 
