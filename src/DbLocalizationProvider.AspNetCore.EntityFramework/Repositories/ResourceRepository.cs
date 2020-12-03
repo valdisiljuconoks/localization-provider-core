@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
+using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Internal;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
     {
         private DbContext GetDbContextInstance()
         {
-            var result = ServiceLocator.ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
+            var result = ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
             return result;
         }
 
@@ -65,24 +66,24 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         private IEnumerable<LocalizationResource> ToLocalizationResource(IQueryable<LocalizationResourceEntity> query)
         {
             var result = query.Select(p => new LocalizationResource
-            {
-                Id = (int)p.Id,
-                Author = p.Author ?? "unknown",
-                FromCode = p.FromCode,
-                ResourceKey = p.ResourceKey,
-                IsHidden = p.IsHidden,
-                IsModified = p.IsModified,
-                ModificationDate = p.ModificationDate,
-                Notes = p.Notes,
-                Translations = p.Translations.Select(t => new LocalizationResourceTranslation
                 {
-                    Id = (int)t.Id,
-                    Language = t.Language ?? string.Empty,
-                    ResourceId = (int)t.ResourceId,
-                    ModificationDate = t.ModificationDate,
-                    Value = t.Value
-                }).ToList()
-            })
+                    Id = (int)p.Id,
+                    Author = p.Author ?? "unknown",
+                    FromCode = p.FromCode,
+                    ResourceKey = p.ResourceKey,
+                    IsHidden = p.IsHidden,
+                    IsModified = p.IsModified,
+                    ModificationDate = p.ModificationDate,
+                    Notes = p.Notes,
+                    Translations = p.Translations.Select(t => new LocalizationResourceTranslation
+                    {
+                        Id = (int)t.Id,
+                        Language = t.Language ?? string.Empty,
+                        ResourceId = (int)t.ResourceId,
+                        ModificationDate = t.ModificationDate,
+                        Value = t.Value
+                    }).ToList()
+                })
                 .AsEnumerable()
                 .ForEach(p => p.Translations.ForEach(t => t.LocalizationResource = p));
 

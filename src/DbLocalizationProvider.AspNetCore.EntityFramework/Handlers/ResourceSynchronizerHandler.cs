@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Abstractions;
+using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Internal;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
@@ -20,7 +21,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
     { 
         private DbContext GetDbContextInstance()
         {
-            var result = ServiceLocator.ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
+            var result = ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
             return result;
         }
 
