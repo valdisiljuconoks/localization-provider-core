@@ -30,7 +30,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
             // we can check whether we know this resource at all
             // if not - we can break circuit here
 
-            // TODO: if (!ConfigurationContext.Current.BaseCacheManager.IsKeyKnown(key)) return null;
+            if (!ConfigurationContext.Current.BaseCacheManager.IsKeyKnown(key)) return null;
 
             //if (!ConfigurationContext.Current.BaseCacheManager.IsKeyKnown(key)) return null;
 

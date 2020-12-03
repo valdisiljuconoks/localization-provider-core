@@ -44,7 +44,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 
                 repository.InsertResource(resource);
 
-                //TODO: ConfigurationContext.Current.BaseCacheManager.StoreKnownKey(resource.ResourceKey);
+                ConfigurationContext.Current.BaseCacheManager.StoreKnownKey(resource.ResourceKey);
             }
         }
     }
