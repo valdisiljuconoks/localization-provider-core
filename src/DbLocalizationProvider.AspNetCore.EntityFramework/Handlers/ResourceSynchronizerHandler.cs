@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Abstractions;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
 using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Internal;
 using DbLocalizationProvider.Queries;
@@ -18,13 +18,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
     public class ResourceSynchronizerHandler : IQueryHandler<SyncResources.Query, IEnumerable<LocalizationResource>>
-    { 
-        private DbContext GetDbContextInstance()
-        {
-            var result = ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
-            return result;
-        }
-
+    {
         public IEnumerable<LocalizationResource> Execute(SyncResources.Query query)
         {
             ConfigurationContext.Current.Logger?.Debug("Starting to sync resources...");
@@ -45,6 +39,12 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 
             ConfigurationContext.Current.Logger?.Debug($"Resource synchronization took: {sw.ElapsedMilliseconds}ms");
 
+            return result;
+        }
+
+        private DbContext GetDbContextInstance()
+        {
+            var result = ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
             return result;
         }
 
@@ -149,21 +149,23 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
             // split work queue by 400 resources each
             var groupedProperties = properties.SplitByCount(400);
 
+            if (!groupedProperties.Any()) return;
+
+
+            var context = GetDbContextInstance();
+
             Parallel.ForEach(groupedProperties,
                              group =>
                              {
-                                 var sb = new StringBuilder();
-                                 sb.AppendLine("DO $$");
-                                 sb.AppendLine("DECLARE resourceId integer;");
-                                 sb.AppendLine("BEGIN");
-
                                  var refactoredResources = group.Where(r => !string.IsNullOrEmpty(r.OldResourceKey));
+
                                  foreach (var refactoredResource in refactoredResources)
-                                     sb.Append($@"
-        IF EXISTS(SELECT 1 FROM public.""LocalizationResources"" WHERE ""ResourceKey"" = '{refactoredResource.OldResourceKey}') THEN
-            UPDATE public.""LocalizationResources"" SET ""ResourceKey"" = '{refactoredResource.Key}', ""FromCode"" = '1' WHERE ""ResourceKey"" = '{refactoredResource.OldResourceKey}';
-        END IF;
-        ");
+                                 {
+                                     context.Set<LocalizationResourceEntity>()
+                                         .Where(p => p.ResourceKey == refactoredResource.OldResourceKey)
+                                         .AsEnumerable()
+                                         .ForEach(p => p.FromCode = true);
+                                 }
 
                                  foreach (var property in group)
                                  {
@@ -171,65 +173,89 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 
                                      if (existingResource == null)
                                      {
-                                         sb.Append($@"
-        resourceId := coalesce((SELECT ""Id"" FROM public.""LocalizationResources"" WHERE ""ResourceKey"" = '{property.Key}'), -1);
-        IF resourceId = -1 THEN 
-            INSERT INTO public.""LocalizationResources"" (""ResourceKey"", ""ModificationDate"", ""Author"", ""FromCode"", ""IsModified"", ""IsHidden"") VALUES ('{property.Key}', CAST(NOW() at time zone 'utc' AS timestamp), 'type-scanner', '1', '0', '{Convert.ToInt32(property.IsHidden)}');
-            resourceId := LASTVAL();");
+                                         var entity = context.Set<LocalizationResourceEntity>()
+                                             .SingleOrDefault(p => p.ResourceKey == property.Key);
+
+                                         if (entity == null)
+                                         {
+                                             entity = new LocalizationResourceEntity
+                                             {
+                                                 ResourceKey = property.Key,
+                                                 ModificationDate = DateTime.UtcNow,
+                                                 Author = "type-scanner",
+                                                 FromCode = true,
+                                                 IsModified = false,
+                                                 IsHidden = property.IsHidden,
+                                                 Translations = new List<LocalizationResourceTranslationEntity>()
+                                             };
+                                             context.Add(entity);
+                                         }
 
                                          // add all translations
                                          foreach (var propertyTranslation in property.Translations)
-                                             sb.Append($@"
-            INSERT INTO public.""LocalizationResourceTranslations"" (""ResourceId"", ""Language"", ""Value"", ""ModificationDate"") VALUES (resourceId, '{propertyTranslation.Culture}', N'{propertyTranslation.Translation.Replace("'", "''")}', CAST(NOW() at time zone 'utc' AS timestamp));");
-
-                                         sb.Append(@"
-        END IF;
-        ");
+                                         {
+                                             entity.Translations.Add(new LocalizationResourceTranslationEntity
+                                             {
+                                                 Language = propertyTranslation.Culture,
+                                                 Value = propertyTranslation.Translation.Replace(
+                                                     "'",
+                                                     "''"),
+                                                 ModificationDate = DateTime.UtcNow
+                                             });
+                                         }
                                      }
 
                                      if (existingResource != null)
                                      {
-                                         sb.AppendLine(
-                                             $@"UPDATE public.""LocalizationResources"" SET ""FromCode"" = '1', ""IsHidden"" = '{Convert.ToInt32(property.IsHidden)}' where ""Id"" = {existingResource.Id};");
+                                         context.Set<LocalizationResourceEntity>()
+                                             .Where(p => p.Id == existingResource.Id)
+                                             .AsEnumerable()
+                                             .ForEach(p =>
+                                             {
+                                                 p.FromCode = true;
+                                                 p.IsHidden = property.IsHidden;
+                                             });
 
                                          var invariantTranslation = property.Translations.First(t => t.Culture == string.Empty);
-                                         sb.AppendLine(
-                                             $@"UPDATE public.""LocalizationResourceTranslations"" SET ""Value"" = N'{invariantTranslation.Translation.Replace("'", "''")}' where ""ResourceId""={existingResource.Id} AND ""Language""='{invariantTranslation.Culture}';");
+
+                                         context.Set<LocalizationResourceTranslationEntity>()
+                                             .Where(p => p.ResourceId == existingResource.Id &&
+                                                         p.Language == invariantTranslation.Culture)
+                                             .AsEnumerable()
+                                             .ForEach(p => p.Value = invariantTranslation.Translation.Replace("'", "''"));
 
                                          if (existingResource.IsModified.HasValue && !existingResource.IsModified.Value)
                                              foreach (var propertyTranslation in property.Translations)
-                                                 AddTranslationScript(existingResource, sb, propertyTranslation);
+                                             {
+                                                 var existingTranslation =
+                                                     existingResource.Translations.FirstOrDefault(
+                                                         t => t.Language == propertyTranslation.Culture);
+                                                 if (existingTranslation == null)
+                                                 {
+                                                     var entity = new LocalizationResourceTranslationEntity
+                                                     {
+                                                         ResourceId = existingResource.Id,
+                                                         Language = propertyTranslation.Culture,
+                                                         Value = propertyTranslation.Translation.Replace("'", "''"),
+                                                         ModificationDate = DateTime.UtcNow
+                                                     };
+                                                     context.Add(entity);
+                                                 }
+                                                 else if (!existingTranslation.Value.Equals(propertyTranslation.Translation))
+                                                 {
+                                                     context.Set<LocalizationResourceTranslationEntity>()
+                                                         .Where(p => p.ResourceId == existingResource.Id &&
+                                                                     p.Language == propertyTranslation.Culture)
+                                                         .AsEnumerable()
+                                                         .ForEach(p => p.Value =
+                                                                      propertyTranslation.Translation.Replace("'", "''"));
+                                                 }
+                                             }
                                      }
+
+                                     context.SaveChanges();
                                  }
-
-                                 sb.AppendLine("END $$;");
-
-                                 //using (var conn = new NpgsqlConnection(Settings.DbContextConnectionString))
-                                 //{
-                                 //    var cmd = new NpgsqlCommand(sb.ToString(), conn)
-                                 //    {
-                                 //        CommandTimeout = 60
-                                 //    };
-
-                                 //    conn.Open();
-                                 //    cmd.ExecuteNonQuery();
-                                 //    conn.Close();
-                                 //}
                              });
-        }
-
-        private static void AddTranslationScript(
-            LocalizationResource existingResource,
-            StringBuilder buffer,
-            DiscoveredTranslation resource)
-        {
-            var existingTranslation = existingResource.Translations.FirstOrDefault(t => t.Language == resource.Culture);
-            if (existingTranslation == null)
-                buffer.AppendLine(
-                    $@"INSERT INTO public.""LocalizationResourceTranslations"" (""ResourceId"", ""Language"", ""Value"", ""ModificationDate"") VALUES ({existingResource.Id}, '{resource.Culture}', N'{resource.Translation.Replace("'", "''")}',  CAST(NOW() at time zone 'utc' AS timestamp));");
-            else if (!existingTranslation.Value.Equals(resource.Translation))
-                buffer.AppendLine(
-                    $@"UPDATE public.""LocalizationResourceTranslations"" SET ""Value"" = N'{resource.Translation.Replace("'", "''")}' WHERE ResourceId={existingResource.Id} and ""Language""='{resource.Culture}';");
         }
     }
 }
