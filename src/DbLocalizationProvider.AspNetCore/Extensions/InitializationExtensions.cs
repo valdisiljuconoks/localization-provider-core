@@ -15,7 +15,7 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
     /// </summary>
     public static class InitializationExtensions
     {
-        private static bool SyncOnStartDone = false;
+        private static bool _syncOnStartDone = false;
         /// <summary>
         /// Synchronizes resources with underlying storage
         /// </summary>
@@ -34,17 +34,16 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
             // TODO: Hack! This code should be removed after making library DI compatible.
             var serviceProvider =  builder.ApplicationServices.GetRequiredService<IServiceProvider>();
             ServiceLocator.Initialize(serviceProvider.GetService<IServiceProviderProxy>());
-            // --
 
-            // TODO Andriy: bad idea to sync here cuz HttpContext does not exists, so Service locator will not work. It could be changed when TypeFactory get redesigned for DI support
             // if we need to sync - then it's good time to do it now
-
-            builder.UseWhen(context => !SyncOnStartDone,
-                            builder =>
+            builder.UseWhen(context => !_syncOnStartDone,
+                            applicationBuilder =>
                             {
-                                builder.Use(async (context, next) =>
+                                // Using Conditional Middleware cuz ServiceProvider is not available on start, so Sync will not work in that case
+
+                                applicationBuilder.Use(async (context, next) =>
                                 {
-                                    var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
+                                    var logger = applicationBuilder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
 
                                     var configContext = ConfigurationContext.Current;
 
@@ -59,7 +58,7 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
                                             $"{nameof(configContext.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
                                     }
 
-                                    SyncOnStartDone = true;
+                                    _syncOnStartDone = true;
 
                                     await next.Invoke();
                                 });

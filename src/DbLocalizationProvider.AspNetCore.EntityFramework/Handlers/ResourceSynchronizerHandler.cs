@@ -43,17 +43,17 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
             return result;
         }
 
-            private IServiceScope CreateScopedContext(out DbContext context)
-            {
-                var scope = ServiceLocator.ServiceProvider.CreateScope();
-                context = scope.ServiceProvider.GetService(Settings.ContextType) as DbContext;
-                return scope;
-            }
+        private IServiceScope CreateScopedContext(out DbContext context)
+        {
+            var scope = ServiceLocator.ServiceProvider.CreateScope();
+            context = scope.ServiceProvider.GetService(Settings.ContextType) as DbContext;
+            return scope;
+        }
 
-            internal IEnumerable<LocalizationResource> MergeLists(
-            IEnumerable<LocalizationResource> databaseResources,
-            List<DiscoveredResource> discoveredResources,
-            List<DiscoveredResource> discoveredModels)
+        internal IEnumerable<LocalizationResource> MergeLists(
+        IEnumerable<LocalizationResource> databaseResources,
+        List<DiscoveredResource> discoveredResources,
+        List<DiscoveredResource> discoveredModels)
         {
             if (discoveredResources == null || discoveredModels == null || !discoveredResources.Any() ||
                 !discoveredModels.Any())
@@ -157,7 +157,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 
             using (var scope = CreateScopedContext(out var context))
             {
-                Parallel.ForEach(groupedProperties, 
+                Parallel.ForEach(groupedProperties,
                     group =>
                                  {
                                      var refactoredResources = group.Where(r => !string.IsNullOrEmpty(r.OldResourceKey));
@@ -256,8 +256,6 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
                                                      }
                                                  }
                                          }
-
-                                         //                                         context.SaveChanges();
                                      }
                                  });
                 context.SaveChanges();
