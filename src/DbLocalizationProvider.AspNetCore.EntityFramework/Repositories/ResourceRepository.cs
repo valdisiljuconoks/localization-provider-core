@@ -147,7 +147,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
 
             using (var scope = CreateScopedContext(out var context))
             {
-                var entity = context.Find<LocalizationResourceTranslationEntity>(translation.Id);
+                var entity = context.Find<LocalizationResourceTranslationEntity>((long)translation.Id);
                 if (entity != null)
                 {
                     entity.Value = translation.Value;
@@ -175,7 +175,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
 
             using (var scope = CreateScopedContext(out var context))
             {
-                var entity = context.Find<LocalizationResourceTranslationEntity>(translation.Id);
+                var entity = context.Find<LocalizationResourceTranslationEntity>((long)translation.Id);
                 if (entity != null)
                 {
                     context.Remove(entity);
@@ -196,7 +196,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
 
             using (var scope = CreateScopedContext(out var context))
             {
-                var entity = context.Find<LocalizationResourceEntity>();
+                var entity = context.Find<LocalizationResourceEntity>((long)resource.Id);
                 if (entity != null)
                 {
                     entity.ModificationDate = resource.ModificationDate;
@@ -221,7 +221,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             using (var scope = CreateScopedContext(out var context))
             {
 
-                var entity = context.Find<LocalizationResourceEntity>(resource.Id);
+                var entity = context.Find<LocalizationResourceEntity>((long)resource.Id);
 
                 if (entity != null)
                 {
