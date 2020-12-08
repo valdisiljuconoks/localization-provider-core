@@ -35,6 +35,10 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
             var serviceProvider =  builder.ApplicationServices.GetRequiredService<IServiceProvider>();
             ServiceLocator.Initialize(serviceProvider.GetService<IServiceProviderProxy>());
 
+            var logger = builder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
+            var configContext = ConfigurationContext.Current;
+            if (logger != null) configContext.Logger = new LoggerAdapter(logger);
+
             // if we need to sync - then it's good time to do it now
             builder.UseWhen(context => !_syncOnStartDone,
                             applicationBuilder =>
@@ -43,12 +47,6 @@ namespace DbLocalizationProvider.AspNetCore.Extensions
 
                                 applicationBuilder.Use(async (context, next) =>
                                 {
-                                    var logger = applicationBuilder?.ApplicationServices.GetService<ILogger<LoggerAdapter>>();
-
-                                    var configContext = ConfigurationContext.Current;
-
-                                    if (logger != null) configContext.Logger = new LoggerAdapter(logger);
-
                                     var sync = new Synchronizer();
                                     sync.SyncResources(configContext.DiscoverAndRegisterResources);
 
