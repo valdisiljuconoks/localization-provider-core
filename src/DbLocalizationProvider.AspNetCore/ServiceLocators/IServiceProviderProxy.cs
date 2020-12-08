@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.ServiceLocators
 {
@@ -10,5 +11,7 @@ namespace DbLocalizationProvider.AspNetCore.ServiceLocators
         IEnumerable<T> GetServices<T>();
         object GetService(Type type);
         IEnumerable<object> GetServices(Type type);
+
+        IServiceScope CreateScope();
     }
 }

@@ -9,6 +9,7 @@ using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
 using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Internal;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
 {
@@ -17,10 +18,11 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
     /// </summary>
     public class ResourceRepository
     {
-        private DbContext GetDbContextInstance()
+        private IServiceScope CreateScopedContext(out DbContext context)
         {
-            var result = ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
-            return result;
+            var scope = ServiceLocator.ServiceProvider.CreateScope();
+            context = scope.ServiceProvider.GetService(Settings.ContextType) as DbContext;
+            return scope;
         }
 
         /// <summary>
@@ -29,15 +31,18 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         /// <returns>List of resources</returns>
         public IEnumerable<LocalizationResource> GetAll()
         {
-            var context = GetDbContextInstance();
+            using (var scope = CreateScopedContext(out var context))
+            {
 
-            var query = context.Set<LocalizationResourceEntity>()
-                .Include(p => p.Translations)
-                .AsNoTracking();
+                var query = context.Set<LocalizationResourceEntity>()
+                    .Include(p => p.Translations)
+                    .AsNoTracking();
 
-            var result = ToLocalizationResources(query);
+                var result = ToLocalizationResources(query)
+                    .ToList();
 
-            return result;
+                return result;
+            }
         }
 
         /// <summary>
@@ -50,17 +55,20 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             if (resourceKey == null) throw new ArgumentNullException(nameof(resourceKey));
 
-            var context = GetDbContextInstance();
+            using (var scope = CreateScopedContext(out var context))
+            {
 
-            var query = context.Set<LocalizationResourceEntity>()
-                .Include(p => p.Translations)
-                .AsNoTracking()
-                .Where(p => p.ResourceKey == resourceKey);
 
-            var result = ToLocalizationResources(query)
-                .SingleOrDefault();
+                var query = context.Set<LocalizationResourceEntity>()
+                    .Include(p => p.Translations)
+                    .AsNoTracking()
+                    .Where(p => p.ResourceKey == resourceKey);
 
-            return result;
+                var result = ToLocalizationResources(query)
+                    .SingleOrDefault();
+
+                return result;
+            }
         }
 
         private IEnumerable<LocalizationResource> ToLocalizationResources(IQueryable<LocalizationResourceEntity> query)
@@ -106,18 +114,20 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
-            var context = GetDbContextInstance();
-
-            var entity = new LocalizationResourceTranslationEntity
+            using (var scope = CreateScopedContext(out var context))
             {
-                Language = translation.Language,
-                ResourceId = translation.ResourceId,
-                Value = translation.Value,
-                ModificationDate = translation.ModificationDate
-            };
-            context.Add(entity);
 
-            context.SaveChanges();
+
+                var entity = new LocalizationResourceTranslationEntity
+                {
+                    Language = translation.Language,
+                    ResourceId = translation.ResourceId,
+                    Value = translation.Value,
+                    ModificationDate = translation.ModificationDate
+                };
+                context.Add(entity);
+
+            }
         }
 
         /// <summary>
@@ -135,15 +145,16 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
-            var context = GetDbContextInstance();
-
-            var entity = context.Find<LocalizationResourceTranslationEntity>(translation.Id);
-            if (entity != null)
+            using (var scope = CreateScopedContext(out var context))
             {
-                entity.Value = translation.Value;
-                entity.ModificationDate = translation.ModificationDate;
+                var entity = context.Find<LocalizationResourceTranslationEntity>(translation.Id);
+                if (entity != null)
+                {
+                    entity.Value = translation.Value;
+                    entity.ModificationDate = translation.ModificationDate;
 
-                context.SaveChanges();
+                    context.SaveChanges();
+                }
             }
         }
 
@@ -162,14 +173,15 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
-            var context = GetDbContextInstance();
-
-            var entity = context.Find<LocalizationResourceTranslationEntity>(translation.Id);
-            if (entity != null)
+            using (var scope = CreateScopedContext(out var context))
             {
-                context.Remove(entity);
+                var entity = context.Find<LocalizationResourceTranslationEntity>(translation.Id);
+                if (entity != null)
+                {
+                    context.Remove(entity);
 
-                context.SaveChanges();
+                    context.SaveChanges();
+                }
             }
         }
 
@@ -182,17 +194,18 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             if (resource == null) throw new ArgumentNullException(nameof(resource));
 
-            var context = GetDbContextInstance();
-
-            var entity = context.Find<LocalizationResourceEntity>();
-            if (entity != null)
+            using (var scope = CreateScopedContext(out var context))
             {
-                entity.ModificationDate = resource.ModificationDate;
-                if (resource.IsModified != null)
-                    entity.IsModified = resource.IsModified.Value;
-                entity.Notes = resource.Notes;
+                var entity = context.Find<LocalizationResourceEntity>();
+                if (entity != null)
+                {
+                    entity.ModificationDate = resource.ModificationDate;
+                    if (resource.IsModified != null)
+                        entity.IsModified = resource.IsModified.Value;
+                    entity.Notes = resource.Notes;
 
-                context.SaveChanges();
+                    context.SaveChanges();
+                }
             }
         }
 
@@ -205,15 +218,17 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             if (resource == null) throw new ArgumentNullException(nameof(resource));
 
-            var context = GetDbContextInstance();
-
-            var entity = context.Find<LocalizationResourceEntity>(resource.Id);
-
-            if (entity != null)
+            using (var scope = CreateScopedContext(out var context))
             {
-                context.Remove(entity);
 
-                context.SaveChanges();
+                var entity = context.Find<LocalizationResourceEntity>(resource.Id);
+
+                if (entity != null)
+                {
+                    context.Remove(entity);
+
+                    context.SaveChanges();
+                }
             }
         }
 
@@ -222,11 +237,12 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         /// </summary>
         public void DeleteAllResources()
         {
-            var context = GetDbContextInstance();
+            using (var scope = CreateScopedContext(out var context))
+            {
+                context.RemoveRange(context.Set<LocalizationResourceEntity>());
 
-            context.RemoveRange(context.Set<LocalizationResourceEntity>());
-
-            context.SaveChanges();
+                context.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -238,34 +254,36 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             if (resource == null) throw new ArgumentNullException(nameof(resource));
 
-            var context = GetDbContextInstance();
-
-            var entity = new LocalizationResourceEntity
+            using (var scope = CreateScopedContext(out var context))
             {
-                ResourceKey = resource.ResourceKey,
-                Author = resource.Author,
-                FromCode = resource.FromCode,
-                IsHidden = resource.IsHidden ?? false,
-                IsModified = resource.IsModified ?? false,
-                ModificationDate = resource.ModificationDate,
-                Notes = resource.Notes,
-                Translations = new List<LocalizationResourceTranslationEntity>()
-            };
 
-            resource.Translations.ForEach(translation =>
-            {
-                var item = new LocalizationResourceTranslationEntity
+                var entity = new LocalizationResourceEntity
                 {
-                    Language = translation.Language,
-                    Value = translation.Value,
-                    ModificationDate = translation.ModificationDate
+                    ResourceKey = resource.ResourceKey,
+                    Author = resource.Author,
+                    FromCode = resource.FromCode,
+                    IsHidden = resource.IsHidden ?? false,
+                    IsModified = resource.IsModified ?? false,
+                    ModificationDate = resource.ModificationDate,
+                    Notes = resource.Notes,
+                    Translations = new List<LocalizationResourceTranslationEntity>()
                 };
-                entity.Translations.Add(item);
-            });
 
-            context.Add(entity);
+                resource.Translations.ForEach(translation =>
+                {
+                    var item = new LocalizationResourceTranslationEntity
+                    {
+                        Language = translation.Language,
+                        Value = translation.Value,
+                        ModificationDate = translation.ModificationDate
+                    };
+                    entity.Translations.Add(item);
+                });
 
-            context.SaveChanges();
+                context.Add(entity);
+
+                context.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -275,19 +293,21 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         /// <returns></returns>
         public IEnumerable<CultureInfo> GetAvailableLanguages(bool includeInvariant)
         {
-            var context = GetDbContextInstance();
+            using (var scope = CreateScopedContext(out var context))
+            {
 
-            var result = context.Set<LocalizationResourceTranslationEntity>()
-                .AsNoTracking()
-                .Where(p => p.Language != string.Empty)
-                .Distinct()
-                .Select(p => new CultureInfo(p.Language))
-                .ToList();
+                var result = context.Set<LocalizationResourceTranslationEntity>()
+                    .AsNoTracking()
+                    .Where(p => p.Language != string.Empty)
+                    .Distinct()
+                    .Select(p => new CultureInfo(p.Language))
+                    .ToList();
 
-            if (includeInvariant)
-                result.Insert(0, CultureInfo.InvariantCulture);
+                if (includeInvariant)
+                    result.Insert(0, CultureInfo.InvariantCulture);
 
-            return result;
+                return result;
+            }
         }
     }
 }

@@ -14,6 +14,7 @@ using DbLocalizationProvider.Internal;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
@@ -42,13 +43,14 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
             return result;
         }
 
-        private DbContext GetDbContextInstance()
-        {
-            var result = ServiceLocator.ServiceProvider.GetService(Settings.ContextType) as DbContext;
-            return result;
-        }
+            private IServiceScope CreateScopedContext(out DbContext context)
+            {
+                var scope = ServiceLocator.ServiceProvider.CreateScope();
+                context = scope.ServiceProvider.GetService(Settings.ContextType) as DbContext;
+                return scope;
+            }
 
-        internal IEnumerable<LocalizationResource> MergeLists(
+            internal IEnumerable<LocalizationResource> MergeLists(
             IEnumerable<LocalizationResource> databaseResources,
             List<DiscoveredResource> discoveredResources,
             List<DiscoveredResource> discoveredModels)
@@ -133,13 +135,14 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 
         private void ResetSyncStatus()
         {
-            var context = GetDbContextInstance();
+            using (var scope = CreateScopedContext(out var context))
+            {
+                context.Set<LocalizationResourceEntity>()
+                    .Where(p => p.FromCode)
+                    .AsEnumerable().ForEach(p => p.FromCode = false);
 
-            context.Set<LocalizationResource>()
-                .Where(p => p.FromCode)
-                .AsEnumerable().ForEach(p => p.FromCode = false);
-
-            context.SaveChanges();
+                context.SaveChanges();
+            }
         }
 
         private void RegisterDiscoveredResources(
@@ -152,110 +155,113 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
             if (!groupedProperties.Any()) return;
 
 
-            var context = GetDbContextInstance();
-
-            Parallel.ForEach(groupedProperties,
-                             group =>
-                             {
-                                 var refactoredResources = group.Where(r => !string.IsNullOrEmpty(r.OldResourceKey));
-
-                                 foreach (var refactoredResource in refactoredResources)
+            using (var scope = CreateScopedContext(out var context))
+            {
+                Parallel.ForEach(groupedProperties, 
+                    group =>
                                  {
-                                     context.Set<LocalizationResourceEntity>()
-                                         .Where(p => p.ResourceKey == refactoredResource.OldResourceKey)
-                                         .AsEnumerable()
-                                         .ForEach(p => p.FromCode = true);
-                                 }
+                                     var refactoredResources = group.Where(r => !string.IsNullOrEmpty(r.OldResourceKey));
 
-                                 foreach (var property in group)
-                                 {
-                                     var existingResource = allResources.FirstOrDefault(r => r.ResourceKey == property.Key);
-
-                                     if (existingResource == null)
-                                     {
-                                         var entity = context.Set<LocalizationResourceEntity>()
-                                             .SingleOrDefault(p => p.ResourceKey == property.Key);
-
-                                         if (entity == null)
-                                         {
-                                             entity = new LocalizationResourceEntity
-                                             {
-                                                 ResourceKey = property.Key,
-                                                 ModificationDate = DateTime.UtcNow,
-                                                 Author = "type-scanner",
-                                                 FromCode = true,
-                                                 IsModified = false,
-                                                 IsHidden = property.IsHidden,
-                                                 Translations = new List<LocalizationResourceTranslationEntity>()
-                                             };
-                                             context.Add(entity);
-                                         }
-
-                                         // add all translations
-                                         foreach (var propertyTranslation in property.Translations)
-                                         {
-                                             entity.Translations.Add(new LocalizationResourceTranslationEntity
-                                             {
-                                                 Language = propertyTranslation.Culture,
-                                                 Value = propertyTranslation.Translation.Replace(
-                                                     "'",
-                                                     "''"),
-                                                 ModificationDate = DateTime.UtcNow
-                                             });
-                                         }
-                                     }
-
-                                     if (existingResource != null)
+                                     foreach (var refactoredResource in refactoredResources)
                                      {
                                          context.Set<LocalizationResourceEntity>()
-                                             .Where(p => p.Id == existingResource.Id)
+                                             .Where(p => p.ResourceKey == refactoredResource.OldResourceKey)
                                              .AsEnumerable()
-                                             .ForEach(p =>
-                                             {
-                                                 p.FromCode = true;
-                                                 p.IsHidden = property.IsHidden;
-                                             });
-
-                                         var invariantTranslation = property.Translations.First(t => t.Culture == string.Empty);
-
-                                         context.Set<LocalizationResourceTranslationEntity>()
-                                             .Where(p => p.ResourceId == existingResource.Id &&
-                                                         p.Language == invariantTranslation.Culture)
-                                             .AsEnumerable()
-                                             .ForEach(p => p.Value = invariantTranslation.Translation.Replace("'", "''"));
-
-                                         if (existingResource.IsModified.HasValue && !existingResource.IsModified.Value)
-                                             foreach (var propertyTranslation in property.Translations)
-                                             {
-                                                 var existingTranslation =
-                                                     existingResource.Translations.FirstOrDefault(
-                                                         t => t.Language == propertyTranslation.Culture);
-                                                 if (existingTranslation == null)
-                                                 {
-                                                     var entity = new LocalizationResourceTranslationEntity
-                                                     {
-                                                         ResourceId = existingResource.Id,
-                                                         Language = propertyTranslation.Culture,
-                                                         Value = propertyTranslation.Translation.Replace("'", "''"),
-                                                         ModificationDate = DateTime.UtcNow
-                                                     };
-                                                     context.Add(entity);
-                                                 }
-                                                 else if (!existingTranslation.Value.Equals(propertyTranslation.Translation))
-                                                 {
-                                                     context.Set<LocalizationResourceTranslationEntity>()
-                                                         .Where(p => p.ResourceId == existingResource.Id &&
-                                                                     p.Language == propertyTranslation.Culture)
-                                                         .AsEnumerable()
-                                                         .ForEach(p => p.Value =
-                                                                      propertyTranslation.Translation.Replace("'", "''"));
-                                                 }
-                                             }
+                                             .ForEach(p => p.FromCode = true);
                                      }
 
-                                     context.SaveChanges();
-                                 }
-                             });
+                                     foreach (var property in group)
+                                     {
+                                         var existingResource = allResources.FirstOrDefault(r => r.ResourceKey == property.Key);
+
+                                         if (existingResource == null)
+                                         {
+                                             var entity = context.Set<LocalizationResourceEntity>()
+                                                 .SingleOrDefault(p => p.ResourceKey == property.Key);
+
+                                             if (entity == null)
+                                             {
+                                                 entity = new LocalizationResourceEntity
+                                                 {
+                                                     ResourceKey = property.Key,
+                                                     ModificationDate = DateTime.UtcNow,
+                                                     Author = "type-scanner",
+                                                     FromCode = true,
+                                                     IsModified = false,
+                                                     IsHidden = property.IsHidden,
+                                                     Translations = new List<LocalizationResourceTranslationEntity>()
+                                                 };
+                                                 context.Add(entity);
+                                             }
+
+                                             // add all translations
+                                             foreach (var propertyTranslation in property.Translations)
+                                             {
+                                                 entity.Translations.Add(new LocalizationResourceTranslationEntity
+                                                 {
+                                                     Language = propertyTranslation.Culture,
+                                                     Value = propertyTranslation.Translation.Replace(
+                                                         "'",
+                                                         "''"),
+                                                     ModificationDate = DateTime.UtcNow
+                                                 });
+                                             }
+                                         }
+
+                                         if (existingResource != null)
+                                         {
+                                             context.Set<LocalizationResourceEntity>()
+                                                 .Where(p => p.Id == existingResource.Id)
+                                                 .AsEnumerable()
+                                                 .ForEach(p =>
+                                                 {
+                                                     p.FromCode = true;
+                                                     p.IsHidden = property.IsHidden;
+                                                 });
+
+                                             var invariantTranslation =
+                                                 property.Translations.First(t => t.Culture == string.Empty);
+
+                                             context.Set<LocalizationResourceTranslationEntity>()
+                                                 .Where(p => p.ResourceId == existingResource.Id &&
+                                                             p.Language == invariantTranslation.Culture)
+                                                 .AsEnumerable()
+                                                 .ForEach(p => p.Value = invariantTranslation.Translation.Replace("'", "''"));
+
+                                             if (existingResource.IsModified.HasValue && !existingResource.IsModified.Value)
+                                                 foreach (var propertyTranslation in property.Translations)
+                                                 {
+                                                     var existingTranslation =
+                                                         existingResource.Translations.FirstOrDefault(
+                                                             t => t.Language == propertyTranslation.Culture);
+                                                     if (existingTranslation == null)
+                                                     {
+                                                         var entity = new LocalizationResourceTranslationEntity
+                                                         {
+                                                             ResourceId = existingResource.Id,
+                                                             Language = propertyTranslation.Culture,
+                                                             Value = propertyTranslation.Translation.Replace("'", "''"),
+                                                             ModificationDate = DateTime.UtcNow
+                                                         };
+                                                         context.Add(entity);
+                                                     }
+                                                     else if (!existingTranslation.Value.Equals(propertyTranslation.Translation))
+                                                     {
+                                                         context.Set<LocalizationResourceTranslationEntity>()
+                                                             .Where(p => p.ResourceId == existingResource.Id &&
+                                                                         p.Language == propertyTranslation.Culture)
+                                                             .AsEnumerable()
+                                                             .ForEach(p => p.Value =
+                                                                          propertyTranslation.Translation.Replace("'", "''"));
+                                                     }
+                                                 }
+                                         }
+
+                                         //                                         context.SaveChanges();
+                                     }
+                                 });
+                context.SaveChanges();
+            }
         }
     }
 }

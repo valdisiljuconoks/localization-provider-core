@@ -35,5 +35,10 @@ namespace DbLocalizationProvider.AspNetCore.ServiceLocators
         {
             return _contextAccessor.HttpContext.RequestServices.GetServices(type);
         }
+
+        public IServiceScope CreateScope()
+        {
+            return _contextAccessor.HttpContext.RequestServices.CreateScope();
+        }
     }
 }
