@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Extensions;
 using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Internal;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
 {
@@ -18,22 +18,14 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
     /// </summary>
     public class ResourceRepository
     {
-        private IServiceScope CreateScopedContext(out DbContext context)
-        {
-            var scope = ServiceLocator.ServiceProvider.CreateScope();
-            context = scope.ServiceProvider.GetService(Settings.ContextType) as DbContext;
-            return scope;
-        }
-
         /// <summary>
         /// Gets all resources.
         /// </summary>
         /// <returns>List of resources</returns>
         public IEnumerable<LocalizationResource> GetAll()
         {
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
-
                 var query = context.Set<LocalizationResourceEntity>()
                     .Include(p => p.Translations)
                     .AsNoTracking();
@@ -55,10 +47,8 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             if (resourceKey == null) throw new ArgumentNullException(nameof(resourceKey));
 
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
-
-
                 var query = context.Set<LocalizationResourceEntity>()
                     .Include(p => p.Translations)
                     .AsNoTracking()
@@ -114,10 +104,8 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
-
-
                 var entity = new LocalizationResourceTranslationEntity
                 {
                     Language = translation.Language,
@@ -126,7 +114,6 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
                     ModificationDate = translation.ModificationDate
                 };
                 context.Add(entity);
-
             }
         }
 
@@ -145,7 +132,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
                 var entity = context.Find<LocalizationResourceTranslationEntity>((long)translation.Id);
                 if (entity != null)
@@ -173,7 +160,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
             if (resource == null) throw new ArgumentNullException(nameof(resource));
             if (translation == null) throw new ArgumentNullException(nameof(translation));
 
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
                 var entity = context.Find<LocalizationResourceTranslationEntity>((long)translation.Id);
                 if (entity != null)
@@ -194,7 +181,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             if (resource == null) throw new ArgumentNullException(nameof(resource));
 
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
                 var entity = context.Find<LocalizationResourceEntity>((long)resource.Id);
                 if (entity != null)
@@ -218,9 +205,8 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             if (resource == null) throw new ArgumentNullException(nameof(resource));
 
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
-
                 var entity = context.Find<LocalizationResourceEntity>((long)resource.Id);
 
                 if (entity != null)
@@ -237,7 +223,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         /// </summary>
         public void DeleteAllResources()
         {
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
                 context.RemoveRange(context.Set<LocalizationResourceEntity>());
 
@@ -254,9 +240,8 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         {
             if (resource == null) throw new ArgumentNullException(nameof(resource));
 
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
-
                 var entity = new LocalizationResourceEntity
                 {
                     ResourceKey = resource.ResourceKey,
@@ -293,9 +278,8 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Repositories
         /// <returns></returns>
         public IEnumerable<CultureInfo> GetAvailableLanguages(bool includeInvariant)
         {
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
-
                 var result = context.Set<LocalizationResourceTranslationEntity>()
                     .AsNoTracking()
                     .Where(p => p.Language != string.Empty)

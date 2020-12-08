@@ -9,12 +9,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.AspNetCore.EntityFramework.Entities;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Extensions;
 using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Internal;
 using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 {
@@ -43,17 +42,10 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
             return result;
         }
 
-        private IServiceScope CreateScopedContext(out DbContext context)
-        {
-            var scope = ServiceLocator.ServiceProvider.CreateScope();
-            context = scope.ServiceProvider.GetService(Settings.ContextType) as DbContext;
-            return scope;
-        }
-
         internal IEnumerable<LocalizationResource> MergeLists(
-        IEnumerable<LocalizationResource> databaseResources,
-        List<DiscoveredResource> discoveredResources,
-        List<DiscoveredResource> discoveredModels)
+            IEnumerable<LocalizationResource> databaseResources,
+            List<DiscoveredResource> discoveredResources,
+            List<DiscoveredResource> discoveredModels)
         {
             if (discoveredResources == null || discoveredModels == null || !discoveredResources.Any() ||
                 !discoveredModels.Any())
@@ -135,7 +127,7 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
 
         private void ResetSyncStatus()
         {
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
                 context.Set<LocalizationResourceEntity>()
                     .Where(p => p.FromCode)
@@ -155,10 +147,10 @@ namespace DbLocalizationProvider.AspNetCore.EntityFramework.Handlers
             if (!groupedProperties.Any()) return;
 
 
-            using (var scope = CreateScopedContext(out var context))
+            using (var scope = ServiceLocator.ServiceProvider.CreateScopedContext(out var context))
             {
                 Parallel.ForEach(groupedProperties,
-                    group =>
+                                 group =>
                                  {
                                      var refactoredResources = group.Where(r => !string.IsNullOrEmpty(r.OldResourceKey));
 

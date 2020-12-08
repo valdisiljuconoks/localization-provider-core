@@ -16,26 +16,6 @@ namespace DbLocalizationProvider.AspNetCore.ServiceLocators
             this._contextAccessor = contextAccessor;
         }
 
-        public T GetService<T>()
-        {
-            return _contextAccessor.HttpContext.RequestServices.GetService<T>();
-        }
-
-        public IEnumerable<T> GetServices<T>()
-        {
-            return _contextAccessor.HttpContext.RequestServices.GetServices<T>();
-        }
-
-        public object GetService(Type type)
-        {
-            return _contextAccessor.HttpContext.RequestServices.GetService(type);
-        }
-
-        public IEnumerable<object> GetServices(Type type)
-        {
-            return _contextAccessor.HttpContext.RequestServices.GetServices(type);
-        }
-
         public IServiceScope CreateScope()
         {
             return _contextAccessor.HttpContext.RequestServices.CreateScope();
