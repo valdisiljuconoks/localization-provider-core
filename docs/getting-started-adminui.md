@@ -26,6 +26,8 @@ public class Startup
 
         services.AddDbLocalizationProvider(cfg =>
         {
+            // configure provider
+            // for example cfg.UseSqlServer(...);
             cfg...
         });
 
@@ -87,6 +89,7 @@ public class Startup
             endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             ...
 
+            endpoints.MapRazorPages();
             endpoints.MapDbLocalizationAdminUI();
         });
     }
