@@ -26,7 +26,206 @@ Database localization provider is split into main [abstraction projects](https:/
 
 ## Getting Started
 
-### Bare Minimum to Start With
+
+### Bare Minimum to Start using EntityFramework
+Below are code fragments that are essential to get started with localization provider.
+
+Install required packages:
+
+```
+> dotnet add package LocalizationProvider.AspNetCore
+> dotnet add package LocalizationProvider.AdminUI.AspNetCore
+> dotnet add package LocalizationProvider.AspNetCore.EntityFramework
+```
+
+Following service configuration (usually in `Startup.cs`) is required to get localization provider working:
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // add your authorization provider (asp.net identity, identity server, which ever..)
+    
+        services
+            .AddControllersWithViews()
+            .AddMvcLocalization();
+    
+        services.AddRazorPages();
+        services.AddRouting();
+    
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            // options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection")); 
+            options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"));
+            options.UseLocalizationProvider();
+         });
+                
+        services.AddDbLocalizationProvider(_ =>
+        {
+            _.UseEntityFramework<ApplicationDbContext>();
+            ...
+        });
+    
+        services.AddDbLocalizationProviderAdminUI(_ =>
+        {
+            ...
+        });
+    }
+
+    ...
+}
+```
+
+And following setup of the application is required as minimum (also usually located in `Startup.cs`):
+
+```csharp
+public class Startup
+{
+    ...
+
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+    
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationProviderAdminUI();
+        app.UseDbLocalizationClientsideProvider(); //assuming that you like also Javascript
+    
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapRazorPages();
+            endpoints.MapDbLocalizationAdminUI();
+            endpoints.MapDbLocalizationClientsideProvider();
+        });
+    }
+}
+```
+
+You can grab some snippets form this sample `Startup.cs` file (based ASP.NET Core 3.1):
+
+```csharp
+using System.Collections.Generic;
+using System.Globalization;
+using DbLocalizationProvider.AdminUI.AspNetCore;
+using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
+using DbLocalizationProvider.AspNetCore;
+using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
+using DbLocalizationProvider.Core.AspNetSample.Data;
+using DbLocalizationProvider.Core.AspNetSample.Resources;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Extensions;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace SampleApp
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+        
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                // options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection")); 
+                options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"));
+                options.UseLocalizationProvider();
+            });
+
+            services
+                .AddDefaultIdentity<IdentityUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services
+                .AddControllersWithViews()
+                .AddMvcLocalization();
+
+            services.AddRazorPages();
+            services.AddRouting();
+
+            var supportedCultures = new List<CultureInfo> { new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
+
+            services.Configure<RequestLocalizationOptions>(opts =>
+            {
+                opts.DefaultRequestCulture = new RequestCulture("en");
+                opts.SupportedCultures = supportedCultures;
+                opts.SupportedUICultures = supportedCultures;
+            });
+
+            services.AddDbLocalizationProvider(_ =>
+            {
+                _.EnableInvariantCultureFallback = true;
+                _.ScanAllAssemblies = true;
+                _.FallbackCultures.Try(supportedCultures);
+                _.UseEntityFramework<ApplicationDbContext>();
+            });
+
+            services.AddDbLocalizationProviderAdminUI(_ =>
+            {
+                _.RootUrl = "/localization-admin";
+                _.ShowInvariantCulture = true;
+                _.ShowHiddenResources = false;
+                _.DefaultView = ResourceListView.Tree;
+            });
+        }
+
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
+
+            var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(options.Value);
+
+            app.UseRouting();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseDbLocalizationProvider();
+            app.UseDbLocalizationProviderAdminUI();
+            app.UseDbLocalizationClientsideProvider();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
+
+                endpoints.MapDbLocalizationAdminUI();
+                endpoints.MapDbLocalizationClientsideProvider();
+            });
+        }
+    }
+}
+```
+
+Also you can refer to [sample app in GitHub](https://github.com/valdisiljuconoks/localization-provider-core/tree/master/tests/DbLocalizationProvider.Core.AspNetSample) for some more hints if needed.
+
+### Bare Minimum to Start using ADO Storage
 Below are code fragments that are essential to get started with localization provider.
 
 Install required packages:
@@ -209,8 +408,6 @@ namespace SampleApp
     }
 }
 ```
-
-Also you can refer to [sample app in GitHub](https://github.com/valdisiljuconoks/localization-provider-core/tree/master/tests/DbLocalizationProvider.Core.AspNetSample) for some more hints if needed.
 
 ### More Detailed Help
 

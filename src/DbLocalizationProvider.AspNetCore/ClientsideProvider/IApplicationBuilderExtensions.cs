@@ -1,15 +1,13 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
-using DbLocalizationProvider.AspNetCore.ClientsideProvider;
 using DbLocalizationProvider.Cache;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using AppContext = DbLocalizationProvider.AspNetCore.ClientsideProvider.AppContext;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
 {
     public static class IApplicationBuilderClientsideExtensions
     {

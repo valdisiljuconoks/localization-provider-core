@@ -7,6 +7,7 @@ using System.Linq;
 using DbLocalizationProvider.AspNetCore.Cache;
 using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
+using DbLocalizationProvider.AspNetCore.ServiceLocators;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore.Extensions
 {
     /// <summary>
     /// Extension for adding localization provider services to the collection
@@ -75,6 +76,10 @@ namespace DbLocalizationProvider.AspNetCore
             }
 
             services.AddHttpContextAccessor();
+
+            // TODO: Hack! This code should be removed after making library DI compatible.
+            services.AddSingleton<IServiceProviderProxy, HttpContextServiceProviderProxy>();
+            // -
 
             return services;
         }

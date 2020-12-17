@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using DbLocalizationProvider.AspNetCore;
+using DbLocalizationProvider.AspNetCore.Extensions;
 using DbLocalizationProvider.Storage.SqlServer;
 using funcapp;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;

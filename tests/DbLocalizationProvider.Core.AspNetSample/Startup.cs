@@ -3,11 +3,14 @@ using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AspNetCore;
+using DbLocalizationProvider.AspNetCore.ClientsideProvider;
 using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
+using DbLocalizationProvider.AspNetCore.EntityFramework.Extensions;
+using DbLocalizationProvider.AspNetCore.Extensions;
 using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Data;
+using DbLocalizationProvider.Core.AspNetSample.Extensions;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
-using DbLocalizationProvider.Storage.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -33,10 +36,15 @@ namespace DbLocalizationProvider.Core.AspNetSample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options =>
+                {
+                   // options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection"));
+                   options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection"));
+                   options.UseLocalizationProvider();
+                });
 
             services
-                .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -75,8 +83,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //.Try(new CultureInfo("sv"))
                 //.Then(new CultureInfo("no"))
                 //.Then(new CultureInfo("en"));
-
-                _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                _.UseEntityFramework<ApplicationDbContext>();
             });
 
             services.AddDbLocalizationProviderAdminUI(_ =>
@@ -112,6 +119,9 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 app.UseHsts();
             }
 
+            app.ApplyMigrations();
+            app.SeedUserData("test@test.com","Test@123", "Administrators");
+
             var options = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(options.Value);
 
@@ -135,10 +145,10 @@ namespace DbLocalizationProvider.Core.AspNetSample
             //         template: "{controller=Home}/{action=Index}/{id?}");
             // });
 
-            using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                scope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
-            }
+            //using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            //{
+            //    scope.ServiceProvider.GetService<ApplicationDbContext>().Database.Migrate();
+            //}
 
             app.UseEndpoints(endpoints =>
             {

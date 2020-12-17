@@ -7,6 +7,7 @@ using System.Reflection;
 using DbLocalizationProvider.Core.AspNetSample.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,7 +22,9 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
         private readonly ILocalizationProvider _provider;
         private readonly ILogger _logger;
 
-        public HomeController(ILocalizationProvider provider, IOptions<MvcOptions> options, ILogger<HomeController> logger)
+        public HomeController(ILocalizationProvider provider, 
+            IOptions<MvcOptions> options, 
+            ILogger<HomeController> logger)
         {
             _provider = provider;
             _logger = logger;
