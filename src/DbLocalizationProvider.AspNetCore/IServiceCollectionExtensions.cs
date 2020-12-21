@@ -9,6 +9,7 @@ using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Queries;
+using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,6 +57,7 @@ namespace DbLocalizationProvider.AspNetCore
             services.AddSingleton<IStringLocalizerFactory, DbStringLocalizerFactory>();
             services.AddSingleton(_ => LocalizationProvider.Current);
             services.AddSingleton<ILocalizationProvider>(_ => LocalizationProvider.Current);
+            services.AddTransient<ISynchronizer, Synchronizer>();
 
             // we need to check whether invariant fallback is correctly configured
             if (ctx.EnableInvariantCultureFallback && !ctx.FallbackCultures.Contains(CultureInfo.InvariantCulture))

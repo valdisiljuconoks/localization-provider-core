@@ -77,6 +77,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //.Then(new CultureInfo("en"));
 
                 _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+
+                _.ManualResourceProvider = new SomeManualResources();
             });
 
             services.AddDbLocalizationProviderAdminUI(_ =>

@@ -42,6 +42,11 @@ namespace DbLocalizationProvider.AspNetCore
                 context.Logger?.Info($"{nameof(context.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
             }
 
+            if (context.ManualResourceProvider != null)
+            {
+                sync.RegisterManually(context.ManualResourceProvider.GetResources());
+            }
+
             return builder;
         }
     }
