@@ -21,6 +21,9 @@ namespace MyProject
         [TranslationForCulture("In Swedish and English (SV)", "sv")]
         [TranslationForCulture("In Swedish and English (EN)", "en")]
         public static string InSwedishAndEnglishInvariant => "In Swedish and English (INV)";
+
+        [TranslationForCulture("Nav nozīmes 2", "lv-lv")]
+        public static string ThisShouldMessUpWithCultureCasing => "No matter what we put here";
     }
 
 

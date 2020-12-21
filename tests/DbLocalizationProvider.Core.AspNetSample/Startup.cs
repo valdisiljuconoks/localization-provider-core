@@ -55,7 +55,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 c.AddDebug();
             });
 
-            var supportedCultures = new List<CultureInfo> { new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
+            var supportedCultures = new List<CultureInfo> { new CultureInfo("lv-LV"), new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
 
             services.Configure<RequestLocalizationOptions>(opts =>
             {
