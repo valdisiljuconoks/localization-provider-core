@@ -3,7 +3,6 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using DbLocalizationProvider.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations
@@ -13,6 +12,17 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
     /// </summary>
     public class LocalizedDisplayMetadataProvider : IDisplayMetadataProvider
     {
+        private readonly ModelMetadataLocalizationHelper _metadataHelper;
+
+        /// <summary>
+        /// Initiates new instance of this helper.
+        /// </summary>
+        /// <param name="metadataHelper">Metadata helper</param>
+        public LocalizedDisplayMetadataProvider(ModelMetadataLocalizationHelper metadataHelper)
+        {
+            _metadataHelper = metadataHelper;
+        }
+
         /// <summary>
         /// Called by ASP.NET Core when we need to translate view model display labels
         /// </summary>
@@ -30,14 +40,14 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             if (currentMetaData == null) return;
 
             modelMetadata.DisplayName = () => !ConfigurationContext.Current.ResourceLookupFilter(currentMetaData)
-                ? ModelMetadataLocalizationHelper.GetTranslation(currentMetaData)
-                : ModelMetadataLocalizationHelper.GetTranslation(containerType, propertyName);
+                ? _metadataHelper.GetTranslation(currentMetaData)
+                : _metadataHelper.GetTranslation(containerType, propertyName);
 
             var displayAttribute = theAttributes.OfType<DisplayAttribute>().FirstOrDefault();
             if(displayAttribute?.Description != null)
             {
                 modelMetadata.Description = () =>
-                    ModelMetadataLocalizationHelper.GetTranslation(containerType, $"{propertyName}-Description");
+                    _metadataHelper.GetTranslation(containerType, $"{propertyName}-Description");
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace DbLocalizationProvider.Core.AspNetSample.Resources
+using DbLocalizationProvider.Abstractions;
+
+namespace DbLocalizationProvider.Core.AspNetSample.Resources
 {
     public class Shared
     {

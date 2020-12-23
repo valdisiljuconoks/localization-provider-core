@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using DbLocalizationProvider.AspNetCore;
@@ -45,7 +45,7 @@ namespace funcapp
                 _.UseSqlServer(b.GetConnectionString("DefaultConnection"));
             });
 
-            InitializationExtensions.UseDbLocalizationProvider();
+            InitializationExtensions.UseDbLocalizationProvider(builder.Services.BuildServiceProvider());
         }
     }
 
