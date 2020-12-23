@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc.Localization;
 
 namespace DbLocalizationProvider.AspNetCore
 {
+    /// <summary>
+    /// A factory that creates <see cref="IHtmlLocalizer" /> instances.
+    /// </summary>
     public class DbHtmlLocalizerFactory : IHtmlLocalizerFactory
     {
         private readonly ExpressionHelper _expressionHelper;
@@ -15,6 +18,12 @@ namespace DbLocalizationProvider.AspNetCore
         private readonly ILocalizationProvider _localizationProvider;
         private readonly DbStringLocalizerFactory _localizerFactory;
 
+        /// <summary>
+        /// Creates new instance of this class
+        /// </summary>
+        /// <param name="localizerFactory">Localizer factory</param>
+        /// <param name="localizationProvider">Localization provider</param>
+        /// <param name="expressionHelper">Expression builder</param>
         public DbHtmlLocalizerFactory(
             DbStringLocalizerFactory localizerFactory,
             ILocalizationProvider localizationProvider,
@@ -25,6 +34,13 @@ namespace DbLocalizationProvider.AspNetCore
             _expressionHelper = expressionHelper ?? throw new ArgumentNullException(nameof(expressionHelper));
         }
 
+        /// <summary>
+        /// Creates new instance of this class
+        /// </summary>
+        /// <param name="language">Specify a language to be used for the factory</param>
+        /// <param name="localizerFactory">Localizer factory</param>
+        /// <param name="localizationProvider">Localization provider</param>
+        /// <param name="expressionHelper">Expression builder</param>
         private DbHtmlLocalizerFactory(
             CultureInfo language,
             DbStringLocalizerFactory localizerFactory,
@@ -34,6 +50,12 @@ namespace DbLocalizationProvider.AspNetCore
             _language = language ?? throw new ArgumentNullException(nameof(language));
         }
 
+        /// <summary>
+        /// Creates an <see cref="IHtmlLocalizer" />.
+        /// </summary>
+        /// <param name="baseName">The base name of the resource to load strings from.</param>
+        /// <param name="location">The location to load resources from.</param>
+        /// <returns>The <see cref="IHtmlLocalizer" />.</returns>
         public IHtmlLocalizer Create(string baseName, string location)
         {
             if (baseName == null)
@@ -49,6 +71,12 @@ namespace DbLocalizationProvider.AspNetCore
             return new DbHtmlLocalizer(_localizerFactory.Create(baseName, location), _expressionHelper);
         }
 
+        /// <summary>
+        /// Creates an <see cref="IHtmlLocalizer" /> using the <see cref="System.Reflection.Assembly" /> and
+        /// <see cref="Type.FullName" /> of the specified <see cref="Type" />.
+        /// </summary>
+        /// <param name="resourceSource">The <see cref="Type" />.</param>
+        /// <returns>The <see cref="IHtmlLocalizer" />.</returns>
         public IHtmlLocalizer Create(Type resourceSource)
         {
             if (resourceSource == null)
@@ -59,6 +87,11 @@ namespace DbLocalizationProvider.AspNetCore
             return new DbHtmlLocalizer(_localizerFactory.Create(resourceSource), _expressionHelper);
         }
 
+        /// <summary>
+        /// Changes language of given HtmlLocalizer factory
+        /// </summary>
+        /// <param name="language">Language to change to</param>
+        /// <returns>The <see cref="IHtmlLocalizerFactory" />.</returns>
         public DbHtmlLocalizerFactory ChangeLanguage(CultureInfo language)
         {
             return new DbHtmlLocalizerFactory(language,

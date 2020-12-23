@@ -7,8 +7,18 @@ using Microsoft.AspNetCore.Mvc.Localization;
 
 namespace DbLocalizationProvider.AspNetCore
 {
+    /// <summary>
+    /// An <see cref="IViewLocalizer"/> implementation that derives the resource location from the executing view's
+    /// file path.
+    /// </summary>
     public class DbViewLocalizer : ViewLocalizer, ILocalizationServicesAccessor
     {
+        /// <summary>
+        /// Creates a new <see cref="ViewLocalizer"/>.
+        /// </summary>
+        /// <param name="localizerFactory">The <see cref="IHtmlLocalizerFactory"/>.</param>
+        /// <param name="hostingEnvironment">The <see cref="IWebHostEnvironment"/>.</param>
+        /// <param name="expressionHelper">Expression helper</param>
         public DbViewLocalizer(
             IHtmlLocalizerFactory localizerFactory,
             IWebHostEnvironment hostingEnvironment,
@@ -18,6 +28,9 @@ namespace DbLocalizationProvider.AspNetCore
             ExpressionHelper = expressionHelper;
         }
 
+        /// <summary>
+        /// Expression helper
+        /// </summary>
         public ExpressionHelper ExpressionHelper { get; }
     }
 }

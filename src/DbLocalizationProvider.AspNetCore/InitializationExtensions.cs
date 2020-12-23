@@ -21,13 +21,28 @@ namespace DbLocalizationProvider.AspNetCore
         /// <returns>ASP.NET Core application builder to enable fluent API call chains</returns>
         public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             UseDbLocalizationProvider(builder.ApplicationServices);
 
             return builder;
         }
 
+        /// <summary>
+        /// Synchronizes resources with underlying storage
+        /// </summary>
+        /// <param name="serviceFactory">Factory of the services (this will be required to get access to previously registered services)</param>
+        /// <returns>ASP.NET Core application builder to enable fluent API call chains</returns>
         public static void UseDbLocalizationProvider(IServiceProvider serviceFactory)
         {
+            if (serviceFactory == null)
+            {
+                throw new ArgumentNullException(nameof(serviceFactory));
+            }
+
             var logger = serviceFactory.GetService<ILogger<LoggerAdapter>>();
             var context = ConfigurationContext.Current;
 
