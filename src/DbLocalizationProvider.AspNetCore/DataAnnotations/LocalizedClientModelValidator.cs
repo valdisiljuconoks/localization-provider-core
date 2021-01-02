@@ -9,25 +9,44 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations
 {
+    /// <summary>
+    /// Provides a collection of <see cref="IClientModelValidator"/>s.
+    /// </summary>
     public class LocalizedClientModelValidator : IClientModelValidatorProvider
     {
         private readonly ResourceKeyBuilder _keyBuilder;
         private readonly ExpressionHelper _expressionHelper;
+        private readonly ConfigurationContext _configurationContext;
         private readonly ILocalizationProvider _localizationProvider;
         private readonly IValidationAttributeAdapterProvider _validationAttributeAdapterProvider;
 
+        /// <summary>
+        /// Creates new instance of localized client-side validator.
+        /// </summary>
+        /// <param name="validationAttributeAdapterProvider"></param>
+        /// <param name="localizationProvider"></param>
+        /// <param name="keyBuilder"></param>
+        /// <param name="expressionHelper"></param>
+        /// <param name="configurationContext"></param>
         public LocalizedClientModelValidator(
             IValidationAttributeAdapterProvider validationAttributeAdapterProvider,
             ILocalizationProvider localizationProvider,
             ResourceKeyBuilder keyBuilder,
-            ExpressionHelper expressionHelper)
+            ExpressionHelper expressionHelper,
+            ConfigurationContext configurationContext)
         {
             _validationAttributeAdapterProvider = validationAttributeAdapterProvider;
             _localizationProvider = localizationProvider ?? throw new ArgumentNullException(nameof(localizationProvider));
             _keyBuilder = keyBuilder ?? throw new ArgumentNullException(nameof(keyBuilder));
             _expressionHelper = expressionHelper ?? throw new ArgumentNullException(nameof(expressionHelper));
+            _configurationContext = configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
         }
 
+        /// <summary>
+        /// Creates set of <see cref="IClientModelValidator"/>s by updating
+        /// <see cref="ClientValidatorItem.Validator"/> in <see cref="ClientValidatorProviderContext.Results"/>.
+        /// </summary>
+        /// <param name="context">The <see cref="ClientModelValidationContext"/> associated with this call.</param>
         public void CreateValidators(ClientValidatorProviderContext context)
         {
             if (context == null)
@@ -36,7 +55,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             }
 
             var type = context.ModelMetadata.ContainerType ?? context.ModelMetadata.ModelType;
-            var isReusable = ConfigurationContext.Current.ModelMetadataProviders.UseCachedProviders;
+            var isReusable = _configurationContext.ModelMetadataProviders.UseCachedProviders;
             var flag = false;
 
             foreach (var result in context.Results)

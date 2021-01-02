@@ -1,6 +1,7 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using System;
 using System.Collections.Generic;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Cache;
@@ -8,15 +9,27 @@ using DbLocalizationProvider.Queries;
 
 namespace DbLocalizationProvider.AspNetCore.Queries
 {
+    /// <summary>
+    /// Cached version of `GetAllResources` query
+    /// </summary>
     public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>>
     {
         private readonly IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>> _inner;
 
+        /// <summary>
+        /// Creates new instance of this class.
+        /// </summary>
+        /// <param name="inner">Inner query</param>
         public CachedGetAllResourcesHandler(IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>> inner)
         {
-            _inner = inner;
+            _inner = inner ?? throw new ArgumentNullException(nameof(inner));
         }
 
+        /// <summary>
+        /// Executes the handler
+        /// </summary>
+        /// <param name="query">Query to execute.</param>
+        /// <returns>Result from the query.</returns>
         public IEnumerable<LocalizationResource> Execute(GetAllResources.Query query)
         {
             if(query.ForceReadFromDb) return _inner.Execute(query);

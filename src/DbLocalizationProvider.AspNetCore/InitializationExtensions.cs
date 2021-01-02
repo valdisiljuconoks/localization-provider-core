@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace DbLocalizationProvider.AspNetCore
 {
     /// <summary>
-    /// Extension points
+    /// Extension point to initialize provider.
     /// </summary>
     public static class InitializationExtensions
     {
@@ -36,7 +36,7 @@ namespace DbLocalizationProvider.AspNetCore
         /// </summary>
         /// <param name="serviceFactory">Factory of the services (this will be required to get access to previously registered services)</param>
         /// <returns>ASP.NET Core application builder to enable fluent API call chains</returns>
-        public static void UseDbLocalizationProvider(IServiceProvider serviceFactory)
+        public static void UseDbLocalizationProvider(this IServiceProvider serviceFactory)
         {
             if (serviceFactory == null)
             {
@@ -44,7 +44,7 @@ namespace DbLocalizationProvider.AspNetCore
             }
 
             var logger = serviceFactory.GetService<ILogger<LoggerAdapter>>();
-            var context = ConfigurationContext.Current;
+            var context = serviceFactory.GetService<ConfigurationContext>();
 
             if (logger != null) context.Logger = new LoggerAdapter(logger);
 

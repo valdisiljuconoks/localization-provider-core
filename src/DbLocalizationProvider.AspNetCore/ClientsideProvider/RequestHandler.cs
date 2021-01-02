@@ -14,11 +14,22 @@ using JsonConverter = DbLocalizationProvider.Json.JsonConverter;
 
 namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
 {
+    /// <summary>
+    /// Handler to respond with client-side JSON document.
+    /// </summary>
     public class RequestHandler
     {
-        // must have , otherwise exception at runtime
+        /// <summary>
+        /// Must have, otherwise exception at runtime.
+        /// </summary>
+        /// <param name="next">Next middleware in the pipeline.</param>
         public RequestHandler(RequestDelegate next) { }
 
+        /// <summary>
+        /// Main execution method.
+        /// </summary>
+        /// <param name="context">Http context. Will be used to write response to.</param>
+        /// <returns>Task (for async).</returns>
         public async Task Invoke(HttpContext context)
         {
             var response = GenerateResponse(context);
@@ -67,7 +78,13 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
 
             if (!(cache.Get(cacheKey) is string responseObject))
             {
-                responseObject = GetJson(filename, languageName, debugMode, camelCase);
+                responseObject = GetJson(filename,
+                                         languageName,
+                                         debugMode,
+                                         camelCase,
+                                         context.RequestServices.GetService<IQueryExecutor>(),
+                                         context.RequestServices.GetService<ConfigurationContext>());
+
                 cache.Insert(cacheKey, responseObject, false);
             }
 
@@ -83,15 +100,23 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
             return responseObject;
         }
 
-        private string GetJson(string filename, string languageName, bool debugMode, bool camelCase)
+        private string GetJson(
+            string filename,
+            string languageName,
+            bool debugMode,
+            bool camelCase,
+            IQueryExecutor queryExecutor,
+            ConfigurationContext configurationContext)
         {
             var settings = new JsonSerializerSettings();
-            var converter = new JsonConverter();
+            var converter = new JsonConverter(queryExecutor);
 
             if (camelCase) settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             if (debugMode) settings.Formatting = Formatting.Indented;
 
-            return JsonConvert.SerializeObject(converter.GetJson(filename, languageName, camelCase), settings);
+            return JsonConvert.SerializeObject(
+                converter.GetJson(filename, languageName, configurationContext.FallbackList, camelCase),
+                settings);
         }
 
         private static string ExtractFileName(HttpContext context)

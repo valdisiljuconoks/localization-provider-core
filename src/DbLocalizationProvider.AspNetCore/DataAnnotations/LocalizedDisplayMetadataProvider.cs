@@ -13,14 +13,17 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
     public class LocalizedDisplayMetadataProvider : IDisplayMetadataProvider
     {
         private readonly ModelMetadataLocalizationHelper _metadataHelper;
+        private readonly ConfigurationContext _configurationContext;
 
         /// <summary>
         /// Initiates new instance of this helper.
         /// </summary>
-        /// <param name="metadataHelper">Metadata helper</param>
-        public LocalizedDisplayMetadataProvider(ModelMetadataLocalizationHelper metadataHelper)
+        /// <param name="metadataHelper">Metadata helper.</param>
+        /// <param name="configurationContext">Configuration settings.</param>
+        public LocalizedDisplayMetadataProvider(ModelMetadataLocalizationHelper metadataHelper, ConfigurationContext configurationContext)
         {
             _metadataHelper = metadataHelper;
+            _configurationContext = configurationContext;
         }
 
         /// <summary>
@@ -39,7 +42,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             var currentMetaData = modelMetadata.DisplayName?.Invoke();
             if (currentMetaData == null) return;
 
-            modelMetadata.DisplayName = () => !ConfigurationContext.Current.ResourceLookupFilter(currentMetaData)
+            modelMetadata.DisplayName = () => !_configurationContext.ShouldLookupResource(currentMetaData)
                 ? _metadataHelper.GetTranslation(currentMetaData)
                 : _metadataHelper.GetTranslation(containerType, propertyName);
 

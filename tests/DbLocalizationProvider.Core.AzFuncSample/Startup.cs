@@ -37,15 +37,16 @@ namespace funcapp
                 b.AddConsole();
             });
 
-            builder.Services.AddDbLocalizationProvider(_ =>
+            builder.Services.AddDbLocalizationProvider(ctx =>
             {
-                _.EnableInvariantCultureFallback = true;
-                _.DiscoverAndRegisterResources = false;
-                _.DiagnosticsEnabled = true;
-                _.UseSqlServer(b.GetConnectionString("DefaultConnection"));
+                ctx.EnableInvariantCultureFallback = true;
+                ctx.DiscoverAndRegisterResources = false;
+                ctx.DiagnosticsEnabled = true;
+
+                ctx.UseSqlServer(b.GetConnectionString("DefaultConnection"));
             });
 
-            InitializationExtensions.UseDbLocalizationProvider(builder.Services.BuildServiceProvider());
+            builder.Services.BuildServiceProvider().UseDbLocalizationProvider();
         }
     }
 

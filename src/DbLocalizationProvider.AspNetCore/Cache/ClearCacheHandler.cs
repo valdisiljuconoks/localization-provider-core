@@ -8,11 +8,18 @@ namespace DbLocalizationProvider.AspNetCore.Cache
 {
     public class ClearCacheHandler : ICommandHandler<ClearCache.Command>
     {
+        private readonly ICacheManager _cache;
+
+        public ClearCacheHandler(ICacheManager cache)
+        {
+            _cache = cache;
+        }
+
         public void Execute(ClearCache.Command command)
         {
             foreach(var itemToRemove in InMemoryCacheManager.Entries)
             {
-                ConfigurationContext.Current.CacheManager.Remove(itemToRemove.Key);
+                _cache.Remove(itemToRemove.Key);
             }
         }
     }

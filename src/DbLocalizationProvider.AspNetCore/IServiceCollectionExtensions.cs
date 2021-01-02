@@ -38,7 +38,7 @@ namespace DbLocalizationProvider.AspNetCore
             this IServiceCollection services,
             Action<ConfigurationContext> setup = null)
         {
-            var ctx = ConfigurationContext.Current;
+            var ctx = new ConfigurationContext();
             var factory = ctx.TypeFactory;
 
             // setup default implementations
@@ -60,12 +60,13 @@ namespace DbLocalizationProvider.AspNetCore
             setup?.Invoke(ctx);
 
             // adding mvc localization stuff
-
             var scanState = new ScanState();
             var keyBuilder = new ResourceKeyBuilder(scanState);
             var oldKeyBuilder = new OldResourceKeyBuilder(keyBuilder);
             var expressionHelper = new ExpressionHelper(keyBuilder);
-            var localizationProvider = new LocalizationProvider(keyBuilder, expressionHelper);
+            var queryExecutor = new QueryExecutor(ctx);
+            var translationBuilder = new DiscoveredTranslationBuilder(queryExecutor);
+            var localizationProvider = new LocalizationProvider(keyBuilder, expressionHelper, ctx.FallbackList, queryExecutor);
 
             services.AddSingleton(scanState);
             services.AddSingleton(keyBuilder);
@@ -73,11 +74,11 @@ namespace DbLocalizationProvider.AspNetCore
 
             services.AddSingleton(new TypeDiscoveryHelper(new List<IResourceTypeScanner>
             {
-                new LocalizedModelTypeScanner(keyBuilder, oldKeyBuilder, scanState),
-                new LocalizedResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState),
-                new LocalizedEnumTypeScanner(keyBuilder),
-                new LocalizedForeignResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState)
-            }));
+                new LocalizedModelTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder),
+                new LocalizedResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder),
+                new LocalizedEnumTypeScanner(keyBuilder, translationBuilder),
+                new LocalizedForeignResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder)
+            }, ctx));
 
             services.AddSingleton(localizationProvider);
             services.AddSingleton<ILocalizationProvider>(localizationProvider);
@@ -92,9 +93,9 @@ namespace DbLocalizationProvider.AspNetCore
             services.AddTransient(typeof(IHtmlLocalizer<>), typeof(DbHtmlLocalizer<>));
 
             // we need to check whether invariant fallback is correctly configured
-            if (ctx.EnableInvariantCultureFallback && !ctx.FallbackCultures.Contains(CultureInfo.InvariantCulture))
+            if (ctx.EnableInvariantCultureFallback && !ctx.FallbackLanguages.Contains(CultureInfo.InvariantCulture))
             {
-                ctx.FallbackCultures.Then(CultureInfo.InvariantCulture);
+                ctx.FallbackLanguages.Then(CultureInfo.InvariantCulture);
             }
 
             // setup model metadata providers
@@ -105,7 +106,7 @@ namespace DbLocalizationProvider.AspNetCore
                     {
                         _.ModelMetadataDetailsProviders.Add(
                             new LocalizedDisplayMetadataProvider(
-                                new ModelMetadataLocalizationHelper(localizationProvider, keyBuilder)));
+                                new ModelMetadataLocalizationHelper(localizationProvider, keyBuilder, ctx), ctx));
                     });
 
                 services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
