@@ -15,14 +15,17 @@ namespace DbLocalizationProvider.AspNetCore.Queries
     public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>>
     {
         private readonly IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>> _inner;
+        private readonly ConfigurationContext _configurationContext;
 
         /// <summary>
         /// Creates new instance of this class.
         /// </summary>
         /// <param name="inner">Inner query</param>
-        public CachedGetAllResourcesHandler(IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>> inner)
+        /// <param name="configurationContext">Configuration settings</param>
+        public CachedGetAllResourcesHandler(IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>> inner, ConfigurationContext configurationContext)
         {
             _inner = inner ?? throw new ArgumentNullException(nameof(inner));
+            _configurationContext = configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
         }
 
         /// <summary>
@@ -36,15 +39,15 @@ namespace DbLocalizationProvider.AspNetCore.Queries
 
             // if keys = 0, execute inner query to actually get resources from the db
             // this is usually called during initialization when cache is not yet filled up
-            if(ConfigurationContext.Current.BaseCacheManager.KnownKeyCount == 0) return _inner.Execute(query);
+            if(_configurationContext.BaseCacheManager.KnownKeyCount == 0) return _inner.Execute(query);
 
             var result = new List<LocalizationResource>();
-            var keys = ConfigurationContext.Current.BaseCacheManager.KnownKeys;
+            var keys = _configurationContext.BaseCacheManager.KnownKeys;
 
             foreach(var key in keys)
             {
                 var cacheKey = CacheKeyHelper.BuildKey(key);
-                if(ConfigurationContext.Current.CacheManager.Get(cacheKey) is LocalizationResource localizationResource)
+                if(_configurationContext.CacheManager.Get(cacheKey) is LocalizationResource localizationResource)
                 {
                     result.Add(localizationResource);
                 }
@@ -54,7 +57,7 @@ namespace DbLocalizationProvider.AspNetCore.Queries
                     var resourceFromDb = new GetResource.Query(key).Execute();
                     if(resourceFromDb != null)
                     {
-                        ConfigurationContext.Current.CacheManager.Insert(cacheKey, resourceFromDb, true);
+                        _configurationContext.CacheManager.Insert(cacheKey, resourceFromDb, true);
                         result.Add(resourceFromDb);
                     }
                 }
