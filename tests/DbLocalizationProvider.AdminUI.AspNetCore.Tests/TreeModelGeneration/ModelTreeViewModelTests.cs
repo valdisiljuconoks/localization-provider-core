@@ -16,9 +16,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("This.Is.Resource.Key")
+                new LocalizationResource("This.Is.Resource.Key", false)
                 {
-                    Translations = new List<LocalizationResourceTranslation>
+                    Translations = new LocalizationResourceTranslationCollection(false)
                     {
                         new LocalizationResourceTranslation // invariant
                         {
@@ -28,9 +28,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
                         new LocalizationResourceTranslation { Language = "lv", Value = "Latvian" }
                     }
                 },
-                new LocalizationResource("Another.Resource.Key")
+                new LocalizationResource("Another.Resource.Key", false)
                 {
-                    Translations = new List<LocalizationResourceTranslation>
+                    Translations = new LocalizationResourceTranslationCollection(false)
                     {
                         new LocalizationResourceTranslation // invariant
                         {
@@ -61,9 +61,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("This.Is.Resource.Key")
+                new LocalizationResource("This.Is.Resource.Key", false)
                 {
-                    Translations = new List<LocalizationResourceTranslation>
+                    Translations = new LocalizationResourceTranslationCollection(false)
                     {
                         new LocalizationResourceTranslation // invariant
                         {
@@ -73,9 +73,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
                         new LocalizationResourceTranslation { Language = "lv", Value = "Latvian" }
                     }
                 },
-                new LocalizationResource("This.Is.Resource.AnotherKey")
+                new LocalizationResource("This.Is.Resource.AnotherKey", false)
                 {
-                    Translations = new List<LocalizationResourceTranslation>
+                    Translations = new LocalizationResourceTranslationCollection(false)
                     {
                         new LocalizationResourceTranslation // invariant
                         {
@@ -104,9 +104,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("This.Is.Resource.Key")
+                new LocalizationResource("This.Is.Resource.Key", false)
                 {
-                    Translations = new List<LocalizationResourceTranslation>
+                    Translations = new LocalizationResourceTranslationCollection(false)
                     {
                         new LocalizationResourceTranslation // invariant
                         {
@@ -135,9 +135,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("This.Is.Resource.Key")
+                new LocalizationResource("This.Is.Resource.Key", false)
                 {
-                    Translations = new List<LocalizationResourceTranslation>
+                    Translations = new LocalizationResourceTranslationCollection(false)
                     {
                         new LocalizationResourceTranslation // invariant
                         {
@@ -167,9 +167,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("ThisIsResourceKey")
+                new LocalizationResource("ThisIsResourceKey", false)
                 {
-                    Translations = new List<LocalizationResourceTranslation>
+                    Translations = new LocalizationResourceTranslationCollection(false)
                     {
                         new LocalizationResourceTranslation // invariant
                         {

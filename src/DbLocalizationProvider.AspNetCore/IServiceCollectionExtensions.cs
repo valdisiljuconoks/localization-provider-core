@@ -68,9 +68,11 @@ namespace DbLocalizationProvider.AspNetCore
             var translationBuilder = new DiscoveredTranslationBuilder(queryExecutor);
             var localizationProvider = new LocalizationProvider(keyBuilder, expressionHelper, ctx.FallbackList, queryExecutor);
 
+            services.AddSingleton(ctx);
             services.AddSingleton(scanState);
             services.AddSingleton(keyBuilder);
             services.AddSingleton(expressionHelper);
+            services.AddSingleton(queryExecutor);
 
             services.AddSingleton(new TypeDiscoveryHelper(new List<IResourceTypeScanner>
             {
@@ -79,6 +81,10 @@ namespace DbLocalizationProvider.AspNetCore
                 new LocalizedEnumTypeScanner(keyBuilder, translationBuilder),
                 new LocalizedForeignResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder)
             }, ctx));
+
+            // setting up service factory callback
+            services.TryAddTransient<ServiceFactory>(p => p.GetService);
+            services.AddSingleton(p => new TypeFactory(p.GetService<ConfigurationContext>(), p.GetService));
 
             services.AddSingleton(localizationProvider);
             services.AddSingleton<ILocalizationProvider>(localizationProvider);

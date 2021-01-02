@@ -70,7 +70,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 _.DefaultResourceCulture = CultureInfo.InvariantCulture;
                 _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
                 _.ScanAllAssemblies = true;
-                _.FallbackCultures.Try(supportedCultures);
+                _.FallbackLanguages.Try(supportedCultures);
                 _.ForeignResources.Add<SomeForeignViewModel>();
                 //.Try(new CultureInfo("sv"))
                 //.Then(new CultureInfo("no"))

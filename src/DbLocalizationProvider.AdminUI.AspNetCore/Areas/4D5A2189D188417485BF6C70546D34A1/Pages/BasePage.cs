@@ -1,6 +1,7 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using System;
 using System.Linq;
 using System.Text;
 using DbLocalizationProvider.Cache;
@@ -15,7 +16,17 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
 {
     public class BasePage : PageModel
     {
+        private readonly ConfigurationContext _configurationContext;
+        private readonly IQueryExecutor _queryExecutor;
+        private readonly ICommandExecutor _commandExecutor;
         private const string _lastViewCookieName = "LocalizationProvider_LastView";
+
+        public BasePage(ConfigurationContext configurationContext, IQueryExecutor queryExecutor, ICommandExecutor commandExecutor)
+        {
+            _configurationContext = configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
+            _queryExecutor = queryExecutor ?? throw new ArgumentNullException(nameof(queryExecutor));
+            _commandExecutor = commandExecutor ?? throw new ArgumentNullException(nameof(commandExecutor));
+        }
 
         public IActionResult OnGet()
         {
@@ -39,8 +50,10 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
 
         public FileResult OnGetExport(string format = "json")
         {
-            var exporter = ConfigurationContext.Current.Export.Providers.FindById(format);
-            var resources = new GetAllResources.Query(true).Execute();
+            var exporter = _configurationContext.Export.Providers.FindById(format);
+            var resourcesQuery = new GetAllResources.Query(true);
+            var resources = _queryExecutor.Execute(resourcesQuery);
+
             var result = exporter.Export(resources.ToList(), null);
 
             return new FileContentResult(Encoding.UTF8.GetBytes(result.SerializedData), result.FileMimeType)
@@ -51,7 +64,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
 
         public IActionResult OnGetCleanCache()
         {
-            new ClearCache.Command().Execute();
+            _commandExecutor.Execute(new ClearCache.Command());
 
             return Page();
         }
