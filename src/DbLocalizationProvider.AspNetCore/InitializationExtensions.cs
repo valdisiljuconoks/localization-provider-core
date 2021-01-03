@@ -2,9 +2,9 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
+using DbLocalizationProvider.Logging;
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore
@@ -43,10 +43,10 @@ namespace DbLocalizationProvider.AspNetCore
                 throw new ArgumentNullException(nameof(serviceFactory));
             }
 
-            var logger = serviceFactory.GetService<ILogger<LoggerAdapter>>();
+            var logger = serviceFactory.GetRequiredService<ILogger>();
             var context = serviceFactory.GetService<ConfigurationContext>();
 
-            if (logger != null) context.Logger = new LoggerAdapter(logger);
+            context.Logger = logger;
 
             // if we need to sync - then it's good time to do it now
             var sync = serviceFactory.GetService<Synchronizer>();
@@ -54,7 +54,7 @@ namespace DbLocalizationProvider.AspNetCore
 
             if (!context.DiscoverAndRegisterResources)
             {
-                context.Logger?.Info($"{nameof(context.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
+                logger.Info($"{nameof(context.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
             }
 
             if (context.ManualResourceProvider != null)

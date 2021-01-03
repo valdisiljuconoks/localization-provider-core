@@ -19,7 +19,9 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ILogger = DbLocalizationProvider.Logging.ILogger;
 
 namespace DbLocalizationProvider.AspNetCore
 {
@@ -65,14 +67,33 @@ namespace DbLocalizationProvider.AspNetCore
             var oldKeyBuilder = new OldResourceKeyBuilder(keyBuilder);
             var expressionHelper = new ExpressionHelper(keyBuilder);
             var queryExecutor = new QueryExecutor(ctx);
+            var commandExecutor = new CommandExecutor(ctx);
             var translationBuilder = new DiscoveredTranslationBuilder(queryExecutor);
             var localizationProvider = new LocalizationProvider(keyBuilder, expressionHelper, ctx.FallbackList, queryExecutor);
 
-            services.AddSingleton(ctx);
+            services.AddSingleton(p =>
+            {
+                // TODO: looks like a bit hackish
+                ctx.TypeFactory.SetServiceFactory(p.GetService);
+                return ctx;
+            });
+
+            services.AddSingleton(p => ctx.TypeFactory);
+
+            // add all registered handlers to DI (in order to use service factory callback from DI lib)
+            foreach (var handler in ctx.TypeFactory.GetAllHandlers())
+            {
+                services.AddTransient(handler);
+            }
+
             services.AddSingleton(scanState);
             services.AddSingleton(keyBuilder);
             services.AddSingleton(expressionHelper);
             services.AddSingleton(queryExecutor);
+            services.AddSingleton<IQueryExecutor>(queryExecutor);
+            services.AddSingleton(commandExecutor);
+            services.AddSingleton<ICommandExecutor>(commandExecutor);
+            services.AddSingleton<ILogger>(p => new LoggerAdapter(p.GetService<ILogger<LoggerAdapter>>()));
 
             services.AddSingleton(new TypeDiscoveryHelper(new List<IResourceTypeScanner>
             {
@@ -81,10 +102,6 @@ namespace DbLocalizationProvider.AspNetCore
                 new LocalizedEnumTypeScanner(keyBuilder, translationBuilder),
                 new LocalizedForeignResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder)
             }, ctx));
-
-            // setting up service factory callback
-            services.TryAddTransient<ServiceFactory>(p => p.GetService);
-            services.AddSingleton(p => new TypeFactory(p.GetService<ConfigurationContext>(), p.GetService));
 
             services.AddSingleton(localizationProvider);
             services.AddSingleton<ILocalizationProvider>(localizationProvider);
