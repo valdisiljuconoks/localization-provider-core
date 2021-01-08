@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
 
 namespace DbLocalizationProvider.Core.AspNetSample.Models

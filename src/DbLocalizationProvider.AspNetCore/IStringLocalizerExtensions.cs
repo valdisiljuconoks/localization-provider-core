@@ -4,7 +4,6 @@
 using System;
 using System.Globalization;
 using System.Linq.Expressions;
-using DbLocalizationProvider.Internal;
 using Microsoft.Extensions.Localization;
 
 namespace DbLocalizationProvider.AspNetCore
@@ -16,7 +15,7 @@ namespace DbLocalizationProvider.AspNetCore
             Expression<Func<object>> model,
             params object[] formatArguments)
         {
-            return target[ExpressionHelper.GetFullMemberName(model), formatArguments];
+            return target[GetMemberName(target, model), formatArguments];
         }
 
         public static LocalizedString GetStringByCulture(
@@ -26,12 +25,21 @@ namespace DbLocalizationProvider.AspNetCore
             params object[] formatArguments)
         {
             if (model == null)
+            {
                 throw new ArgumentNullException(nameof(model));
+            }
 
             if (language == null)
+            {
                 throw new ArgumentNullException(nameof(language));
+            }
 
-            return target.WithCulture(language)[ExpressionHelper.GetFullMemberName(model), formatArguments];
+            if (target is ICultureAwareStringLocalizer cultureAwareLocalizer)
+            {
+                return cultureAwareLocalizer.ChangeLanguage(language)[GetMemberName(target, model), formatArguments];
+            }
+
+            return null;
         }
 
         public static LocalizedString GetString<T>(
@@ -39,7 +47,7 @@ namespace DbLocalizationProvider.AspNetCore
             Expression<Func<T, object>> model,
             params object[] formatArguments)
         {
-            return target[ExpressionHelper.GetFullMemberName(model), formatArguments];
+            return target[GetMemberName(target, model), formatArguments];
         }
 
         public static LocalizedString GetStringByCulture<T>(
@@ -49,12 +57,31 @@ namespace DbLocalizationProvider.AspNetCore
             params object[] formatArguments)
         {
             if (model == null)
+            {
                 throw new ArgumentNullException(nameof(model));
+            }
 
             if (language == null)
+            {
                 throw new ArgumentNullException(nameof(language));
+            }
 
-            return target.WithCulture(language)[ExpressionHelper.GetFullMemberName(model), formatArguments];
+            if (target is ICultureAwareStringLocalizer cultureAwareLocalizer)
+            {
+                return cultureAwareLocalizer.ChangeLanguage(language)[GetMemberName(target, model), formatArguments];
+            }
+
+            return null;
+        }
+
+        private static string GetMemberName(IStringLocalizer target, LambdaExpression model)
+        {
+            if (target is ILocalizationServicesAccessor accessor)
+            {
+                return accessor.ExpressionHelper.GetFullMemberName(model);
+            }
+
+            return string.Empty;
         }
     }
 }

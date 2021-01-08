@@ -47,7 +47,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             });
 
             // we need to set handlers at this stage as Mvc config might be added to the service collection *after* DbLocalizationProvider
-            var factory = ConfigurationContext.Current.TypeFactory;
+            var factory = app.ApplicationServices.GetService<TypeFactory>();
             factory.ForQuery<AvailableLanguages.Query>()
                 .SetHandler(() => new AvailableLanguagesHandler(
                                 app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>()));

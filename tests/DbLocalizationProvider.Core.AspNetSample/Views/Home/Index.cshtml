@@ -41,6 +41,8 @@
 
 <div>Translate&lt;SampleResources&gt;(PageHeader2) - @localized.PageHeader2</div>
 <div>ViewData["TestString"] ("Shared.Yes") = @ViewData["TestString"]</div>
+<div>Translate.GetString(() => {}, Culture, placeholder) = @Provider.GetString(() => SampleResources.PropertyWithPlaceholders, new CultureInfo("no"), "replaced value")</div>
+<div>Translate.GetString(() => {}, Culture) = @Provider.GetString(() => SampleResources.PropertyWithPlaceholders, new CultureInfo("no"))</div>
 <div>IViewLocalizer.GetString() = @Localizer.GetString(() => SampleResources.PageHeader)</div>
 <div>IViewLocalizer["..."] = @Localizer["DbLocalizationProvider.Core.AspNetSample.Resources.SampleResources.PageHeader"]</div>
 <div>IHtmlLocalizer&lt;T&gt;.GetString() = @Localizer2.GetString(r => r.PageHeader2)</div>
@@ -116,6 +118,10 @@
 </div>
 <div>
     Requesting translation in swedish (should be invariant- as there is no translation at all) - @Provider.GetStringByCulture(() => ResourcesForFallback.OnlyInInvariant, new CultureInfo("sv"))
+</div>
+<hr/>
+<div>
+    Manually registered resource - @Provider.GetString("Manual.Resource.1")
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
