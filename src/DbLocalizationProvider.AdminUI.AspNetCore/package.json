@@ -13,6 +13,6 @@
         "popper.js": "1.14.7",
         "vue": "2.6.10",
         "vue-ads-table-tree": "^2.3.3",
-        "vue-directive-tooltip": "1.5.1"
+        "vue-directive-tooltip": "1.6.3"
     }
 }
