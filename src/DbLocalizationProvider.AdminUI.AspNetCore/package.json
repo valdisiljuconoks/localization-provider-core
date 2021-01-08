@@ -3,16 +3,16 @@
     "name": "aspnetcore.admin-ui",
     "private": true,
     "devDependencies": {
-        "@fortawesome/fontawesome-free": "^5.9.0"
+        "@fortawesome/fontawesome-free": "^5.15.1"
     },
     "dependencies": {
-        "axios": "0.21.1",
-        "bootstrap": "4.5.2",
-        "jquery": "3.5.0",
-        "open-iconic": "1.1.1",
-        "popper.js": "1.16.1",
-        "vue": "2.6.10",
+        "axios": "^0.21.1",
+        "bootstrap": "^4.5.3",
+        "jquery": "^3.5.1",
+        "open-iconic": "^1.1.1",
+        "popper.js": "^1.16.1",
+        "vue": "^2.6.12",
         "vue-ads-table-tree": "^2.4.2",
-        "vue-directive-tooltip": "1.6.3"
+        "vue-directive-tooltip": "^1.6.3"
     }
 }

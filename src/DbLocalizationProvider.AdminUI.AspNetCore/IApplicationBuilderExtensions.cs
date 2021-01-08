@@ -25,7 +25,10 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app)
         {
             var path = UiConfigurationContext.Current.RootUrl;
-            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
 
             // add checker middleware - to support registration order verification
             app.UseMiddleware<AdminUIMarkerMiddleware>();
@@ -48,9 +51,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
             // we need to set handlers at this stage as Mvc config might be added to the service collection *after* DbLocalizationProvider
             var factory = app.ApplicationServices.GetService<TypeFactory>();
-            factory.ForQuery<AvailableLanguages.Query>()
-                .SetHandler(() => new AvailableLanguagesHandler(
-                                app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>()));
+            factory
+                .ForQuery<AvailableLanguages.Query>()
+                .SetHandler(() =>
+                                new AvailableLanguagesHandler(
+                                    app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>()));
 
             return app;
         }
