@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using DbLocalizationProvider;
 using DbLocalizationProvider.Abstractions;
 
@@ -21,6 +21,9 @@ namespace MyProject
         [TranslationForCulture("In Swedish and English (SV)", "sv")]
         [TranslationForCulture("In Swedish and English (EN)", "en")]
         public static string InSwedishAndEnglishInvariant => "In Swedish and English (INV)";
+
+        [TranslationForCulture("Nav nozīmes 2", "lv-lv")]
+        public static string ThisShouldMessUpWithCultureCasing => "No matter what we put here";
     }
 
 
@@ -51,6 +54,8 @@ namespace DbLocalizationProvider.Core.AspNetSample.Resources
 
         [WeirdCustom("Weird enum attribute value")]
         public static SomeEnum SomeEnumProperty => SomeEnum.ValueOne;
+
+        public static string PropertyWithPlaceholders => "This is a text with some place holders: `{0}`.";
 
         public static string ThisIsPrettyLongResourceKeyNameJustToTestHowBadItLooksInAdministrativeUserInterfaceResourceListPageTable => "This is pretty long";
     }

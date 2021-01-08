@@ -14,9 +14,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests
             var model = new LocalizationResourceApiModel(
                 new List<LocalizationResource>
                 {
-                    new LocalizationResource("the-key1")
+                    new LocalizationResource("the-key1", false)
                     {
-                        Translations = new List<LocalizationResourceTranslation>
+                        Translations = new LocalizationResourceTranslationCollection(false)
                         {
                             new LocalizationResourceTranslation { Language = "", Value = "Invariant" },
                             new LocalizationResourceTranslation { Language = "en", Value = "English" },
@@ -38,9 +38,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests
             var model = new LocalizationResourceApiModel(
                 new List<LocalizationResource>
                 {
-                    new LocalizationResource("the-key1")
+                    new LocalizationResource("the-key1", false)
                     {
-                        Translations = new List<LocalizationResourceTranslation>
+                        Translations = new LocalizationResourceTranslationCollection(false)
                         {
                             new LocalizationResourceTranslation { Language = "", Value = "Invariant" },
                             new LocalizationResourceTranslation { Language = "en", Value = "English" }

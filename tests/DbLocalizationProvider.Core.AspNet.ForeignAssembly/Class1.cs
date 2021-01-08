@@ -1,4 +1,6 @@
-﻿namespace DbLocalizationProvider.Core.AspNet.ForeignAssembly
+using DbLocalizationProvider.Abstractions;
+
+namespace DbLocalizationProvider.Core.AspNet.ForeignAssembly
 {
     [LocalizedModel]
     public class Class1

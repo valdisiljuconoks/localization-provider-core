@@ -1,6 +1,7 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -16,10 +17,14 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
     public class ServiceController : ControllerBase
     {
         private readonly UiConfigurationContext _config;
+        private readonly ICommandExecutor _commandExecutor;
+        private readonly IQueryExecutor _queryExecutor;
 
-        public ServiceController(UiConfigurationContext config)
+        public ServiceController(UiConfigurationContext config, ICommandExecutor commandExecutor, IQueryExecutor queryExecutor)
         {
             _config = config;
+            _commandExecutor = commandExecutor ?? throw new ArgumentNullException(nameof(commandExecutor));
+            _queryExecutor = queryExecutor ?? throw new ArgumentNullException(nameof(queryExecutor));
         }
 
         [HttpGet]
@@ -50,7 +55,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public JsonResult Save([FromBody] CreateOrUpdateTranslationRequestModel model)
         {
             var cmd = new CreateOrUpdateTranslation.Command(model.Key, new CultureInfo(model.Language), model.Translation);
-            cmd.Execute();
+            _commandExecutor.Execute(cmd);
 
             return ServiceOperationResult.Ok;
         }
@@ -59,7 +64,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public JsonResult Remove([FromBody] RemoveTranslationRequestModel model)
         {
             var cmd = new RemoveTranslation.Command(model.Key, new CultureInfo(model.Language));
-            cmd.Execute();
+            _commandExecutor.Execute(cmd);
 
             return ServiceOperationResult.Ok;
         }
@@ -70,7 +75,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             if (!_config.HideDeleteButton)
             {
                 var cmd = new DeleteResource.Command(model.Key);
-                cmd.Execute();
+                _commandExecutor.Execute(cmd);
             }
 
             return ServiceOperationResult.Ok;
@@ -92,10 +97,13 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         private (List<LocalizationResource>, IEnumerable<CultureInfo>, bool) GetResources()
         {
             var availableLanguagesQuery = new AvailableLanguages.Query {IncludeInvariant = true};
-            var languages = availableLanguagesQuery.Execute();
+            var languages = _queryExecutor.Execute(availableLanguagesQuery);
 
             var getResourcesQuery = new GetAllResources.Query(true);
-            var resources = getResourcesQuery.Execute().OrderBy(_ => _.ResourceKey).ToList();
+            var resources = _queryExecutor
+                .Execute(getResourcesQuery)
+                .OrderBy(_ => _.ResourceKey)
+                .ToList();
 
             var user = Request.HttpContext.User;
             var isAdmin = false;

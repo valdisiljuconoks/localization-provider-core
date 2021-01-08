@@ -55,7 +55,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 c.AddDebug();
             });
 
-            var supportedCultures = new List<CultureInfo> { new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
+            var supportedCultures = new List<CultureInfo> { new CultureInfo("lv-LV"), new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
 
             services.Configure<RequestLocalizationOptions>(opts =>
             {
@@ -70,13 +70,15 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 _.DefaultResourceCulture = CultureInfo.InvariantCulture;
                 _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
                 _.ScanAllAssemblies = true;
-                _.FallbackCultures.Try(supportedCultures);
+                _.FallbackLanguages.Try(supportedCultures);
                 _.ForeignResources.Add<SomeForeignViewModel>();
                 //.Try(new CultureInfo("sv"))
                 //.Then(new CultureInfo("no"))
                 //.Then(new CultureInfo("en"));
 
                 _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+
+                _.ManualResourceProvider = new SomeManualResources();
             });
 
             services.AddDbLocalizationProviderAdminUI(_ =>

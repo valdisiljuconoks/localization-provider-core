@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using DbLocalizationProvider.Core.AspNetSample.Models;
+using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -20,11 +21,17 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
     {
         private readonly ILocalizationProvider _provider;
         private readonly ILogger _logger;
+        private readonly ISynchronizer _synchronizer;
 
-        public HomeController(ILocalizationProvider provider, IOptions<MvcOptions> options, ILogger<HomeController> logger)
+        public HomeController(
+            ILocalizationProvider provider,
+            IOptions<MvcOptions> options,
+            ILogger<HomeController> logger,
+            ISynchronizer synchronizer)
         {
             _provider = provider;
             _logger = logger;
+            _synchronizer = synchronizer;
 
             var asms = GetAssemblies().Where(a => a.FullName.Contains("DbLocalizationProvider"));
         }
@@ -54,6 +61,12 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
 
         public IActionResult Index()
         {
+            // register manually some of the resources
+            _synchronizer.RegisterManually(new List<ManualResource>
+            {
+                new ManualResource("Manual.Resource.1", "English translation", new CultureInfo("en"))
+            });
+
             var u = ControllerContext.HttpContext.User?.Identity;
 
             var zz = _provider.GetStringByCulture(() => ResourcesForFallback.OnlyInInvariant, new CultureInfo("sv"));

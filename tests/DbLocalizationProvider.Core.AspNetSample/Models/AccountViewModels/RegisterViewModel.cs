@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using DbLocalizationProvider.Abstractions;
 
 namespace DbLocalizationProvider.Core.AspNetSample.Models.AccountViewModels
 {
