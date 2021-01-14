@@ -86,6 +86,12 @@ namespace DbLocalizationProvider.AspNetCore
                 services.AddTransient(handler);
             }
 
+            // add all registered handlers to DI (in order to use service factory callback from DI lib)
+            foreach (var (service, implementation) in ctx.TypeFactory.GetAllTransientServiceMappings())
+            {
+                services.AddTransient(service, implementation);
+            }
+
             services.AddSingleton(scanState);
             services.AddSingleton(keyBuilder);
             services.AddSingleton(expressionHelper);

@@ -3,12 +3,12 @@
 
 using System;
 using DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure;
-using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using AvailableLanguagesHandler = DbLocalizationProvider.AdminUI.AspNetCore.Queries.AvailableLanguagesHandler;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
@@ -49,13 +49,14 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                 RequestPath = path + "/webfonts"
             });
 
-            // we need to set handlers at this stage as Mvc config might be added to the service collection *after* DbLocalizationProvider
             var factory = app.ApplicationServices.GetService<TypeFactory>();
+            var requestOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+
+            // we need to override default handler at this stage
+            // as Mvc config might be added to the service collection *after* DbLocalizationProvider
             factory
                 .ForQuery<AvailableLanguages.Query>()
-                .SetHandler(() =>
-                                new AvailableLanguagesHandler(
-                                    app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>()));
+                .SetHandler(() => new AvailableLanguagesHandler(requestOptions.Value.SupportedUICultures));
 
             return app;
         }
