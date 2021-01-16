@@ -1,6 +1,9 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using System;
+using System.Globalization;
+using System.Reflection;
 using DbLocalizationProvider.Internal;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -11,8 +14,11 @@ namespace DbLocalizationProvider.AspNetCore
     /// An <see cref="IViewLocalizer"/> implementation that derives the resource location from the executing view's
     /// file path.
     /// </summary>
-    public class DbViewLocalizer : ViewLocalizer, ILocalizationServicesAccessor
+    public class DbViewLocalizer : ViewLocalizer, ILocalizationServicesAccessor, ICultureAwareHtmlLocalizer
     {
+        private readonly DbHtmlLocalizerFactory _localizerFactory;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
         /// <summary>
         /// Creates a new <see cref="ViewLocalizer"/>.
         /// </summary>
@@ -20,11 +26,13 @@ namespace DbLocalizationProvider.AspNetCore
         /// <param name="hostingEnvironment">The <see cref="IWebHostEnvironment"/>.</param>
         /// <param name="expressionHelper">Expression helper</param>
         public DbViewLocalizer(
-            IHtmlLocalizerFactory localizerFactory,
+            DbHtmlLocalizerFactory localizerFactory,
             IWebHostEnvironment hostingEnvironment,
             ExpressionHelper expressionHelper)
             : base(localizerFactory, hostingEnvironment)
         {
+            _localizerFactory = localizerFactory;
+            _hostingEnvironment = hostingEnvironment;
             ExpressionHelper = expressionHelper;
         }
 
@@ -32,5 +40,50 @@ namespace DbLocalizationProvider.AspNetCore
         /// Expression helper
         /// </summary>
         public ExpressionHelper ExpressionHelper { get; }
+
+        /// <summary>
+        /// Changes the language of the view localizer (USE WITH CAUTION! is this involves some magic to get it done).
+        /// </summary>
+        /// <param name="language">New language to set</param>
+        /// <returns><see cref="IHtmlLocalizer"/> with changed language.</returns>
+        public IHtmlLocalizer ChangeLanguage(CultureInfo language)
+        {
+            // capture initialized localizer field from the base
+            var localizer = GetField(typeof(ViewLocalizer), this, "_localizer");
+
+            // get underlying string localizer
+            var underLyingLocalizer = GetField(typeof(HtmlLocalizer), localizer, "_localizer");
+            if (underLyingLocalizer is DbStringLocalizer stringLocalizer)
+            {
+                SetField(typeof(HtmlLocalizer), localizer, "_localizer", stringLocalizer.ChangeLanguage(language));
+            }
+
+            // create new instance of view localizer
+            var dbViewLocalizer = new DbViewLocalizer(_localizerFactory, _hostingEnvironment, ExpressionHelper);
+
+            // set back underlying localizer
+            SetField(typeof(ViewLocalizer), dbViewLocalizer, "_localizer", localizer);
+
+            // this all ceremony is required because we just can't new up instance of view localizer.
+            // it's been contextualize during it's lifetime - so we need to "restore" state.
+            // this is VERY HACK-ish and do not recommend anyone to use it. at all. forget about it.
+            return dbViewLocalizer;
+        }
+
+        private static object GetField(Type type, object instance, string fieldName)
+        {
+            var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var field = type.GetField(fieldName, bindFlags);
+
+            return field?.GetValue(instance);
+        }
+
+        private static void SetField(Type type, object instance, string fieldName, object value)
+        {
+            var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var field = type.GetField(fieldName, bindFlags);
+
+            field?.SetValue(instance, value);
+        }
     }
 }

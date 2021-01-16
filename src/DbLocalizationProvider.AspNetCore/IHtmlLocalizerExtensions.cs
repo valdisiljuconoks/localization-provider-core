@@ -8,8 +8,18 @@ using Microsoft.AspNetCore.Mvc.Localization;
 
 namespace DbLocalizationProvider.AspNetCore
 {
+    /// <summary>
+    /// For the stuff that's missing.
+    /// </summary>
     public static class IHtmlLocalizerExtensions
     {
+        /// <summary>
+        /// Gets resource translation.
+        /// </summary>
+        /// <param name="target">Localizer.</param>
+        /// <param name="model">Resource expression.</param>
+        /// <param name="formatArguments">Message formatting arguments.</param>
+        /// <returns>Html string if translation is found for resource in requested language.</returns>
         public static LocalizedHtmlString GetString(
             this IHtmlLocalizer target,
             Expression<Func<object>> model,
@@ -18,6 +28,14 @@ namespace DbLocalizationProvider.AspNetCore
             return target[GetMemberName(target, model), formatArguments];
         }
 
+        /// <summary>
+        /// Returns resource in requested language (USE WITH CAUTION! is this involves some magic to get it done).
+        /// </summary>
+        /// <param name="target">Localizer.</param>
+        /// <param name="model">Resource expression.</param>
+        /// <param name="language">Language in which you would like to get resource translation back.</param>
+        /// <param name="formatArguments">Message formatting arguments.</param>
+        /// <returns>Html string if translation is found for resource in requested language.</returns>
         public static LocalizedHtmlString GetStringByCulture(
             this IHtmlLocalizer target,
             Expression<Func<object>> model,
@@ -42,6 +60,13 @@ namespace DbLocalizationProvider.AspNetCore
             return null;
         }
 
+        /// <summary>
+        /// Gets resource translation.
+        /// </summary>
+        /// <param name="target">Localizer.</param>
+        /// <param name="model">Resource expression.</param>
+        /// <param name="formatArguments">Message formatting arguments.</param>
+        /// <returns>Html string if translation is found for resource in requested language.</returns>
         public static LocalizedHtmlString GetString<T>(
             this IHtmlLocalizer<T> target,
             Expression<Func<T, object>> model,
@@ -50,6 +75,14 @@ namespace DbLocalizationProvider.AspNetCore
             return target[GetMemberName(target, model), formatArguments];
         }
 
+        /// <summary>
+        /// Returns resource in requested language (USE WITH CAUTION! is this involves some magic to get it done).
+        /// </summary>
+        /// <param name="target">Localizer.</param>
+        /// <param name="model">Resource expression.</param>
+        /// <param name="language">Language in which you would like to get resource translation back.</param>
+        /// <param name="formatArguments">Message formatting arguments.</param>
+        /// <returns>Html string if translation is found for resource in requested language.</returns>
         public static LocalizedHtmlString GetStringByCulture<T>(
             this IHtmlLocalizer<T> target,
             Expression<Func<T, object>> model,
