@@ -7,6 +7,7 @@ using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
 using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
+using DbLocalizationProvider.Storage.AzureTables;
 using DbLocalizationProvider.Storage.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -76,7 +77,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //.Then(new CultureInfo("no"))
                 //.Then(new CultureInfo("en"));
 
-                _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                //_.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                _.UseAzureTables("UseDevelopmentStorage=true");
 
                 _.ManualResourceProvider = new SomeManualResources();
             });

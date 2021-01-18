@@ -22,6 +22,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Abstractions\DbLocalizationProvider.Abstractions.csproj" />
+    <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Storage.AzureTables\DbLocalizationProvider.Storage.AzureTables.csproj" />
+    <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Storage.PostgreSQL\DbLocalizationProvider.Storage.PostgreSql.csproj" />
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Storage.SqlServer\DbLocalizationProvider.Storage.SqlServer.csproj" />
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
     <ProjectReference Include="..\..\src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj" />

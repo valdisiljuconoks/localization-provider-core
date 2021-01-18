@@ -97,7 +97,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
         private (List<LocalizationResource>, IEnumerable<CultureInfo>, bool) GetResources()
         {
-            var availableLanguagesQuery = new AvailableLanguages.Query {IncludeInvariant = true};
+            var availableLanguagesQuery = new AvailableLanguages.Query { IncludeInvariant = false };
             var languages = _queryExecutor.Execute(availableLanguagesQuery);
 
             var getResourcesQuery = new GetAllResources.Query(true);
