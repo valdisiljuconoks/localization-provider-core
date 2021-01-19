@@ -54,9 +54,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
             // we need to override default handler at this stage
             // as Mvc config might be added to the service collection *after* DbLocalizationProvider
-            //factory
-            //    .ForQuery<AvailableLanguages.Query>()
-            //    .SetHandler(() => new AvailableLanguagesHandler(requestOptions.Value.SupportedUICultures));
+            factory
+                .ForQuery<AvailableLanguages.Query>()
+                .SetHandler(() => new AvailableLanguagesHandler(requestOptions.Value.SupportedUICultures));
 
             return app;
         }
