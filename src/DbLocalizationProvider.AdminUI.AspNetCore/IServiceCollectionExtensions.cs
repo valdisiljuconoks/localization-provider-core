@@ -4,6 +4,7 @@
 using System;
 using DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure;
 using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
+using DbLocalizationProvider.AdminUI.AspNetCore.Security;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,10 +28,12 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             this IServiceCollection services,
             Action<UiConfigurationContext> setup = null)
         {
-            setup?.Invoke(UiConfigurationContext.Current);
+            var context = new UiConfigurationContext();
+            UiConfigurationContext.Current = context;
 
-            services.AddSingleton(_ => UiConfigurationContext.Current);
-            services.AddScoped<AuthorizeRolesAttribute>();
+            setup?.Invoke(context);
+
+            services.AddSingleton(_ => context);
 
             // this is required for dynamic endpoint routing (if one is used in the app)
             services.AddSingleton<AdminUIDynamicRouteValueTransformer>();
@@ -38,16 +41,28 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             // add support for admin ui razor class library pages
             services.Configure<RazorPagesOptions>(_ =>
             {
-                _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUI");
-                _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree");
+                _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUI", AccessPolicy.Name);
+                _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1", "/AdminUI", context.RootUrl);
 
-                _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1",
-                                               "/AdminUI",
-                                               UiConfigurationContext.Current.RootUrl);
-                _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1",
-                                               "/AdminUITree",
-                                               UiConfigurationContext.Current.RootUrl + "/tree");
+                _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree", AccessPolicy.Name);
+                _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree", context.RootUrl + "/tree");
             });
+
+            if (context.AccessPolicyOptions != null)
+            {
+                services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(AccessPolicy.Name, context.AccessPolicyOptions);
+                });
+            }
+            else
+            {
+                services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(AccessPolicy.Name,
+                                      policy => policy.AddRequirements(new CheckAdministratorsRoleRequirement()));
+                });
+            }
 
             return services;
         }

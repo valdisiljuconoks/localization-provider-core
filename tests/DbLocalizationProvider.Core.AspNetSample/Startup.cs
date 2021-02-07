@@ -9,6 +9,7 @@ using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Storage.AzureTables;
 using DbLocalizationProvider.Storage.SqlServer;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -87,11 +88,13 @@ namespace DbLocalizationProvider.Core.AspNetSample
             {
                 _.RootUrl = "/localization-admin";
 
-                _.AuthorizedAdminRoles.Clear();
-                _.AuthorizedAdminRoles.Add("Administrators");
+                //_.AuthorizedAdminRoles.Clear();
+                //_.AuthorizedAdminRoles.Add("Administrators");
 
-                _.AuthorizedEditorRoles.Clear();
-                _.AuthorizedEditorRoles.Add("Translators");
+                //_.AuthorizedEditorRoles.Clear();
+                //_.AuthorizedEditorRoles.Add("Translators");
+
+                //_.AccessPolicyOptions = builder => builder.AddRequirements(new RolesAuthorizationRequirement(new [] { "test" }));
 
                 _.ShowInvariantCulture = true;
                 _.ShowHiddenResources = false;

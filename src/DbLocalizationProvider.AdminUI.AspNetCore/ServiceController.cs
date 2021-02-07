@@ -7,14 +7,16 @@ using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.AdminUI.AspNetCore.Models;
+using DbLocalizationProvider.AdminUI.AspNetCore.Security;
 using DbLocalizationProvider.AdminUI.Models;
 using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
-    [AuthorizeRoles]
+    [Authorize(Policy = AccessPolicy.Name)]
     public class ServiceController : ControllerBase
     {
         private readonly UiConfigurationContext _config;
@@ -125,6 +127,5 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                 ShowDeleteButton = !_config.HideDeleteButton
             };
         }
-
     }
 }

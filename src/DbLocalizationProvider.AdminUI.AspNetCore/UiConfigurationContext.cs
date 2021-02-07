@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
@@ -86,7 +87,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// <summary>
         /// Access to current configuration context instance. Statics sucks.
         /// </summary>
-        public static UiConfigurationContext Current { get; } = new UiConfigurationContext();
+        public static UiConfigurationContext Current { get; internal set; }
 
         /// <summary>
         /// This might become handy sometimes when white background and black fonts are too boooooring.
@@ -103,6 +104,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// If you don't need to remove resource ever - set this to <code>true</code>
         /// </summary>
         public bool HideDeleteButton { get; set; } = false;
+
+        /// <summary>
+        /// Access policy hook. You can use this to customize authorization access policy used to secure AdminUI.
+        /// </summary>
+        public Action<AuthorizationPolicyBuilder> AccessPolicyOptions { get; set; }
 
         //internal bool IsTreeViewDisabled { get; set; }
 
