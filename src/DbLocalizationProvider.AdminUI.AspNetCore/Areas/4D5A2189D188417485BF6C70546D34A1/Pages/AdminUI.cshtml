@@ -1,5 +1,4 @@
-﻿
-@page "{handler?}"
+﻿@page "{handler?}"
 
 @using DbLocalizationProvider.AdminUI.AspNetCore
 @using DbLocalizationProvider.AspNetCore
@@ -8,7 +7,7 @@
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUIViewModel
 
 @inject IHtmlLocalizer<Resources> Localizer
-@inject UiConfigurationContext Config
+@inject UiConfigurationContext UiContext
 
 @{
     Layout = null;
@@ -142,9 +141,9 @@
         }
     </style>
 
-    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
+    @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
     {
-        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
+        <link rel="stylesheet" href="@UiContext.CustomCssPath">
     }
 </head>
 <body class="container-fluid">
@@ -176,6 +175,7 @@
         <div class="col-lg-6">
             <span class="float-left">
                 <span class="h1">@Localizer.GetString(_ => _.Header)</span>
+                <psan><small>(v@(UiContext.Version.Value))</small></psan>
             </span>
         </div>
         <div class="col-lg-6">
@@ -216,7 +216,7 @@
                 <th v-for="lang in model.supportedLanguages" scope="col">{{lang.titleDisplay}}</th>
                 <th>@Localizer.GetString(_ => _.HiddenColumn)</th>
                 <th>@Localizer.GetString(_ => _.FromCodeColumn)</th>
-                @if (!Config.HideDeleteButton)
+                @if (!UiContext.HideDeleteButton)
                 {
                     <th>@Localizer.GetString(_ => _.DeleteColumn)</th>
                 }
@@ -236,7 +236,7 @@
                 </td>
                 <td>{{ resource.isHidden }}</td>
                 <td>{{ resource.isFromCode }}</td>
-                @if (!Config.HideDeleteButton)
+                @if (!UiContext.HideDeleteButton)
                 {
                     <td><a href="#" class="btn" v-bind:class="{ disabled: resource.isFromCode }" @@click="deleteResource(resource)"><i class="fas fa-trash"></i></a></td>
                 }

@@ -29,7 +29,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             Action<UiConfigurationContext> setup = null)
         {
             var context = new UiConfigurationContext();
-            UiConfigurationContext.Current = context;
 
             setup?.Invoke(context);
 

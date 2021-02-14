@@ -17,13 +17,19 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
     public class BasePage : PageModel
     {
         private readonly ConfigurationContext _configurationContext;
+        private readonly UiConfigurationContext _uiConfigurationContext;
         private readonly IQueryExecutor _queryExecutor;
         private readonly ICommandExecutor _commandExecutor;
         private const string _lastViewCookieName = "LocalizationProvider_LastView";
 
-        public BasePage(ConfigurationContext configurationContext, IQueryExecutor queryExecutor, ICommandExecutor commandExecutor)
+        public BasePage(
+            ConfigurationContext configurationContext,
+            UiConfigurationContext uiConfigurationContext,
+            IQueryExecutor queryExecutor,
+            ICommandExecutor commandExecutor)
         {
             _configurationContext = configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
+            _uiConfigurationContext = uiConfigurationContext;
             _queryExecutor = queryExecutor ?? throw new ArgumentNullException(nameof(queryExecutor));
             _commandExecutor = commandExecutor ?? throw new ArgumentNullException(nameof(commandExecutor));
         }
@@ -33,17 +39,26 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
             // this is need in order for the Vue and other "sub-components" to load correctly.
             // otherwise - resources will be mapped to one level above and will fail to be fetched
             var url = Request.GetEncodedUrl();
-            if(!url.EndsWith('/')) return Redirect(url + "/");
+            if (!url.EndsWith('/'))
+            {
+                return Redirect(url + "/");
+            }
 
             var lastView = Request.Cookies[_lastViewCookieName];
-            if(!string.IsNullOrEmpty(lastView)) return Page();
+            if (!string.IsNullOrEmpty(lastView))
+            {
+                return Page();
+            }
 
-            var defaultView = UiConfigurationContext.Current.DefaultView;
+            var defaultView = _uiConfigurationContext.DefaultView;
             var isTreeView = url.Contains("tree");
 
             // set view from config
-            Response.Cookies.Append(_lastViewCookieName, UiConfigurationContext.Current.DefaultView.ToString(), new CookieOptions { HttpOnly = true });
-            if(!isTreeView && defaultView == ResourceListView.Tree) Response.Redirect(url + "tree/");
+            Response.Cookies.Append(_lastViewCookieName, defaultView.ToString(), new CookieOptions { HttpOnly = true });
+            if (!isTreeView && defaultView == ResourceListView.Tree)
+            {
+                Response.Redirect(url + "tree/");
+            }
 
             return Page();
         }

@@ -24,7 +24,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// <returns>If you want to chain calls further, you can use the same application builder that was used.</returns>
         public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app)
         {
-            var path = UiConfigurationContext.Current.RootUrl;
+            var path = app.ApplicationServices.GetService<UiConfigurationContext>().RootUrl;
             if (path == null)
             {
                 throw new ArgumentNullException(nameof(path));

@@ -42,18 +42,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             return new ApiResponse(PrepareTreeViewModel());
         }
 
-        private LocalizationResourceApiTreeModel PrepareTreeViewModel()
-        {
-            var (resources, languages, isAdmin) = GetResources();
-            var result = new LocalizationResourceApiTreeModel(resources,
-                languages,
-                _config.MaxResourceKeyPopupTitleLength,
-                _config.MaxResourceKeyDisplayLength,
-                BuildOptions(isAdmin));
-
-            return result;
-        }
-
         [HttpPost]
         public JsonResult Save([FromBody] CreateOrUpdateTranslationRequestModel model)
         {
@@ -86,18 +74,30 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
         private LocalizationResourceApiModel PrepareViewModel()
         {
-            var (resources, languages, isAdmin) = GetResources();
+            var (resources, languages) = GetResources();
             var result = new LocalizationResourceApiModel(
                 resources,
                 languages,
                 _config.MaxResourceKeyPopupTitleLength,
                 _config.MaxResourceKeyDisplayLength,
-                BuildOptions(isAdmin));
+                BuildOptions());
 
             return result;
         }
 
-        private (List<LocalizationResource>, IEnumerable<CultureInfo>, bool) GetResources()
+        private LocalizationResourceApiTreeModel PrepareTreeViewModel()
+        {
+            var (resources, languages) = GetResources();
+            var result = new LocalizationResourceApiTreeModel(resources,
+                                                              languages,
+                                                              _config.MaxResourceKeyPopupTitleLength,
+                                                              _config.MaxResourceKeyDisplayLength,
+                                                              BuildOptions());
+
+            return result;
+        }
+
+        private (List<LocalizationResource>, IEnumerable<CultureInfo>) GetResources()
         {
             var availableLanguagesQuery = new AvailableLanguages.Query { IncludeInvariant = false };
             var languages = _queryExecutor.Execute(availableLanguagesQuery);
@@ -108,20 +108,14 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                 .OrderBy(_ => _.ResourceKey)
                 .ToList();
 
-            var user = Request.HttpContext.User;
-            var isAdmin = false;
-
-            if(user != null)
-                isAdmin = user.Identity.IsAuthenticated && _config.AuthorizedAdminRoles.Any(_ => user.IsInRole(_));
-
-            return (resources, languages, isAdmin);
+            return (resources, languages);
         }
 
-        private UiOptions BuildOptions(bool isAdmin)
+        private UiOptions BuildOptions()
         {
             return new UiOptions
             {
-                AdminMode = isAdmin,
+                AdminMode = true,
                 ShowInvariantCulture = _config.ShowInvariantCulture,
                 ShowHiddenResources = _config.ShowHiddenResources,
                 ShowDeleteButton = !_config.HideDeleteButton

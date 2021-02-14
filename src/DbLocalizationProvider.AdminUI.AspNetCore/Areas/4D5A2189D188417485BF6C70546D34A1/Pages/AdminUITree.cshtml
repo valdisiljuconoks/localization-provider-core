@@ -7,6 +7,7 @@
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUITreeViewModel
 
 @inject IHtmlLocalizer<Resources> Localizer
+@inject UiConfigurationContext UiContext
 @{
     Layout = null;
 }
@@ -163,9 +164,9 @@
         }
     </style>
 
-    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
+    @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
     {
-        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
+        <link rel="stylesheet" href="@UiContext.CustomCssPath">
     }
 
 </head>
@@ -198,6 +199,7 @@
         <div class="col-lg-6">
             <span class="float-left">
                 <span class="h1">@Localizer.GetString(_ => _.Header)</span>
+                <psan><small>(v@(UiContext.Version.Value))</small></psan>
             </span>
         </div>
         <div class="col-lg-6">

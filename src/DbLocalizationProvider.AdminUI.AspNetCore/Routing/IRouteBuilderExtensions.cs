@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Routing
 {
@@ -18,8 +19,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Routing
         /// <returns><see cref="IRouteBuilder"/> to support API call chaining</returns>
         public static IRouteBuilder MapDbLocalizationAdminUI(this IRouteBuilder builder)
         {
-            builder.MapRoute("AdminUI API Route",
-                             UiConfigurationContext.Current.RootUrl + "/api/{controller=Service}/{action=Index}");
+            var context = builder.ServiceProvider.GetService<UiConfigurationContext>();
+            builder.MapRoute("AdminUI API Route", context.RootUrl + "/api/{controller=Service}/{action=Index}");
 
             return builder;
         }

@@ -7,8 +7,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
     {
         public AdminUIViewModel(
             ConfigurationContext configurationContext,
+            UiConfigurationContext  uiContext,
             IQueryExecutor queryExecutor,
             ICommandExecutor commandExecutor)
-            : base(configurationContext, queryExecutor, commandExecutor) { }
+            : base(configurationContext, uiContext, queryExecutor, commandExecutor) { }
     }
 }
