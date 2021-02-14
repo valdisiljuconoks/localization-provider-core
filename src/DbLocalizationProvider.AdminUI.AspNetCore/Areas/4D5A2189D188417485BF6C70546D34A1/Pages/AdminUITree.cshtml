@@ -1,5 +1,6 @@
 ﻿@page "{handler?}"
 
+@using DbLocalizationProvider
 @using DbLocalizationProvider.AdminUI.AspNetCore
 @using DbLocalizationProvider.AspNetCore
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -7,6 +8,7 @@
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUITreeViewModel
 
 @inject IHtmlLocalizer<Resources> Localizer
+@inject ConfigurationContext ConfigContext
 @inject UiConfigurationContext UiContext
 @{
     Layout = null;
@@ -204,7 +206,15 @@
         </div>
         <div class="col-lg-6">
             <div class="float-right">
-                <a href="?handler=Export&format=json" role="button" class="btn btn-light">@Localizer.GetString(_ => _.Export)</a>
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Localizer.GetString(_ => _.Export)</button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
+                        @foreach (var exportProvider in ConfigContext.Export.Providers)
+                        {
+                            <a href="?handler=Export&format=@exportProvider.ProviderId" class="dropdown-item">@exportProvider.FormatName</a>
+                        }
+                    </div>
+                </div>
                 <a href="?handler=CleanCache" onclick="return confirm('@Localizer.GetString(_ => _.CleanCacheConfirmation)');" role="button" class="btn btn-light">@Localizer.GetString(_ => _.CleanCache)</a>
                 <div class="btn-group dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@Localizer.GetString(_ => _.Settings)</button>

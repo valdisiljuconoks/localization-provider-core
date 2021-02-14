@@ -2,6 +2,7 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
+using DbLocalizationProvider.AdminUI.AspNetCore.Configuration;
 using DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Builder;
@@ -57,6 +58,17 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             factory
                 .ForQuery<AvailableLanguages.Query>()
                 .SetHandler(() => new AvailableLanguagesHandler(requestOptions.Value.SupportedUICultures));
+
+            // postfix registered providers
+            var providerSettings = app.ApplicationServices.GetService<IOptions<ProviderSettings>>();
+            if (providerSettings != null)
+            {
+                var context = app.ApplicationServices.GetService<ConfigurationContext>();
+                foreach (var exporter in providerSettings.Value.Exporters)
+                {
+                    context.Export.Providers.Add(exporter);
+                }
+            }
 
             return app;
         }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
+using DbLocalizationProvider.AdminUI.AspNetCore.Csv;
 using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
@@ -84,24 +85,26 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 _.ManualResourceProvider = new SomeManualResources();
             });
 
-            services.AddDbLocalizationProviderAdminUI(_ =>
-            {
-                _.RootUrl = "/localization-admin";
+            services
+                .AddDbLocalizationProviderAdminUI(_ =>
+                {
+                    _.RootUrl = "/localization-admin";
 
-                //_.AuthorizedAdminRoles.Clear();
-                //_.AuthorizedAdminRoles.Add("Administrators");
+                    //_.AuthorizedAdminRoles.Clear();
+                    //_.AuthorizedAdminRoles.Add("Administrators");
 
-                //_.AuthorizedEditorRoles.Clear();
-                //_.AuthorizedEditorRoles.Add("Translators");
+                    //_.AuthorizedEditorRoles.Clear();
+                    //_.AuthorizedEditorRoles.Add("Translators");
 
-                //_.AccessPolicyOptions = builder => builder.AddRequirements(new RolesAuthorizationRequirement(new [] { "test" }));
+                    //_.AccessPolicyOptions = builder => builder.AddRequirements(new RolesAuthorizationRequirement(new [] { "test" }));
 
-                _.ShowInvariantCulture = true;
-                _.ShowHiddenResources = false;
-                _.DefaultView = ResourceListView.Tree;
-                _.CustomCssPath = "/css/custom-adminui.css";
-                _.HideDeleteButton = false;
-            });
+                    _.ShowInvariantCulture = true;
+                    _.ShowHiddenResources = false;
+                    _.DefaultView = ResourceListView.Tree;
+                    _.CustomCssPath = "/css/custom-adminui.css";
+                    _.HideDeleteButton = false;
+                })
+                .AddCsvFormat();
 
             //.VerifyDbLocalizationProviderAdminUISetup();
         }

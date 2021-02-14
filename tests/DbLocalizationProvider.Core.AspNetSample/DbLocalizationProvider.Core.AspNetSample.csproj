@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Storage.PostgreSQL\DbLocalizationProvider.Storage.PostgreSql.csproj" />
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider.Storage.SqlServer\DbLocalizationProvider.Storage.SqlServer.csproj" />
     <ProjectReference Include="..\..\lib\localization-provider\src\DbLocalizationProvider\DbLocalizationProvider.csproj" />
+    <ProjectReference Include="..\..\src\DbLocalizationProvider.AdminUI.AspNetCore.Csv\DbLocalizationProvider.AdminUI.AspNetCore.Csv.csproj" />
     <ProjectReference Include="..\..\src\DbLocalizationProvider.AdminUI.AspNetCore\DbLocalizationProvider.AdminUI.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj" />
     <ProjectReference Include="..\DbLocalizationProvider.Core.AspNet.ForeignAssembly\DbLocalizationProvider.Core.AspNet.ForeignAssembly.csproj" />
