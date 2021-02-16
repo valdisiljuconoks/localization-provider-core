@@ -5,7 +5,7 @@ using DbLocalizationProvider.AdminUI.AspNetCore.Configuration;
 using DbLocalizationProvider.Csv;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore.Csv
+namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
     /// <summary>
     /// Do I really need to document extension classes?

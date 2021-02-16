@@ -10,7 +10,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
     public class Resources
     {
         public string Title = "Admin UI";
-        public string Header = "Localized Resource Editor";
+        public string Header = "Localization Resource Editor";
         public string Export = "Export";
         public string Import = "Import";
         public string TableView = "Table View";
