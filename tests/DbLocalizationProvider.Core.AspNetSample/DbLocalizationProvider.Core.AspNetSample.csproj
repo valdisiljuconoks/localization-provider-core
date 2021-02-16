@@ -32,4 +32,13 @@
     <ProjectReference Include="..\DbLocalizationProvider.Core.AspNet.ForeignAssembly\DbLocalizationProvider.Core.AspNet.ForeignAssembly.csproj" />
   </ItemGroup>
 
+  <!-- Development time workaround for IIS locking files while building -->
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Touch Files="App_Offline.htm" AlwaysCreate="true" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Delete Files="App_Offline.htm" />
+  </Target>
+
 </Project>

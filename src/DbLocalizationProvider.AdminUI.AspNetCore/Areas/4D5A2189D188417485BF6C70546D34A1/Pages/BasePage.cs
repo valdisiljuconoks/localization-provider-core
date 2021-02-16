@@ -7,6 +7,7 @@ using System.Text;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Export;
 using DbLocalizationProvider.Queries;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,18 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
             _uiConfigurationContext = uiConfigurationContext;
             _queryExecutor = queryExecutor ?? throw new ArgumentNullException(nameof(queryExecutor));
             _commandExecutor = commandExecutor ?? throw new ArgumentNullException(nameof(commandExecutor));
+        }
+
+        public HtmlString IncludeStyle(string cssFileName)
+        {
+            return new HtmlString(
+                $"<link rel=\"stylesheet\" href=\"/_content/LocalizationProvider.AdminUI.AspNetCore/css/{cssFileName}\">");
+        }
+
+        public HtmlString IncludeScript(string scriptFileName)
+        {
+            return new HtmlString(
+                $"<script src=\"/_content/LocalizationProvider.AdminUI.AspNetCore/js/{scriptFileName}\"></script>");
         }
 
         public IActionResult OnGet()

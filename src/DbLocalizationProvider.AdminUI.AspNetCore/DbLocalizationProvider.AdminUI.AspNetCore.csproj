@@ -30,39 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\css\all.min.css" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.eot" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.ttf" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.woff" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.eot" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.ttf" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.woff" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.eot" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.ttf" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.woff" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.svg" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.woff2" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.svg" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.woff2" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.svg" />
-    <EmbeddedResource Include="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.woff2" />
-    <EmbeddedResource Include="node_modules\axios\dist\axios.min.js" />
-    <EmbeddedResource Include="node_modules\axios\dist\axios.min.map" />
-    <EmbeddedResource Include="node_modules\bootstrap\dist\css\bootstrap.min.css" />
-    <EmbeddedResource Include="node_modules\bootstrap\dist\css\bootstrap.min.css.map" />
-    <EmbeddedResource Include="node_modules\bootstrap\dist\js\bootstrap.min.js" />
-    <EmbeddedResource Include="node_modules\bootstrap\dist\js\bootstrap.min.js.map" />
-    <EmbeddedResource Include="node_modules\jquery\dist\jquery.min.js" />
-    <EmbeddedResource Include="node_modules\jquery\dist\jquery.min.map" />
-    <EmbeddedResource Include="node_modules\vue-ads-table-tree\dist\vue-ads-table-tree.umd.min.js" />
-    <EmbeddedResource Include="node_modules\vue-ads-table-tree\dist\vue-ads-table-tree.umd.min.js.map" />
-    <EmbeddedResource Include="node_modules\vue-ads-table-tree\dist\vue-ads-table-tree.css" />
-    <EmbeddedResource Include="node_modules\vue-directive-tooltip\dist\vueDirectiveTooltip.css" />
-    <EmbeddedResource Include="node_modules\vue-directive-tooltip\dist\vueDirectiveTooltip.min.js" />
-    <EmbeddedResource Include="node_modules\vue-directive-tooltip\dist\vueDirectiveTooltip.min.js.map" />
-    <EmbeddedResource Include="node_modules\vue\dist\vue.min.js" />
-    <EmbeddedResource Include="node_modules\popper.js\dist\umd\popper.min.js" />
-    <EmbeddedResource Include="node_modules\popper.js\dist\umd\popper.min.js.map" />
     <None Include="package-lock.json" />
     <None Include="package.json" />
   </ItemGroup>
@@ -84,6 +51,14 @@
       <_Parameter1>$(AssemblyName).Tests, PublicKey=002400000480000094000000060200000024000052534131000400000100010061f7a9aa02c1a525f7e914f39ac8901fc05fbdbad295b3c3b17e168fb3e70818c453da4f6ccec386f92038352e2b040a393ea85e631a3da420d92ca1b39cd346a9d2bbe8ef5374d7eec997c7a2a2a93e7ce45a554efe561cadb6f10b86072b79d732729a8f3d43756e6f52c28543ed2ab2822e3dcc99ec25fe5f17bb02976fc0</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
+
+  <ItemGroup>
+    <_AssetsItems Include="$(SolutionDir)\src\DbLocalizationProvider.AdminUI.AspNetCore\wwwroot\**\*.*" />
+  </ItemGroup>
+
+  <Target Name="CopyAssets" AfterTargets="Build">
+    <Copy SourceFiles="@(_AssetsItems)" DestinationFolder="..\..\tests\DbLocalizationProvider.Core.AspNetSample\wwwroot\_content\DbLocalizationProvider.AdminUI.AspNetCore\%(RecursiveDir)" />
+  </Target>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <ItemGroup>

@@ -21,10 +21,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@Localizer.GetString(_ => _.Title)</title>
-    <link rel="stylesheet" href="../res/node_modules.bootstrap.dist.css.bootstrap.min.css">
-    <link rel="stylesheet" href="../res/node_modules.vue_directive_tooltip.dist.vueDirectiveTooltip.css">
-    <link rel="stylesheet" href="../res/node_modules.vue_ads_table_tree.dist.vue-ads-table-tree.css">
-    <link rel="stylesheet" href="../res/node_modules._fortawesome.fontawesome_free.css.all.min.css">
+    @Model.IncludeStyle("bootstrap.min.css")
+    @Model.IncludeStyle("vueDirectiveTooltip.css")
+    @Model.IncludeStyle("vue-ads-table-tree.css")
+    @Model.IncludeStyle("fontawesome-all.min.css")
     <style type="text/css">
         body {
             margin: 10px;
@@ -253,12 +253,12 @@
     </div>
 </div>
 
-<script src="../res/node_modules.jquery.dist.jquery.min.js"></script>
-<script src="../res/node_modules.popper.js.dist.umd.popper.min.js"></script>
-<script src="../res/node_modules.bootstrap.dist.js.bootstrap.min.js"></script>
-<script src="../res/node_modules.vue.dist.vue.min.js"></script>
-<script src="../res/node_modules.axios.dist.axios.min.js"></script>
-<script src="../res/node_modules.vue_ads_table_tree.dist.vue-ads-table-tree.umd.min.js"></script>
+@Model.IncludeScript("jquery.min.js")
+@Model.IncludeScript("popper.min.js")
+@Model.IncludeScript("bootstrap.min.js")
+@Model.IncludeScript("vue.min.js")
+@Model.IncludeScript("axios.min.js")
+@Model.IncludeScript("vue-ads-table-tree.umd.min.js")
 
 <script type="text/javascript">
     const VueAdsTableTree = window["vue-ads-table-tree"].default;

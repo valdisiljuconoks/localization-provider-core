@@ -34,12 +34,12 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             // add checker middleware - to support registration order verification
             app.UseMiddleware<AdminUIMarkerMiddleware>();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new EmbeddedFileProvider(typeof(IApplicationBuilderExtensions).Assembly),
-                ServeUnknownFileTypes = true,
-                RequestPath = path + "/res"
-            });
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new EmbeddedFileProvider(typeof(IApplicationBuilderExtensions).Assembly),
+            //    ServeUnknownFileTypes = true,
+            //    RequestPath = path + "/res"
+            //});
 
             app.UseStaticFiles(new StaticFileOptions
             {
