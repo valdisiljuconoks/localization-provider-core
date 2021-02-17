@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <PackageId>LocalizationProvider.AdminUI.AspNetCore</PackageId>
     <Version>7.0.0</Version>
+    <PackageVersion>7.0.0</PackageVersion>
     <AssemblyVersion>7.0.0.0</AssemblyVersion>
     <FileVersion>7.0.0.0</FileVersion>
     <Authors>Valdis Iljuconoks, https://tech-fellow.net</Authors>
@@ -11,9 +10,12 @@
     <Product>DbLocalizationProvider</Product>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Database driven localization provider. Admin UI for Asp.Net Core apps.</Description>
-    <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
     <Copyright>Tech Fellow Consulting, Copyright © 2021</Copyright>
+    <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/valdisiljuconoks/localization-provider-core/</RepositoryUrl>
     <PackageTags>Localization Provider DbLocalization DbLocalizationProvider LocalizationProvider Database Driven AdminUI AspNetCore NetCore</PackageTags>
+    <PackageId>LocalizationProvider.AdminUI.AspNetCore</PackageId>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\lib\localization-provider\strongname.snk</AssemblyOriginatorKeyFile>
@@ -22,6 +24,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
   <ItemGroup>
