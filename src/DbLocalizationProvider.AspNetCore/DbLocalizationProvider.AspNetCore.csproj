@@ -23,21 +23,8 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.1\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netcoreapp2.1\DbLocalizationProvider.AspNetCore.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Commands\**" />
-    <EmbeddedResource Remove="Commands\**" />
-    <None Remove="Commands\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
