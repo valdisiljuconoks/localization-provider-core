@@ -33,9 +33,18 @@ namespace DbLocalizationProvider.AspNetCore
 
             if (logger != null) context.Logger = new LoggerAdapter(logger);
 
+            // if we do have a before sync callback
+            // hook in there and wait for the signal to continue
+            if (context.SynchronizationCoordinator.BeforeSyncCallback != null)
+            {
+                context.SynchronizationCoordinator.BeforeSyncCallback();
+            }
+
             // if we need to sync - then it's good time to do it now
             var sync = new Synchronizer();
             sync.SyncResources(context.DiscoverAndRegisterResources);
+
+            context.SynchronizationCoordinator.SyncCompleted();
 
             if (!context.DiscoverAndRegisterResources)
             {
