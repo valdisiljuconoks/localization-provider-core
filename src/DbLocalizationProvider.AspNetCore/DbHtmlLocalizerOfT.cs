@@ -35,17 +35,6 @@ namespace DbLocalizationProvider.AspNetCore
         /// <summary>
         /// Changes language of the localizer
         /// </summary>
-        /// <param name="culture">Language to use</param>
-        /// <returns>The <see cref="IHtmlLocalizer"/> with changed language.</returns>
-        [Obsolete("This method is obsolete. Use `CurrentCulture` and `CurrentUICulture` instead.")]
-        public override IHtmlLocalizer WithCulture(CultureInfo culture)
-        {
-            return ChangeLanguage(culture);
-        }
-
-        /// <summary>
-        /// Changes language of the localizer
-        /// </summary>
         /// <param name="language">Language to use</param>
         /// <returns>The <see cref="IHtmlLocalizer"/> with changed language.</returns>
         public IHtmlLocalizer ChangeLanguage(CultureInfo language)
