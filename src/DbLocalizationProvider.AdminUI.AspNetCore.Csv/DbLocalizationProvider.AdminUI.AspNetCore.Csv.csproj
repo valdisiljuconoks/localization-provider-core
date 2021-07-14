@@ -14,7 +14,7 @@
     <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/valdisiljuconoks/localization-provider-core/</RepositoryUrl>
     <PackageTags>Localization Provider DbLocalization DbLocalizationProvider LocalizationProvider Database Driven AdminUI AspNetCore NetCore Csv Import Export</PackageTags>
-    <PackageId>DbLocalizationProvider.AdminUI.AspNetCore.Csv</PackageId>
+    <PackageId>LocalizationProvider.AdminUI.AspNetCore.Csv</PackageId>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <SignAssembly>true</SignAssembly>
