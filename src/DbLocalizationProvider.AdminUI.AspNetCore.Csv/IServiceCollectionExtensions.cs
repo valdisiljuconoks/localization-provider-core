@@ -5,6 +5,7 @@ using DbLocalizationProvider.AdminUI.AspNetCore.Configuration;
 using DbLocalizationProvider.Csv;
 using Microsoft.Extensions.DependencyInjection;
 
+// ReSharper disable once CheckNamespace
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
     /// <summary>
