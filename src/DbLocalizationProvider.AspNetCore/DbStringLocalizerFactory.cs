@@ -9,7 +9,7 @@ using Microsoft.Extensions.Localization;
 namespace DbLocalizationProvider.AspNetCore
 {
     /// <summary>
-    /// A factory that creates <see cref="IStringLocalizerFactory" /> instances.
+    /// A factory that creates <see cref="IStringLocalizer" /> instances.
     /// </summary>
     public class DbStringLocalizerFactory : IStringLocalizerFactory
     {

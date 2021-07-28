@@ -4,41 +4,45 @@
 using System;
 using System.Globalization;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Localization;
 
 namespace DbLocalizationProvider.AspNetCore
 {
     /// <summary>
-    /// Some extensions for <see cref="IStringLocalizer"/>.
+    /// Some extensions for <see cref="IStringLocalizer{T}"/>.
     /// </summary>
-    public static class IStringLocalizerExtensions
+    public static class IStringLocalizerOfTExtensions
     {
         /// <summary>
         /// Returns resource translation.
         /// </summary>
+        /// <typeparam name="T">Type of the model (resource class).</typeparam>
         /// <param name="target">Target type for which extension methods are defined.</param>
         /// <param name="model">Expression of the resource key.</param>
         /// <param name="formatArguments">Maybe some formatting is needed (like substitution of the placeholders).</param>
         /// <returns>Resource translation (if any).</returns>
-        public static LocalizedString GetString(
-            this IStringLocalizer target,
-            Expression<Func<object>> model,
+        public static LocalizedString GetString<T>(
+            this IStringLocalizer<T> target,
+            Expression<Func<T, object>> model,
             params object[] formatArguments)
         {
-            return target[target.GetResourceName(model), formatArguments];
+            return target[GetResourceName(target, model), formatArguments];
         }
 
         /// <summary>
         /// Returns resource translation by given language.
         /// </summary>
+        /// <typeparam name="T">Type of the model (resource class).</typeparam>
         /// <param name="target">Target type for which extension methods are defined.</param>
         /// <param name="model">Expression of the resource key.</param>
         /// <param name="language"></param>
         /// <param name="formatArguments">Maybe some formatting is needed (like substitution of the placeholders).</param>
         /// <returns>Resource translation (if any).</returns>
-        public static LocalizedString GetStringByCulture(
-            this IStringLocalizer target,
-            Expression<Func<object>> model,
+
+        public static LocalizedString GetStringByCulture<T>(
+            this IStringLocalizer<T> target,
+            Expression<Func<T, object>> model,
             CultureInfo language,
             params object[] formatArguments)
         {
@@ -55,13 +59,13 @@ namespace DbLocalizationProvider.AspNetCore
             var localizer = target.GetField<DbStringLocalizer>("_localizer");
             if (localizer is ICultureAwareStringLocalizer cultureAwareLocalizer)
             {
-                return cultureAwareLocalizer.ChangeLanguage(language)[target.GetResourceName(model), formatArguments];
+                return cultureAwareLocalizer.ChangeLanguage(language)[GetResourceName(target, model), formatArguments];
             }
 
             return null;
         }
 
-        private static string GetResourceName(this IStringLocalizer target, LambdaExpression model)
+        private static string GetResourceName<T>(IStringLocalizer<T> target, LambdaExpression model)
         {
             var localizer = target.GetField<DbStringLocalizer>("_localizer");
             if (localizer != null)
@@ -71,5 +75,6 @@ namespace DbLocalizationProvider.AspNetCore
 
             return string.Empty;
         }
+
     }
 }

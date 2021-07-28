@@ -25,6 +25,7 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
         private readonly ILogger _logger;
         private readonly ISynchronizer _synchronizer;
         private readonly IStringLocalizer<Resources.SampleResources> _localizer;
+        private readonly IStringLocalizer _simpleLocalizer;
 
         public HomeController(
             ILocalizationProvider provider,
@@ -37,6 +38,7 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
             _logger = logger;
             _synchronizer = synchronizer;
             _localizer = localizer;
+            _simpleLocalizer = localizer;
 
             var asms = GetAssemblies().Where(a => a.FullName.Contains("DbLocalizationProvider"));
         }
@@ -77,8 +79,13 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
             var zz = _provider.GetStringByCulture(() => ResourcesForFallback.OnlyInInvariant, new CultureInfo("sv"));
 
             var zzz = _localizer.GetString(r => r.PageHeader2);
+            var zzzz = _localizer.GetStringByCulture(r => r.PageHeader2, new CultureInfo("fr-FR"));
+
+            var xxx = _simpleLocalizer.GetString(() => Resources.SampleResources.PageHeader);
+            var xxxx = _simpleLocalizer.GetStringByCulture(() => Resources.SampleResources.PageHeader, new CultureInfo("fr-FR"));
 
             ViewData["TestString"] = _provider.GetString(() => Resources.Shared.CommonResources.Yes);
+
             return View();
         }
 

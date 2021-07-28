@@ -57,7 +57,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 c.AddDebug();
             });
 
-            var supportedCultures = new List<CultureInfo> { new CultureInfo("lv-LV"), new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
+            var supportedCultures = new List<CultureInfo> { new("lv-LV"), new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
 
             services.Configure<RequestLocalizationOptions>(opts =>
             {
@@ -103,7 +103,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                     _.CustomCssPath = "/css/custom-adminui.css";
                     _.HideDeleteButton = false;
                 })
-                .AddCsvFormat();
+                .AddCsvFormat()
+                .AddXliffFormat();
 
             //.VerifyDbLocalizationProviderAdminUISetup();
         }

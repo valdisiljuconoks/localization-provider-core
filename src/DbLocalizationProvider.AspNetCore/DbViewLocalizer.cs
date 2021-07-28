@@ -1,9 +1,7 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
-using System;
 using System.Globalization;
-using System.Reflection;
 using DbLocalizationProvider.Internal;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -49,41 +47,25 @@ namespace DbLocalizationProvider.AspNetCore
         public IHtmlLocalizer ChangeLanguage(CultureInfo language)
         {
             // capture initialized localizer field from the base
-            var localizer = GetField(typeof(ViewLocalizer), this, "_localizer");
+            var localizer = this.GetField<HtmlLocalizer, ViewLocalizer>("_localizer");
 
             // get underlying string localizer
-            var underLyingLocalizer = GetField(typeof(HtmlLocalizer), localizer, "_localizer");
-            if (underLyingLocalizer is DbStringLocalizer stringLocalizer)
+            var underLyingLocalizer = localizer.GetField<DbStringLocalizer, HtmlLocalizer>("_localizer");
+            if (underLyingLocalizer != null)
             {
-                SetField(typeof(HtmlLocalizer), localizer, "_localizer", stringLocalizer.ChangeLanguage(language));
+                localizer.SetField<HtmlLocalizer>("_localizer", underLyingLocalizer.ChangeLanguage(language));
             }
 
             // create new instance of view localizer
             var dbViewLocalizer = new DbViewLocalizer(_localizerFactory, _hostingEnvironment, ExpressionHelper);
 
             // set back underlying localizer
-            SetField(typeof(ViewLocalizer), dbViewLocalizer, "_localizer", localizer);
+            dbViewLocalizer.SetField<ViewLocalizer>("_localizer", localizer);
 
             // this all ceremony is required because we just can't new up instance of view localizer.
             // it's been contextualize during it's lifetime - so we need to "restore" state.
             // this is VERY HACK-ish and do not recommend anyone to use it. at all. forget about it.
             return dbViewLocalizer;
-        }
-
-        private static object GetField(Type type, object instance, string fieldName)
-        {
-            var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var field = type.GetField(fieldName, bindFlags);
-
-            return field?.GetValue(instance);
-        }
-
-        private static void SetField(Type type, object instance, string fieldName, object value)
-        {
-            var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var field = type.GetField(fieldName, bindFlags);
-
-            field?.SetValue(instance, value);
         }
     }
 }
