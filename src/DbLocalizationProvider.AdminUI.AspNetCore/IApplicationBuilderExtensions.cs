@@ -51,7 +51,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                 var handler = factory.GetHandlerType<AvailableLanguages.Query>();
 
                 // but we can do that only if handler is known type
-                if (!typeof(AvailableLanguagesHandler).IsAssignableFrom(handler))
+                if (typeof(AvailableLanguagesHandler).IsAssignableFrom(handler))
                 {
                     var requestOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
                     factory
