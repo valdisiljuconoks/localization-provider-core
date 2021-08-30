@@ -33,14 +33,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
             // add checker middleware - to support registration order verification
             app.UseMiddleware<AdminUIMarkerMiddleware>();
-
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    FileProvider = new EmbeddedFileProvider(typeof(IApplicationBuilderExtensions).Assembly),
-            //    ServeUnknownFileTypes = true,
-            //    RequestPath = path + "/res"
-            //});
-
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new EmbeddedFileProvider(
@@ -51,13 +43,22 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             });
 
             var factory = app.ApplicationServices.GetService<TypeFactory>();
-            var requestOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
 
             // we need to override default handler at this stage
             // as Mvc config might be added to the service collection *after* DbLocalizationProvider
-            factory
-                .ForQuery<AvailableLanguages.Query>()
-                .SetHandler(() => new AvailableLanguagesHandler(requestOptions.Value.SupportedUICultures));
+            if (factory != null)
+            {
+                var handler = factory.GetHandlerType<AvailableLanguages.Query>();
+
+                // but we can do that only if handler is known type
+                if (!typeof(AvailableLanguagesHandler).IsAssignableFrom(handler))
+                {
+                    var requestOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+                    factory
+                        .ForQuery<AvailableLanguages.Query>()
+                        .SetHandler(() => new AvailableLanguagesHandler(requestOptions.Value.SupportedUICultures));
+                }
+            }
 
             // postfix registered providers
             var providerSettings = app.ApplicationServices.GetService<IOptions<ProviderSettings>>();
