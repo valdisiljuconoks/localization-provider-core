@@ -98,6 +98,7 @@ namespace DbLocalizationProvider.AspNetCore
             services.AddSingleton(queryExecutor);
             services.AddSingleton<IQueryExecutor>(queryExecutor);
             services.AddSingleton(commandExecutor);
+            services.AddSingleton(translationBuilder);
             services.AddSingleton<ICommandExecutor>(commandExecutor);
             services.AddSingleton<ILogger>(p => new LoggerAdapter(p.GetService<ILogger<LoggerAdapter>>()));
 
