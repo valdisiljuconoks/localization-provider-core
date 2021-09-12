@@ -26,6 +26,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests
                     }
                 },
                 new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("no") },
+                new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("no") },
                 120,
                 80,
                 new UiOptions());
@@ -48,6 +49,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests
                         }
                     }
                 },
+                new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("no") },
                 new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("no") },
                 120,
                 80,

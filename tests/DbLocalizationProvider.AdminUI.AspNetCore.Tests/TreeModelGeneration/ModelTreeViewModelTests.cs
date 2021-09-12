@@ -45,7 +45,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
 
             var languages = new[] { new CultureInfo("en"), new CultureInfo("lv") };
 
-            var sut = new LocalizationResourceApiTreeModel(resources, languages, 100, 100, new UiOptions());
+            var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
             var result = sut.ConvertToApiModel(resources);
             var first = result.First();
@@ -90,7 +90,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
 
             var languages = new[] { new CultureInfo("en"), new CultureInfo("lv") };
 
-            var sut = new LocalizationResourceApiTreeModel(resources, languages, 100, 100, new UiOptions());
+            var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
             var result = sut.ConvertToApiModel(resources);
             var first = result.First();
@@ -121,7 +121,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
 
             var languages = new[] { new CultureInfo("en"), new CultureInfo("lv") };
 
-            var sut = new LocalizationResourceApiTreeModel(resources, languages, 100, 100, new UiOptions());
+            var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
             var result = sut.ConvertToApiModel(resources);
             var first = result.Single();
@@ -152,7 +152,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
 
             var languages = new[] { new CultureInfo("en"), new CultureInfo("lv"), new CultureInfo("no") };
 
-            var sut = new LocalizationResourceApiTreeModel(resources, languages, 100, 100, new UiOptions());
+            var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
             var result = sut.ConvertToApiModel(resources);
             var first = result.Single();
@@ -184,7 +184,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
 
             var languages = new[] { new CultureInfo("en"), new CultureInfo("lv") };
 
-            var sut = new LocalizationResourceApiTreeModel(resources, languages, 100, 100, new UiOptions());
+            var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
             var result = sut.ConvertToApiModel(resources);
             var first = result.Single();

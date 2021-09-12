@@ -78,8 +78,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //.Then(new CultureInfo("no"))
                 //.Then(new CultureInfo("en"));
 
-                //_.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-                _.UseAzureTables("UseDevelopmentStorage=true");
+                _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                //_.UseAzureTables("UseDevelopmentStorage=true");
 
                 _.ManualResourceProvider = new SomeManualResources();
             });
@@ -97,7 +97,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
 
                     //_.AccessPolicyOptions = builder => builder.AddRequirements(new RolesAuthorizationRequirement(new [] { "test" }));
 
-                    _.ShowInvariantCulture = true;
+                    _.ShowInvariantCulture = false;
+
                     _.ShowHiddenResources = false;
                     _.DefaultView = ResourceListView.Tree;
                     _.CustomCssPath = "/css/custom-adminui.css";

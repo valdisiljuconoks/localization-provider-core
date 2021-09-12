@@ -75,9 +75,12 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         private LocalizationResourceApiModel PrepareViewModel()
         {
             var (resources, languages) = GetResources();
+            var visibleLanguages = GetVisibleLanguages();
+
             var result = new LocalizationResourceApiModel(
                 resources,
                 languages,
+                visibleLanguages ?? languages,
                 _config.MaxResourceKeyPopupTitleLength,
                 _config.MaxResourceKeyDisplayLength,
                 BuildOptions());
@@ -85,10 +88,25 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             return result;
         }
 
+        private IEnumerable<CultureInfo> GetVisibleLanguages()
+        {
+            var cookie = Request.Cookies["LocalizationProvider_VisibleLanguages"];
+            if (string.IsNullOrEmpty(cookie))
+            {
+                return null;
+            }
+
+            return cookie
+                .Split('|', StringSplitOptions.RemoveEmptyEntries)
+                .Where(l => !l.Equals("invariant", StringComparison.InvariantCultureIgnoreCase))
+                .Select(l => new CultureInfo(l));
+        }
+
         private LocalizationResourceApiTreeModel PrepareTreeViewModel()
         {
             var (resources, languages) = GetResources();
             var result = new LocalizationResourceApiTreeModel(resources,
+                                                              languages,
                                                               languages,
                                                               _config.MaxResourceKeyPopupTitleLength,
                                                               _config.MaxResourceKeyDisplayLength,

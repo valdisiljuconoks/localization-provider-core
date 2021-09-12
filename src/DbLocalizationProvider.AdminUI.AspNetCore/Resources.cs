@@ -21,6 +21,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string Save = "Ok, Save!";
         public string Cancel = "Cancel";
         public string Remove = "Remove";
+        public string SelectAll = "(Select All)";
         public string RemoveConfirmation = "Do you want to remove this translation?";
         public string SearchPlaceholder = "if it gets too noisy, type filter here...";
         public string ResourceKeyColumn = "Key";
