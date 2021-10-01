@@ -179,7 +179,8 @@
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</span>
+                    <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
+                    <div>({{model.language }})</div>
                 </div>
                 <div class="modal-body">
                     <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
@@ -342,7 +343,7 @@
                         this.columns.push({
                             property: 'translation-' + language.code,
                             language: language.code,
-                            title: language.titleDisplay,
+                            title: language.display,
                             direction: null,
                             filterable: true
                         });

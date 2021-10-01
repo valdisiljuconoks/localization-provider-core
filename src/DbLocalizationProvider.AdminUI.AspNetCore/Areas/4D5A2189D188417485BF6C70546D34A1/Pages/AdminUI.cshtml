@@ -163,7 +163,8 @@
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</span>
+                    <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
+                    <div>({{model.language }})</div>
                 </div>
                 <div class="modal-body">
                     <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
@@ -185,7 +186,7 @@
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" class="header">Available Languages</span>
+                    <span name="header" class="header">@Localizer.GetString(_ => _.AvailableLanguages)</span>
                 </div>
                 <div class="modal-body">
                     <form>
@@ -263,7 +264,7 @@
             <tr>
                 <th>@Localizer.GetString(_ => _.ResourceKeyColumn)</th>
                 <th v-if="model.options.showInvariantCulture">@Localizer.GetString(_ => _.InvariantCultureColumn)</th>
-                <th v-for="lang in model.visibleLanguages" scope="col">{{lang.titleDisplay}}</th>
+                <th v-for="lang in model.visibleLanguages" scope="col">{{lang.display}}</th>
                 <th>@Localizer.GetString(_ => _.HiddenColumn)</th>
                 <th>@Localizer.GetString(_ => _.FromCodeColumn)</th>
                 @if (!UiContext.HideDeleteButton)

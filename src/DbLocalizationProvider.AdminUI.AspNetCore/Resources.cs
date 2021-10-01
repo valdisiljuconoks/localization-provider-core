@@ -25,7 +25,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string RemoveConfirmation = "Do you want to remove this translation?";
         public string SearchPlaceholder = "if it gets too noisy, type filter here...";
         public string ResourceKeyColumn = "Key";
-        public string InvariantCultureColumn = "Invariant Language (Invariant Country)";
+        public string InvariantCultureColumn = "Invariant";
         public string HiddenColumn = "Is Hidden?";
         public string FromCodeColumn = "From code?";
         public string DeleteColumn = "Delete?";
@@ -35,5 +35,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public string CleanCache = "Clean Cache";
         public string CleanCacheConfirmation = "Wanna start with clean cache state?";
         public string ErrorLoadingResources = "There was an error while loading resources. Please check logs for more details!";
+        public string AvailableLanguages = "Available Languages";
     }
 }
