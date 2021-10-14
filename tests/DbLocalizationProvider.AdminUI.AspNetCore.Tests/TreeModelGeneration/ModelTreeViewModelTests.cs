@@ -10,40 +10,40 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
 {
     public class ModelTreeViewModelTests
     {
-        private const string _segmentPropertyName = "resourceKey";
+        private const string _segmentPropertyName = "segmentKey";
 
         [Fact]
         public void GenerateSampleTreeModel_MultipleResources_NoSharedKeyRoots()
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("This.Is.Resource.Key", false)
+                new("This.Is.Resource.Key", false)
                 {
                     Translations = new LocalizationResourceTranslationCollection(false)
                     {
-                        new LocalizationResourceTranslation // invariant
+                        new() // invariant
                         {
                             Language = "", Value = "Invariant"
                         },
-                        new LocalizationResourceTranslation { Language = "en", Value = "English" },
-                        new LocalizationResourceTranslation { Language = "lv", Value = "Latvian" }
+                        new() { Language = "en", Value = "English" },
+                        new() { Language = "lv", Value = "Latvian" }
                     }
                 },
-                new LocalizationResource("Another.Resource.Key", false)
+                new("Another.Resource.Key", false)
                 {
                     Translations = new LocalizationResourceTranslationCollection(false)
                     {
-                        new LocalizationResourceTranslation // invariant
+                        new() // invariant
                         {
                             Language = "", Value = "Invariant 2"
                         },
-                        new LocalizationResourceTranslation { Language = "en", Value = "English 2" },
-                        new LocalizationResourceTranslation { Language = "lv", Value = "Latvian 2" }
+                        new() { Language = "en", Value = "English 2" },
+                        new() { Language = "lv", Value = "Latvian 2" }
                     }
                 }
             };
 
-            var languages = new[] { new CultureInfo("en"), new CultureInfo("lv") };
+            var languages = new AvailableLanguage[] { new("English", 1, new CultureInfo("en")), new("Latvian", 2, new CultureInfo("lv")) };
 
             var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
@@ -62,23 +62,23 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("This.Is.Resource.Key", false)
+                new("This.Is.Resource.Key", false)
                 {
                     Translations = new LocalizationResourceTranslationCollection(false)
                     {
-                        new LocalizationResourceTranslation // invariant
+                        new() // invariant
                         {
                             Language = "", Value = "Invariant"
                         },
-                        new LocalizationResourceTranslation { Language = "en", Value = "English" },
-                        new LocalizationResourceTranslation { Language = "lv", Value = "Latvian" }
+                        new() { Language = "en", Value = "English" },
+                        new() { Language = "lv", Value = "Latvian" }
                     }
                 },
                 new LocalizationResource("This.Is.Resource.AnotherKey", false)
                 {
                     Translations = new LocalizationResourceTranslationCollection(false)
                     {
-                        new LocalizationResourceTranslation // invariant
+                        new() // invariant
                         {
                             Language = "", Value = "Invariant 2"
                         },
@@ -88,7 +88,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
                 }
             };
 
-            var languages = new[] { new CultureInfo("en"), new CultureInfo("lv") };
+            var languages = new AvailableLanguage[] { new("English", 1, new CultureInfo("en")), new("Latvian", 2, new CultureInfo("lv")) };
 
             var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
@@ -105,21 +105,21 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("This.Is.Resource.Key", false)
+                new("This.Is.Resource.Key", false)
                 {
                     Translations = new LocalizationResourceTranslationCollection(false)
                     {
-                        new LocalizationResourceTranslation // invariant
+                        new() // invariant
                         {
                             Language = "", Value = "Invariant"
                         },
-                        new LocalizationResourceTranslation { Language = "en", Value = "English" },
-                        new LocalizationResourceTranslation { Language = "lv", Value = "Latvian" }
+                        new() { Language = "en", Value = "English" },
+                        new() { Language = "lv", Value = "Latvian" }
                     }
                 }
             };
 
-            var languages = new[] { new CultureInfo("en"), new CultureInfo("lv") };
+            var languages = new AvailableLanguage[] { new("English", 1, new CultureInfo("en")), new("Latvian", 2, new CultureInfo("lv")) };
 
             var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
@@ -136,21 +136,26 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("This.Is.Resource.Key", false)
+                new("This.Is.Resource.Key", false)
                 {
                     Translations = new LocalizationResourceTranslationCollection(false)
                     {
-                        new LocalizationResourceTranslation // invariant
+                        new() // invariant
                         {
                             Language = "", Value = "Invariant"
                         },
-                        new LocalizationResourceTranslation { Language = "en", Value = "English" },
-                        new LocalizationResourceTranslation { Language = "lv", Value = "Latvian" }
+                        new() { Language = "en", Value = "English" },
+                        new() { Language = "lv", Value = "Latvian" }
                     }
                 }
             };
 
-            var languages = new[] { new CultureInfo("en"), new CultureInfo("lv"), new CultureInfo("no") };
+            var languages = new AvailableLanguage[]
+            {
+                new("English", 1, new CultureInfo("en")),
+                new("Latvian", 2, new CultureInfo("lv")),
+                new("Norsk", 2, new CultureInfo("no"))
+            };
 
             var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 
@@ -168,21 +173,21 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests.TreeModelGeneration
         {
             var resources = new List<LocalizationResource>
             {
-                new LocalizationResource("ThisIsResourceKey", false)
+                new("ThisIsResourceKey", false)
                 {
                     Translations = new LocalizationResourceTranslationCollection(false)
                     {
-                        new LocalizationResourceTranslation // invariant
+                        new() // invariant
                         {
                             Language = "", Value = "Invariant"
                         },
-                        new LocalizationResourceTranslation { Language = "en", Value = "English" },
-                        new LocalizationResourceTranslation { Language = "lv", Value = "Latvian" }
+                        new() { Language = "en", Value = "English" },
+                        new() { Language = "lv", Value = "Latvian" }
                     }
                 }
             };
 
-            var languages = new[] { new CultureInfo("en"), new CultureInfo("lv") };
+            var languages = new AvailableLanguage[] { new("English", 1, new CultureInfo("en")), new("Latvian", 2, new CultureInfo("lv")) };
 
             var sut = new LocalizationResourceApiTreeModel(resources, languages, languages, 100, 100, new UiOptions());
 

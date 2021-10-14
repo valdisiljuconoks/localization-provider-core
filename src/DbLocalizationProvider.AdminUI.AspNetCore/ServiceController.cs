@@ -75,7 +75,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         private LocalizationResourceApiModel PrepareViewModel()
         {
             var (resources, languages) = GetResources();
-            var visibleLanguages = GetVisibleLanguages();
+            var visibleLanguages = GetVisibleLanguages(languages);
 
             var result = new LocalizationResourceApiModel(
                 resources,
@@ -88,7 +88,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             return result;
         }
 
-        private IEnumerable<CultureInfo> GetVisibleLanguages()
+        private IEnumerable<AvailableLanguage> GetVisibleLanguages(IEnumerable<AvailableLanguage> availableLanguages)
         {
             var cookie = Request.Cookies["LocalizationProvider_VisibleLanguages"];
             if (string.IsNullOrEmpty(cookie))
@@ -96,10 +96,12 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                 return null;
             }
 
-            return cookie
+            var languagesInCookie = cookie
                 .Split('|', StringSplitOptions.RemoveEmptyEntries)
                 .Where(l => !l.Equals("invariant", StringComparison.InvariantCultureIgnoreCase))
                 .Select(l => new CultureInfo(l));
+
+            return availableLanguages.Where(a => languagesInCookie.Contains(a.CultureInfo));
         }
 
         private LocalizationResourceApiTreeModel PrepareTreeViewModel()
@@ -115,7 +117,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             return result;
         }
 
-        private (List<LocalizationResource>, IEnumerable<CultureInfo>) GetResources()
+        private (List<LocalizationResource>, IEnumerable<AvailableLanguage>) GetResources()
         {
             var availableLanguagesQuery = new AvailableLanguages.Query { IncludeInvariant = false };
             var languages = _queryExecutor.Execute(availableLanguagesQuery);
