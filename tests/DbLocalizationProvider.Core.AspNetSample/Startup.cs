@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
+using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
 using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
 using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
+using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Storage.AzureTables;
 using DbLocalizationProvider.Storage.SqlServer;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
@@ -57,7 +59,60 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 c.AddDebug();
             });
 
-            var supportedCultures = new List<CultureInfo> { new("lv-LV"), new CultureInfo("sv"), new CultureInfo("no"), new CultureInfo("en") };
+            var supportedCultures = new List<CultureInfo>
+            {
+                new("lv-LV"),
+                new("sv"),
+                new("no"),
+                new("en"),
+                new("fr"),
+                new("bg-BG"),
+                new("de-DE"),
+                new("fi-FI"),
+                new("hu-HU"),
+                new("nl-NL"),
+                new("pl"),
+                new("sk"),
+                new("uk"),
+                new("et-EE"),
+                new("lt-LT"),
+                new("es-CR"),
+                new("en-ZA"),
+                new("en-JM"),
+                new("es-DO"),
+                new("es-VE"),
+                new("es-CO"),
+                new("en-BZ"),
+                new("en-TT"),
+                new("es-EC"),
+                new("es-UY"),
+                new("es-SV"),
+                new("es-SV"),
+                new("es-PR"),
+                new("se-FI"),
+                new("hr-BA"),
+                new("mi-NZ"),
+                new("ns-ZA"),
+                new("mt-MT"),
+                new("en-IE"),
+                new("de-LI"),
+                new("fr-LU"),
+                new("es-PA"),
+                new("fr-MC"),
+                new("ar-TN"),
+                new("ar-DZ"),
+                new("az-Latn-AZ"),
+                new("eu-ES"),
+                new("fo-FO"),
+                new("hi-IN"),
+                new("fa-IR"),
+                new("ur-PK"),
+                new("he-IL"),
+                new("el-GR"),
+                new("da-DK"),
+                new("cs-CZ"),
+                new("zh-TW")
+            };
 
             services.Configure<RequestLocalizationOptions>(opts =>
             {
@@ -82,6 +137,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //_.UseAzureTables("UseDevelopmentStorage=true");
 
                 _.ManualResourceProvider = new SomeManualResources();
+                _.TypeFactory.ForQuery<AvailableLanguages.Query>().SetHandler<AvailableLanguagesHandler>();
             });
 
             services

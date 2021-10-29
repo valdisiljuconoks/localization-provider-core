@@ -4,12 +4,12 @@
 using System;
 using DbLocalizationProvider.AdminUI.AspNetCore.Configuration;
 using DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure;
+using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
 using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
-using AvailableLanguagesHandler = DbLocalizationProvider.AdminUI.AspNetCore.Queries.AvailableLanguagesHandler;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
@@ -25,7 +25,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// <returns>If you want to chain calls further, you can use the same application builder that was used.</returns>
         public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app)
         {
-            var path = app.ApplicationServices.GetService<UiConfigurationContext>().RootUrl;
+            var path = app.ApplicationServices.GetRequiredService<UiConfigurationContext>().RootUrl;
             if (path == null)
             {
                 throw new ArgumentNullException(nameof(path));
@@ -53,7 +53,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                 // but we can do that only if handler is known type
                 if (typeof(AvailableLanguagesHandler).IsAssignableFrom(handler))
                 {
-                    var requestOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+                    var requestOptions = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
                     factory
                         .ForQuery<AvailableLanguages.Query>()
                         .SetHandler(() => new AvailableLanguagesHandler(requestOptions.Value.SupportedUICultures));
@@ -64,7 +64,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             var providerSettings = app.ApplicationServices.GetService<IOptions<ProviderSettings>>();
             if (providerSettings != null)
             {
-                var context = app.ApplicationServices.GetService<ConfigurationContext>();
+                var context = app.ApplicationServices.GetRequiredService<ConfigurationContext>();
                 foreach (var exporter in providerSettings.Value.Exporters)
                 {
                     context.Export.Providers.Add(exporter);

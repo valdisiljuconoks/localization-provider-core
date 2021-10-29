@@ -14,6 +14,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Queries
     {
         private readonly IEnumerable<AvailableLanguage> _supportedLanguages;
 
+        public AvailableLanguagesHandler()
+        {
+            _supportedLanguages = new List<AvailableLanguage>();
+        }
+
         public AvailableLanguagesHandler(IList<CultureInfo> supportedLanguages)
         {
             if (supportedLanguages == null)
