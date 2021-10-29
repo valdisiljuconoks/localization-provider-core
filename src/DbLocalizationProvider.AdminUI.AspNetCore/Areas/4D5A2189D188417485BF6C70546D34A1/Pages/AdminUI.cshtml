@@ -159,6 +159,25 @@
         i.fas.fa-cog {
             margin-right: 5px;
         }
+
+        table {
+            text-align: left;
+            position: relative;
+            border-collapse: collapse;
+        }
+
+        .table thead th {
+            border: 1px solid #dee2e6;
+        }
+
+        .table .thead-dark th {
+            border-color: #dee2e6;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+        }
     </style>
 
     @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
