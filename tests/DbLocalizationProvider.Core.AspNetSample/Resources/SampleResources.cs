@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using DbLocalizationProvider;
 using DbLocalizationProvider.Abstractions;
+using DbLocalizationProvider.Abstractions.Refactoring;
 
 namespace MyProject
 {
@@ -9,6 +10,16 @@ namespace MyProject
     {
         public static string PageHeader => "This is page header";
     }
+
+    [LocalizedResource]
+    public class RefactoringResources
+    {
+        //public static string Resource1 => "This is res 1";
+
+        [RenamedResource(OldName = "Resource1")]
+        public static string Resource2 => "This is res 2 (refact)";
+    }
+
 
     [LocalizedResource]
     public class ResourcesForFallback

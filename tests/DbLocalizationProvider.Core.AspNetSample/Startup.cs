@@ -138,6 +138,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
 
                 _.ManualResourceProvider = new SomeManualResources();
                 _.TypeFactory.ForQuery<AvailableLanguages.Query>().SetHandler<AvailableLanguagesHandler>();
+
+                _.FlexibleRefactoringMode = true;
             });
 
             services
