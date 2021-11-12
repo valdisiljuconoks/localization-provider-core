@@ -95,5 +95,10 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// </summary>
         public Lazy<string> Version =>
             new Lazy<string>(() => typeof(UiConfigurationContext).Assembly.GetName().Version.ToString());
+
+        /// <summary>
+        /// Set this bit to true if you want to generate list of available languages just using languages from underlying storage.
+        /// </summary>
+        public bool UseAvailableLanguageListFromStorage { get; set; } = false;
     }
 }

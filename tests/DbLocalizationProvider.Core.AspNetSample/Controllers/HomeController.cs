@@ -25,6 +25,7 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
         private readonly ILogger _logger;
         private readonly ISynchronizer _synchronizer;
         private readonly IStringLocalizer<Resources.SampleResources> _localizer;
+        private readonly ICommandExecutor _executor;
         private readonly IStringLocalizer _simpleLocalizer;
 
         public HomeController(
@@ -32,12 +33,14 @@ namespace DbLocalizationProvider.Core.AspNetSample.Controllers
             IOptions<MvcOptions> options,
             ILogger<HomeController> logger,
             ISynchronizer synchronizer,
-            IStringLocalizer<Resources.SampleResources> localizer)
+            IStringLocalizer<Resources.SampleResources> localizer,
+            ICommandExecutor executor)
         {
             _provider = provider;
             _logger = logger;
             _synchronizer = synchronizer;
             _localizer = localizer;
+            _executor = executor;
             _simpleLocalizer = localizer;
 
             var asms = GetAssemblies().Where(a => a.FullName.Contains("DbLocalizationProvider"));

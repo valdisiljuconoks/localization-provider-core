@@ -44,12 +44,12 @@ namespace DbLocalizationProvider.AspNetCore
             }
 
             var logger = serviceFactory.GetRequiredService<ILogger>();
-            var context = serviceFactory.GetService<ConfigurationContext>();
+            var context = serviceFactory.GetRequiredService<ConfigurationContext>();
 
             context.Logger = logger;
 
             // if we need to sync - then it's good time to do it now
-            var sync = serviceFactory.GetService<Synchronizer>();
+            var sync = serviceFactory.GetRequiredService<Synchronizer>();
             sync.SyncResources(context.DiscoverAndRegisterResources);
 
             if (!context.DiscoverAndRegisterResources)

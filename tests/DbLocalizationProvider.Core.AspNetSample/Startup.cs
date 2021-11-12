@@ -137,8 +137,6 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //_.UseAzureTables("UseDevelopmentStorage=true");
 
                 _.ManualResourceProvider = new SomeManualResources();
-                _.TypeFactory.ForQuery<AvailableLanguages.Query>().SetHandler<AvailableLanguagesHandler>();
-
                 _.FlexibleRefactoringMode = true;
             });
 
