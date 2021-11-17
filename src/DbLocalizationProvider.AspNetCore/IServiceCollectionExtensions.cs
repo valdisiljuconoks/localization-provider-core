@@ -48,14 +48,11 @@ namespace DbLocalizationProvider.AspNetCore
             factory.ForQuery<DetermineDefaultCulture.Query>().SetHandler<DetermineDefaultCulture.Handler>();
             factory.ForCommand<ClearCache.Command>().SetHandler<ClearCacheHandler>();
 
-            var provider = services.BuildServiceProvider();
-
             // set to default in-memory provider
-            var cache = provider.GetService<IMemoryCache>();
-            if (cache != null)
+            // only if we have IMemoryCache service registered
+            if (services.FirstOrDefault(descr => descr.ServiceType == typeof(IMemoryCache)) != null)
             {
-                ctx.CacheManager = new InMemoryCacheManager(cache);
-                services.AddSingleton(ctx.CacheManager);
+                services.AddSingleton<ICacheManager, InMemoryCacheManager>();
             }
 
             // run custom configuration setup (if any)
@@ -78,7 +75,7 @@ namespace DbLocalizationProvider.AspNetCore
                 return ctx;
             });
 
-            services.AddSingleton(p => ctx.TypeFactory);
+            services.AddSingleton(_ => ctx.TypeFactory);
 
             // add all registered handlers to DI (in order to use service factory callback from DI lib)
             foreach (var handler in ctx.TypeFactory.GetAllHandlers())
@@ -132,9 +129,9 @@ namespace DbLocalizationProvider.AspNetCore
             if (ctx.ModelMetadataProviders.ReplaceProviders)
             {
                 services.Configure<MvcOptions>(
-                    _ =>
+                    opt =>
                     {
-                        _.ModelMetadataDetailsProviders.Add(
+                        opt.ModelMetadataDetailsProviders.Add(
                             new LocalizedDisplayMetadataProvider(
                                 new ModelMetadataLocalizationHelper(localizationProvider, keyBuilder, ctx), ctx));
                     });

@@ -2,6 +2,7 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
+using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Logging;
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Builder;
@@ -43,10 +44,17 @@ namespace DbLocalizationProvider.AspNetCore
                 throw new ArgumentNullException(nameof(serviceFactory));
             }
 
-            var logger = serviceFactory.GetRequiredService<ILogger>();
             var context = serviceFactory.GetRequiredService<ConfigurationContext>();
 
+            // here (after container creation) we can "finalize" some of the service setup procedures
+            var logger = serviceFactory.GetRequiredService<ILogger>();
             context.Logger = logger;
+
+            var cache = serviceFactory.GetService<ICacheManager>();
+            if (cache != null)
+            {
+                context.CacheManager = cache;
+            }
 
             // if we need to sync - then it's good time to do it now
             var sync = serviceFactory.GetRequiredService<Synchronizer>();
