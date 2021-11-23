@@ -68,13 +68,6 @@ namespace DbLocalizationProvider.AspNetCore
             var translationBuilder = new DiscoveredTranslationBuilder(queryExecutor);
             var localizationProvider = new LocalizationProvider(keyBuilder, expressionHelper, ctx.FallbackList, queryExecutor);
 
-            services.AddSingleton(p =>
-            {
-                // TODO: looks like a bit hackish
-                ctx.TypeFactory.SetServiceFactory(p.GetService);
-                return ctx;
-            });
-
             services.AddSingleton(_ => ctx.TypeFactory);
 
             // add all registered handlers to DI (in order to use service factory callback from DI lib)
@@ -94,6 +87,7 @@ namespace DbLocalizationProvider.AspNetCore
             services.AddSingleton(expressionHelper);
             services.AddSingleton(queryExecutor);
             services.AddSingleton<IQueryExecutor>(queryExecutor);
+
             services.AddSingleton(commandExecutor);
             services.AddSingleton(translationBuilder);
             services.AddSingleton<ICommandExecutor>(commandExecutor);
@@ -107,8 +101,19 @@ namespace DbLocalizationProvider.AspNetCore
                 new LocalizedForeignResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder)
             }, ctx));
 
-            services.AddSingleton(localizationProvider);
-            services.AddSingleton<ILocalizationProvider>(localizationProvider);
+            // this is some super black magic that needs to be reviewed and thrown out most probably
+            services.AddSingleton(sp =>
+            {
+                ((QueryExecutor)localizationProvider._queryExecutor)._context.TypeFactory.SetServiceFactory(sp.GetService);
+                return localizationProvider;
+            });
+
+            services.AddSingleton<ILocalizationProvider>(sp =>
+            {
+                ((QueryExecutor)localizationProvider._queryExecutor)._context.TypeFactory.SetServiceFactory(sp.GetService);
+                return localizationProvider;
+            });
+
             services.AddTransient<ISynchronizer, Synchronizer>();
             services.AddTransient<Synchronizer>();
 
