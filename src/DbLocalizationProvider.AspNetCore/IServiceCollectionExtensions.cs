@@ -34,7 +34,7 @@ namespace DbLocalizationProvider.AspNetCore
         /// Adds the database localization provider.
         /// </summary>
         /// <param name="services">The services.</param>
-        /// <param name="setup">The setup.</param>
+        /// <param name="setup">The setup callback.</param>
         /// <returns></returns>
         public static IServiceCollection AddDbLocalizationProvider(
             this IServiceCollection services,
@@ -50,7 +50,7 @@ namespace DbLocalizationProvider.AspNetCore
 
             // set to default in-memory provider
             // only if we have IMemoryCache service registered
-            if (services.FirstOrDefault(descr => descr.ServiceType == typeof(IMemoryCache)) != null)
+            if (services.FirstOrDefault(d => d.ServiceType == typeof(IMemoryCache)) != null)
             {
                 services.AddSingleton<ICacheManager, InMemoryCacheManager>();
             }
@@ -58,61 +58,45 @@ namespace DbLocalizationProvider.AspNetCore
             // run custom configuration setup (if any)
             setup?.Invoke(ctx);
 
-            // adding mvc localization stuff
-            var scanState = new ScanState();
-            var keyBuilder = new ResourceKeyBuilder(scanState);
-            var oldKeyBuilder = new OldResourceKeyBuilder(keyBuilder);
-            var expressionHelper = new ExpressionHelper(keyBuilder);
-            var queryExecutor = new QueryExecutor(ctx);
-            var commandExecutor = new CommandExecutor(ctx);
-            var translationBuilder = new DiscoveredTranslationBuilder(queryExecutor);
-            var localizationProvider = new LocalizationProvider(keyBuilder, expressionHelper, ctx.FallbackList, queryExecutor);
-
-            services.AddSingleton(_ => ctx.TypeFactory);
+            services.AddSingleton<ScanState>();
+            services.AddSingleton<ResourceKeyBuilder>();
+            services.AddSingleton<OldResourceKeyBuilder>();
+            services.AddSingleton<ExpressionHelper>();
+            services.AddSingleton<QueryExecutor>();
+            services.AddSingleton<IQueryExecutor>(sp => sp.GetRequiredService<QueryExecutor>());
+            services.AddSingleton<CommandExecutor>();
+            services.AddSingleton<ICommandExecutor>(sp => sp.GetRequiredService<CommandExecutor>());
+            services.AddSingleton<DiscoveredTranslationBuilder>();
+            services.AddSingleton(_ => ctx.FallbackList);
+            services.AddSingleton(_ => ctx);
+            services.AddSingleton(sp =>
+            {
+                factory.SetServiceFactory(sp.GetService);
+                return factory;
+            });
 
             // add all registered handlers to DI (in order to use service factory callback from DI lib)
-            foreach (var handler in ctx.TypeFactory.GetAllHandlers())
+            foreach (var handler in factory.GetAllHandlers())
             {
                 services.AddTransient(handler);
             }
 
             // add all registered handlers to DI (in order to use service factory callback from DI lib)
-            foreach (var (service, implementation) in ctx.TypeFactory.GetAllTransientServiceMappings())
+            foreach (var (service, implementation) in factory.GetAllTransientServiceMappings())
             {
                 services.AddTransient(service, implementation);
             }
 
-            services.AddSingleton(scanState);
-            services.AddSingleton(keyBuilder);
-            services.AddSingleton(expressionHelper);
-            services.AddSingleton(queryExecutor);
-            services.AddSingleton<IQueryExecutor>(queryExecutor);
-
-            services.AddSingleton(commandExecutor);
-            services.AddSingleton(translationBuilder);
-            services.AddSingleton<ICommandExecutor>(commandExecutor);
             services.AddSingleton<ILogger>(p => new LoggerAdapter(p.GetService<ILogger<LoggerAdapter>>()));
 
-            services.AddSingleton(new TypeDiscoveryHelper(new List<IResourceTypeScanner>
-            {
-                new LocalizedModelTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder),
-                new LocalizedResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder),
-                new LocalizedEnumTypeScanner(keyBuilder, translationBuilder),
-                new LocalizedForeignResourceTypeScanner(keyBuilder, oldKeyBuilder, scanState, ctx, translationBuilder)
-            }, ctx));
+            services.AddSingleton<TypeDiscoveryHelper>();
+            services.AddTransient<IResourceTypeScanner, LocalizedModelTypeScanner>();
+            services.AddTransient<IResourceTypeScanner, LocalizedResourceTypeScanner>();
+            services.AddTransient<IResourceTypeScanner, LocalizedEnumTypeScanner>();
+            services.AddTransient<IResourceTypeScanner, LocalizedForeignResourceTypeScanner>();
 
-            // this is some super black magic that needs to be reviewed and thrown out most probably
-            services.AddSingleton(sp =>
-            {
-                ((QueryExecutor)localizationProvider._queryExecutor)._context.TypeFactory.SetServiceFactory(sp.GetService);
-                return localizationProvider;
-            });
-
-            services.AddSingleton<ILocalizationProvider>(sp =>
-            {
-                ((QueryExecutor)localizationProvider._queryExecutor)._context.TypeFactory.SetServiceFactory(sp.GetService);
-                return localizationProvider;
-            });
+            services.AddSingleton<LocalizationProvider>();
+            services.AddSingleton<ILocalizationProvider>(sp => sp.GetRequiredService<LocalizationProvider>());
 
             services.AddTransient<ISynchronizer, Synchronizer>();
             services.AddTransient<Synchronizer>();
@@ -133,14 +117,15 @@ namespace DbLocalizationProvider.AspNetCore
             // setup model metadata providers
             if (ctx.ModelMetadataProviders.ReplaceProviders)
             {
-                services.Configure<MvcOptions>(
-                    opt =>
-                    {
-                        opt.ModelMetadataDetailsProviders.Add(
-                            new LocalizedDisplayMetadataProvider(
-                                new ModelMetadataLocalizationHelper(localizationProvider, keyBuilder, ctx), ctx));
-                    });
+                //services.Configure<MvcOptions>(
+                //    opt =>
+                //    {
+                //        opt.ModelMetadataDetailsProviders.Add(
+                //            new LocalizedDisplayMetadataProvider(
+                //                new ModelMetadataLocalizationHelper(localizationProvider, keyBuilder, ctx), ctx));
+                //    });
 
+                services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, ConfigureModelMetadataDetailsProviders>());
                 services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
             }
 
