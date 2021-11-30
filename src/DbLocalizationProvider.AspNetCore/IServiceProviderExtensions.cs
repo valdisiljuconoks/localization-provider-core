@@ -5,33 +5,15 @@ using System;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Logging;
 using DbLocalizationProvider.Sync;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DbLocalizationProvider.AspNetCore
 {
     /// <summary>
-    /// Extension point to initialize provider.
+    /// Extension to initialize and setup provider.
     /// </summary>
-    public static class InitializationExtensions
+    public static class IServiceProviderExtensions
     {
-        /// <summary>
-        /// Synchronizes resources with underlying storage
-        /// </summary>
-        /// <param name="builder">ASP.NET Core application builder</param>
-        /// <returns>ASP.NET Core application builder to enable fluent API call chains</returns>
-        public static IApplicationBuilder UseDbLocalizationProvider(this IApplicationBuilder builder)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            UseDbLocalizationProvider(builder.ApplicationServices);
-
-            return builder;
-        }
-
         /// <summary>
         /// Synchronizes resources with underlying storage
         /// </summary>
