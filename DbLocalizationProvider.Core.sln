@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbLocalizationProvider.AspNetCore", "src\DbLocalizationProvider.AspNetCore\DbLocalizationProvider.AspNetCore.csproj", "{F6627B30-A832-4EB8-A0A1-1125249F2CB6}"
 EndProject
@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution-items", "solution-
 		_config.yml = _config.yml
 		build-packages.ps1 = build-packages.ps1
 		LICENSE = LICENSE
+		push-packages.ps1 = push-packages.ps1
 		README.md = README.md
 	EndProjectSection
 EndProject
