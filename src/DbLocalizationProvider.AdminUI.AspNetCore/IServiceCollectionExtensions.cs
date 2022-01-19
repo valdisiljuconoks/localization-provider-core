@@ -23,8 +23,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// </summary>
         /// <param name="services">Collection of the services (Microsoft approach for DI).</param>
         /// <param name="setup">UI setup context will be passed in, so you can do some customization on that object to influence how AdminUI behaves.</param>
-        /// <returns>The same service collection - so you can do chaining.</returns>
-        public static IServiceCollection AddDbLocalizationProviderAdminUI(
+        /// <returns>AdminUI builder - so you can do configuration further.</returns>
+        public static IDbLocalizationProviderAdminUIBuilder AddDbLocalizationProviderAdminUI(
             this IServiceCollection services,
             Action<UiConfigurationContext> setup = null)
         {
@@ -63,7 +63,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                 });
             }
 
-            return services;
+            return new DbLocalizationProviderBuilder(services, context);
         }
 
         /// <summary>

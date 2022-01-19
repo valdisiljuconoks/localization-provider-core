@@ -160,8 +160,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                     _.CustomCssPath = "/css/custom-adminui.css";
                     _.HideDeleteButton = false;
                 })
-                .AddCsvFormat()
-                .AddXliffFormat();
+                .AddCsvSupport()
+                .AddXliffSupport();
 
             //.VerifyDbLocalizationProviderAdminUISetup();
         }

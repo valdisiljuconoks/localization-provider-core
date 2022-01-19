@@ -2,11 +2,9 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AspNetCore.Cache;
-using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Internal;
@@ -26,17 +24,17 @@ using ILogger = DbLocalizationProvider.Logging.ILogger;
 namespace DbLocalizationProvider.AspNetCore
 {
     /// <summary>
-    /// Extension for adding localization provider services to the collection
+    /// Extension for adding localization provider services to the service collection.
     /// </summary>
     public static class IServiceCollectionExtensions
     {
         /// <summary>
         /// Adds the database localization provider.
         /// </summary>
-        /// <param name="services">The services.</param>
+        /// <param name="services">The service collection.</param>
         /// <param name="setup">The setup callback.</param>
         /// <returns></returns>
-        public static IServiceCollection AddDbLocalizationProvider(
+        public static IDbLocalizationProviderBuilder AddDbLocalizationProvider(
             this IServiceCollection services,
             Action<ConfigurationContext> setup = null)
         {
@@ -131,7 +129,7 @@ namespace DbLocalizationProvider.AspNetCore
 
             services.AddHttpContextAccessor();
 
-            return services;
+            return new DbLocalizationProviderBuilder(services, ctx);
         }
     }
 }

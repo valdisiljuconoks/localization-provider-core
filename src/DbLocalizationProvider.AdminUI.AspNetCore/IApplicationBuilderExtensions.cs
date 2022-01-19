@@ -48,8 +48,15 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
             // If Mvc config is added *after* DbLocalizationProvider setup
             // this is a moment when we still can influence things
-            if (factory != null && !uiConfigurationContext.UseAvailableLanguageListFromStorage)
+            // so if available languages should be used from localization options set for requests
+            // we can override handler here - but only if it's still well known type
+            // if we don't know the handler - this means that somebody override it and basically we can't touch it anymore
+            if (factory != null
+                && !uiConfigurationContext.UseAvailableLanguageListFromStorage
+                && (typeof(AvailableLanguagesHandler).IsAssignableFrom(factory.GetHandlerType<AvailableLanguages.Query>())
+                    || typeof(AvailableLanguages.Handler).IsAssignableFrom(factory.GetHandlerType<AvailableLanguages.Query>())))
             {
+
                 var requestOptions = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
                 factory
                     .ForQuery<AvailableLanguages.Query>()
