@@ -153,7 +153,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
 
                     //_.AccessPolicyOptions = builder => builder.AddRequirements(new RolesAuthorizationRequirement(new [] { "test" }));
 
-                    _.ShowInvariantCulture = false;
+                    _.ShowInvariantCulture = true;
 
                     _.ShowHiddenResources = false;
                     _.DefaultView = ResourceListView.Tree;

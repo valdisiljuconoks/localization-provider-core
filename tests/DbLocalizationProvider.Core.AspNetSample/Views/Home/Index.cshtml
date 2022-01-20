@@ -37,7 +37,8 @@
     document.getElementById('placeHolder2').innerHTML = window.jsl10nNO.DbLocalizationProvider.Core.AspNetSample.Resources.SampleResources.SomeHtmlResource;
 </script>
 
-<h2>Current Culture: @currentCulture</h2>
+<h2>Current Culture (RequestCultureFeature): @currentCulture</h2>
+<h2>CurrentUICulture: @CultureInfo.CurrentUICulture</h2>
 
 <div>Translate&lt;SampleResources&gt;(PageHeader2) - @localized.PageHeader2</div>
 <div>ViewData["TestString"] ("Shared.Yes") = @ViewData["TestString"]</div>

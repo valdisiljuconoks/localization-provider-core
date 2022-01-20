@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using DbLocalizationProvider.AspNetCore.ClientsideProvider;
 using DbLocalizationProvider.Internal;
+using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ namespace DbLocalizationProvider.AspNetCore
             Expression<Func<object>> expression,
             params object[] formatArguments)
         {
-            return TranslateByCulture(htmlHelper, expression, CultureInfo.CurrentUICulture, formatArguments);
+            return TranslateByCulture(htmlHelper, expression, GetCurrentUICulture(htmlHelper), formatArguments);
         }
 
         public static IHtmlContent Translate(
@@ -30,7 +31,7 @@ namespace DbLocalizationProvider.AspNetCore
             Enum target,
             params object[] formatArguments)
         {
-            return TranslateByCulture(htmlHelper, target, CultureInfo.CurrentUICulture, formatArguments);
+            return TranslateByCulture(htmlHelper, target, GetCurrentUICulture(htmlHelper), formatArguments);
         }
 
         public static IHtmlContent Translate(
@@ -39,7 +40,7 @@ namespace DbLocalizationProvider.AspNetCore
             Type customAttribute,
             params object[] formatArguments)
         {
-            return TranslateByCulture(htmlHelper, expression, customAttribute, CultureInfo.CurrentUICulture, formatArguments);
+            return TranslateByCulture(htmlHelper, expression, customAttribute, GetCurrentUICulture(htmlHelper), formatArguments);
         }
 
         public static IHtmlContent TranslateByCulture(
@@ -114,7 +115,7 @@ namespace DbLocalizationProvider.AspNetCore
             Expression<Func<TModel, TResult>> expression,
             params object[] formatArguments)
         {
-            return TranslateForByCulture(htmlHelper, expression, CultureInfo.CurrentUICulture, formatArguments);
+            return TranslateForByCulture(htmlHelper, expression, GetCurrentUICulture(htmlHelper), formatArguments);
         }
 
         public static IHtmlContent TranslateFor<TModel, TResult>(
@@ -123,7 +124,7 @@ namespace DbLocalizationProvider.AspNetCore
             Type customAttribute,
             params object[] formatArguments)
         {
-            return TranslateForByCulture(htmlHelper, expression, customAttribute, CultureInfo.CurrentUICulture, formatArguments);
+            return TranslateForByCulture(htmlHelper, expression, customAttribute, GetCurrentUICulture(htmlHelper), formatArguments);
         }
 
         public static IHtmlContent TranslateForByCulture<TModel, TResult>(
@@ -192,7 +193,7 @@ namespace DbLocalizationProvider.AspNetCore
             Expression<Func<TModel, TValue>> expression,
             params object[] formatArguments)
         {
-            return DescriptionByCultureFor(htmlHelper, expression, CultureInfo.CurrentUICulture, formatArguments);
+            return DescriptionByCultureFor(htmlHelper, expression, GetCurrentUICulture(htmlHelper), formatArguments);
         }
 
         public static IHtmlContent DescriptionByCultureFor<TModel, TValue>(
@@ -359,6 +360,11 @@ namespace DbLocalizationProvider.AspNetCore
         private static T GetService<T>(IHtmlHelper htmlHelper)
         {
             return htmlHelper.ViewContext.HttpContext.RequestServices.GetService<T>();
+        }
+
+        private static CultureInfo GetCurrentUICulture(IHtmlHelper htmlHelper)
+        {
+            return GetService<IQueryExecutor>(htmlHelper).Execute(new GetCurrentUICulture.Query());
         }
     }
 }

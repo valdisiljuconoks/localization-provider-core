@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Cache;
+using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
@@ -40,8 +41,10 @@ namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
         {
             context.Response.ContentType = "application/javascript";
 
+            var queryExecutor = context.RequestServices.GetRequiredService<IQueryExecutor>();
+
             var languageName = !context.Request.Query.ContainsKey("lang")
-                ? CultureInfo.CurrentUICulture.Name
+                ? queryExecutor.Execute(new GetCurrentUICulture.Query()).Name
                 : context.Request.Query["lang"].ToString();
 
             var filename = ExtractFileName(context);

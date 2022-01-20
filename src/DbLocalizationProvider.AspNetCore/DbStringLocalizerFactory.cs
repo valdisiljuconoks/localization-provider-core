@@ -14,6 +14,7 @@ namespace DbLocalizationProvider.AspNetCore
     public class DbStringLocalizerFactory : IStringLocalizerFactory
     {
         private readonly ExpressionHelper _expressionHelper;
+        private readonly IQueryExecutor _queryExecutor;
         private readonly CultureInfo _language;
         private readonly ILocalizationProvider _localizationProvider;
 
@@ -22,16 +23,22 @@ namespace DbLocalizationProvider.AspNetCore
         /// </summary>
         /// <param name="localizationProvider">Localization provider</param>
         /// <param name="expressionHelper">Expression builder</param>
-        public DbStringLocalizerFactory(ILocalizationProvider localizationProvider, ExpressionHelper expressionHelper)
+        /// <param name="queryExecutor">Executor of various queries</param>
+        public DbStringLocalizerFactory(
+            ILocalizationProvider localizationProvider,
+            ExpressionHelper expressionHelper,
+            IQueryExecutor queryExecutor)
         {
             _localizationProvider = localizationProvider;
             _expressionHelper = expressionHelper;
+            _queryExecutor = queryExecutor;
         }
 
         private DbStringLocalizerFactory(
             CultureInfo language,
             ILocalizationProvider localizationProvider,
-            ExpressionHelper expressionHelper) : this(localizationProvider, expressionHelper)
+            ExpressionHelper expressionHelper,
+            IQueryExecutor queryExecutor) : this(localizationProvider, expressionHelper, queryExecutor)
         {
             _language = language;
         }
@@ -44,7 +51,7 @@ namespace DbLocalizationProvider.AspNetCore
         /// <returns>The <see cref="IStringLocalizer"/>.</returns>
         public IStringLocalizer Create(Type resourceSource)
         {
-            return new DbStringLocalizer(_language, _localizationProvider, _expressionHelper);
+            return new DbStringLocalizer(_language, _localizationProvider, _expressionHelper, _queryExecutor);
         }
 
         /// <summary>
@@ -55,7 +62,7 @@ namespace DbLocalizationProvider.AspNetCore
         /// <returns>The <see cref="IStringLocalizer"/>.</returns>
         public IStringLocalizer Create(string baseName, string location)
         {
-            return new DbStringLocalizer(_language, _localizationProvider, _expressionHelper);
+            return new DbStringLocalizer(_language, _localizationProvider, _expressionHelper, _queryExecutor);
         }
 
         /// <summary>
@@ -65,7 +72,7 @@ namespace DbLocalizationProvider.AspNetCore
         /// <returns>The <see cref="DbStringLocalizerFactory" />.</returns>
         public DbStringLocalizerFactory ChangeLanguage(CultureInfo language)
         {
-            return new DbStringLocalizerFactory(language, _localizationProvider, _expressionHelper);
+            return new DbStringLocalizerFactory(language, _localizationProvider, _expressionHelper, _queryExecutor);
         }
     }
 }
