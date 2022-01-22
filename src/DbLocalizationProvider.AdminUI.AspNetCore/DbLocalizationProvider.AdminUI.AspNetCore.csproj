@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Version>7.0.0-pre-0016</Version>
-    <PackageVersion>7.0.0-pre-0016</PackageVersion>
+    <Version>7.0.0</Version>
+    <PackageVersion>7.0.0</PackageVersion>
     <AssemblyVersion>7.0.0.0</AssemblyVersion>
     <FileVersion>7.0.0.0</FileVersion>
     <Authors>Valdis Iljuconoks, https://tech-fellow.net</Authors>
@@ -39,7 +39,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
