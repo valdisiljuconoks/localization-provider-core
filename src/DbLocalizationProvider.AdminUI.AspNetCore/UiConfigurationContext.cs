@@ -2,7 +2,7 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
@@ -11,20 +11,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
     /// </summary>
     public class UiConfigurationContext
     {
-        /// <summary>
-        /// Set roles to users who will have admin access to UI with more privileges (create new, delete, import, etc).
-        /// </summary>
-        public ICollection<string> AuthorizedAdminRoles { get; } = new List<string> { "Administrators" };
-
-        /// <summary>
-        /// Set roles to users who will have editor access to UI (can add translations).
-        /// </summary>
-        public ICollection<string> AuthorizedEditorRoles { get; } = new List<string>
-                                                                    {
-                                                                        "Administrators",
-                                                                        "Editors"
-                                                                    };
-
         /// <summary>
         /// Sometimes resource keys might get pretty long. You can chop them here.
         /// </summary>
@@ -84,11 +70,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public bool ShowHiddenResources { get; set; } = false;
 
         /// <summary>
-        /// Access to current configuration context instance. Statics sucks.
-        /// </summary>
-        public static UiConfigurationContext Current { get; } = new UiConfigurationContext();
-
-        /// <summary>
         /// This might become handy sometimes when white background and black fonts are too boooooring.
         /// </summary>
         public string CustomCssPath { get; set; }
@@ -104,17 +85,20 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// </summary>
         public bool HideDeleteButton { get; set; } = false;
 
-        //internal bool IsTreeViewDisabled { get; set; }
-
-        //internal bool IsTableViewDisabled { get; set; }
+        /// <summary>
+        /// Access policy hook. You can use this to customize authorization access policy used to secure AdminUI.
+        /// </summary>
+        public Action<AuthorizationPolicyBuilder> AccessPolicyOptions { get; set; }
 
         /// <summary>
-        /// Wanna customize anything here? Call this method.
+        /// Returns current version of the lib
         /// </summary>
-        /// <param name="configCallback">You will receive context instance through which some customization is theoretically possible.</param>
-        public static void Setup(Action<UiConfigurationContext> configCallback)
-        {
-            configCallback?.Invoke(Current);
-        }
+        public Lazy<string> Version =>
+            new Lazy<string>(() => typeof(UiConfigurationContext).Assembly.GetName().Version.ToString());
+
+        /// <summary>
+        /// Set this bit to true if you want to generate list of available languages just using languages from underlying storage.
+        /// </summary>
+        public bool UseAvailableLanguageListFromStorage { get; set; } = false;
     }
 }

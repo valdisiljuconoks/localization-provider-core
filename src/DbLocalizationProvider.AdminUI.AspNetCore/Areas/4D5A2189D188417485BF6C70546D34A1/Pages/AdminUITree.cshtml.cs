@@ -3,5 +3,13 @@
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages
 {
-    public class AdminUITreeViewModel : BasePage { }
+    public class AdminUITreeViewModel : BasePage
+    {
+        public AdminUITreeViewModel(
+            ConfigurationContext configurationContext,
+            UiConfigurationContext uiContext,
+            IQueryExecutor queryExecutor,
+            ICommandExecutor commandExecutor)
+            : base(configurationContext, uiContext, queryExecutor, commandExecutor) { }
+    }
 }

@@ -1,6 +1,8 @@
 cd .\.nuget
 
-nuget push .\LocalizationProvider.AspNetCore.5.3.0.nupkg -source https://api.nuget.org/v3/index.json
-nuget push .\LocalizationProvider.AdminUI.AspNetCore.5.3.0.nupkg -source https://api.nuget.org/v3/index.json
+.\nuget.exe push LocalizationProvider.AspNetCore.7.0.0.nupkg -source https://api.nuget.org/v3/index.json
+.\nuget.exe push LocalizationProvider.AdminUI.AspNetCore.Csv.7.0.0.nupkg -source https://api.nuget.org/v3/index.json
+.\nuget.exe push LocalizationProvider.AdminUI.AspNetCore.Xliff.7.0.0.nupkg -source https://api.nuget.org/v3/index.json
+.\nuget.exe push LocalizationProvider.AdminUI.AspNetCore.7.0.0.nupkg -source https://api.nuget.org/v3/index.json
 
 cd ..\

@@ -1,5 +1,6 @@
 ﻿@page "{handler?}"
 
+@using DbLocalizationProvider
 @using DbLocalizationProvider.AdminUI.AspNetCore
 @using DbLocalizationProvider.AspNetCore
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -7,6 +8,8 @@
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUITreeViewModel
 
 @inject IHtmlLocalizer<Resources> Localizer
+@inject ConfigurationContext ConfigContext
+@inject UiConfigurationContext UiContext
 @{
     Layout = null;
 }
@@ -18,10 +21,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@Localizer.GetString(_ => _.Title)</title>
-    <link rel="stylesheet" href="../res/node_modules.bootstrap.dist.css.bootstrap.min.css">
-    <link rel="stylesheet" href="../res/node_modules.vue_directive_tooltip.css.index.min.css">
-    <link rel="stylesheet" href="../res/node_modules.vue_ads_table_tree.dist.vue-ads-table-tree.css">
-    <link rel="stylesheet" href="../res/node_modules._fortawesome.fontawesome_free.css.all.min.css">
+    @Model.IncludeStyle("bootstrap.min.css")
+    @Model.IncludeStyle("vueDirectiveTooltip.css")
+    @Model.IncludeStyle("vue-ads-table-tree.css")
+    @Model.IncludeStyle("fontawesome-all.min.css")
     <style type="text/css">
         body {
             margin: 10px;
@@ -138,8 +141,7 @@
         i.fas.fa-cog {
             margin-right: 5px;
         }
-    </style>
-    <style type="text/css">
+
         table.vue-ads-border {
             border-width: 0;
         }
@@ -164,9 +166,9 @@
         }
     </style>
 
-    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
+    @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
     {
-        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
+        <link rel="stylesheet" href="@UiContext.CustomCssPath">
     }
 
 </head>
@@ -177,7 +179,8 @@
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</span>
+                    <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
+                    <div>({{model.language }})</div>
                 </div>
                 <div class="modal-body">
                     <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
@@ -199,11 +202,20 @@
         <div class="col-lg-6">
             <span class="float-left">
                 <span class="h1">@Localizer.GetString(_ => _.Header)</span>
+                <psan><small>(v@(UiContext.Version.Value))</small></psan>
             </span>
         </div>
         <div class="col-lg-6">
             <div class="float-right">
-                <a href="?handler=Export&format=json" role="button" class="btn btn-light">@Localizer.GetString(_ => _.Export)</a>
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Localizer.GetString(_ => _.Export)</button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
+                        @foreach (var exportProvider in ConfigContext.Export.Providers)
+                        {
+                            <a href="?handler=Export&format=@exportProvider.ProviderId" class="dropdown-item">@exportProvider.FormatName</a>
+                        }
+                    </div>
+                </div>
                 <a href="?handler=CleanCache" onclick="return confirm('@Localizer.GetString(_ => _.CleanCacheConfirmation)');" role="button" class="btn btn-light">@Localizer.GetString(_ => _.CleanCache)</a>
                 <div class="btn-group dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@Localizer.GetString(_ => _.Settings)</button>
@@ -242,12 +254,12 @@
     </div>
 </div>
 
-<script src="../res/node_modules.jquery.dist.jquery.js"></script>
-<script src="../res/node_modules.popper.js.dist.umd.popper.js"></script>
-<script src="../res/node_modules.bootstrap.dist.js.bootstrap.js"></script>
-<script src="../res/node_modules.vue.dist.vue.min.js"></script>
-<script src="../res/node_modules.axios.dist.axios.min.js"></script>
-<script src="../res/node_modules.vue_ads_table_tree.dist.vue-ads-table-tree.umd.min.js"></script>
+@Model.IncludeScript("jquery.min.js")
+@Model.IncludeScript("popper.min.js")
+@Model.IncludeScript("bootstrap.min.js")
+@Model.IncludeScript("vue.min.js")
+@Model.IncludeScript("axios.min.js")
+@Model.IncludeScript("vue-ads-table-tree.umd.min.js")
 
 <script type="text/javascript">
     const VueAdsTableTree = window["vue-ads-table-tree"].default;
@@ -331,7 +343,7 @@
                         this.columns.push({
                             property: 'translation-' + language.code,
                             language: language.code,
-                            title: language.titleDisplay,
+                            title: language.display,
                             direction: null,
                             filterable: true
                         });

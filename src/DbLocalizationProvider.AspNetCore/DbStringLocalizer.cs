@@ -1,9 +1,12 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using DbLocalizationProvider.Internal;
+using DbLocalizationProvider.Queries;
 using Microsoft.Extensions.Localization;
 
 namespace DbLocalizationProvider.AspNetCore
@@ -11,20 +14,41 @@ namespace DbLocalizationProvider.AspNetCore
     /// <summary>
     /// Service for providing localized strings
     /// </summary>
-    public class DbStringLocalizer : IStringLocalizer
+    public class DbStringLocalizer : IStringLocalizer, ILocalizationServicesAccessor, ICultureAwareStringLocalizer
     {
+        private readonly ILocalizationProvider _localizationProvider;
+        private readonly ExpressionHelper _expressionHelper;
+        private readonly IQueryExecutor _queryExecutor;
         private readonly CultureInfo _culture;
 
         /// <summary>
         /// Creates new instance
         /// </summary>
-        public DbStringLocalizer() { }
+        /// <param name="localizationProvider">Instance of localization provider</param>
+        /// <param name="expressionHelper">ExpressionHelper to be used for walking lambdas</param>
+        /// <param name="queryExecutor">Executor of various queries</param>
+        public DbStringLocalizer(
+            ILocalizationProvider localizationProvider,
+            ExpressionHelper expressionHelper,
+            IQueryExecutor queryExecutor)
+        {
+            _localizationProvider = localizationProvider;
+            _expressionHelper = expressionHelper;
+            _queryExecutor = queryExecutor;
+        }
 
         /// <summary>
         /// Creates new instance specifying culture to use
         /// </summary>
-        /// <param name="culture"></param>
-        public DbStringLocalizer(CultureInfo culture) : this()
+        /// <param name="culture">Language to be used in this localizer.</param>
+        /// <param name="localizationProvider">Instance of localization provider</param>
+        /// <param name="expressionHelper">ExpressionHelper to be used for walking lambdas</param>
+        /// <param name="queryExecutor">Executor of various queries</param>
+        public DbStringLocalizer(
+            CultureInfo culture,
+            ILocalizationProvider localizationProvider,
+            ExpressionHelper expressionHelper,
+            IQueryExecutor queryExecutor) : this(localizationProvider, expressionHelper, queryExecutor)
         {
             _culture = culture;
         }
@@ -36,19 +60,19 @@ namespace DbLocalizationProvider.AspNetCore
         /// <returns>List of localized strings</returns>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            var values = LocalizationProvider.Current.GetStringsByCulture(_culture ?? CultureInfo.CurrentUICulture);
+            var values = _localizationProvider.GetStringsByCulture(_culture ?? _queryExecutor.Execute(new GetCurrentUICulture.Query()));
 
             return values.Select(value => new LocalizedString(value.Key, value.Value ?? value.Key, value.Value == null));
         }
 
         /// <summary>
-        /// Returns new instance of localizer with specified culture
+        /// Change language of the provider and returns string localizer with specified language.
         /// </summary>
-        /// <param name="culture">Culture to use</param>
-        /// <returns>Instance of localizer with specified culture</returns>
-        public IStringLocalizer WithCulture(CultureInfo culture)
+        /// <param name="language">Language to change to.</param>
+        /// <returns>Localizer with specified language.</returns>
+        public IStringLocalizer ChangeLanguage(CultureInfo language)
         {
-            return new DbStringLocalizer(culture);
+            return new DbStringLocalizer(language, _localizationProvider, _expressionHelper, _queryExecutor);
         }
 
         /// <summary>
@@ -60,9 +84,9 @@ namespace DbLocalizationProvider.AspNetCore
         {
             get
             {
-                var value = _culture != null
-                    ? LocalizationProvider.Current.GetStringByCulture(name, _culture)
-                    : LocalizationProvider.Current.GetStringByCulture(name, CultureInfo.CurrentUICulture);
+                var value = _localizationProvider
+                    .GetStringByCulture(name, _culture ?? _queryExecutor.Execute(new GetCurrentUICulture.Query()));
+
                 return new LocalizedString(name, value ?? name, value == null);
             }
         }
@@ -77,11 +101,16 @@ namespace DbLocalizationProvider.AspNetCore
         {
             get
             {
-                var value = _culture != null
-                    ? LocalizationProvider.Current.GetStringByCulture(name, _culture, arguments)
-                    : LocalizationProvider.Current.GetStringByCulture(name, CultureInfo.CurrentUICulture, arguments);
+                var value = _localizationProvider
+                    .GetStringByCulture(name, _culture ?? _queryExecutor.Execute(new GetCurrentUICulture.Query()), arguments);
+
                 return new LocalizedString(name, value ?? name, value == null);
             }
         }
+
+        /// <summary>
+        /// Expression helper to be used to walk lambdas
+        /// </summary>
+        public ExpressionHelper ExpressionHelper => _expressionHelper;
     }
 }

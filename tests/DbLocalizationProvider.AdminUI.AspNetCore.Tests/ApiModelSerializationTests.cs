@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.AdminUI.Models;
 using Newtonsoft.Json;
 using Xunit;
@@ -14,17 +15,18 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests
             var model = new LocalizationResourceApiModel(
                 new List<LocalizationResource>
                 {
-                    new LocalizationResource("the-key1")
+                    new("the-key1", false)
                     {
-                        Translations = new List<LocalizationResourceTranslation>
+                        Translations = new LocalizationResourceTranslationCollection(false)
                         {
-                            new LocalizationResourceTranslation { Language = "", Value = "Invariant" },
-                            new LocalizationResourceTranslation { Language = "en", Value = "English" },
-                            new LocalizationResourceTranslation { Language = "no", Value = "Norsk" }
+                            new() { Language = "", Value = "Invariant" },
+                            new() { Language = "en", Value = "English" },
+                            new() { Language = "no", Value = "Norsk" }
                         }
                     }
                 },
-                new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("no") },
+                new List<AvailableLanguage> { new("English", 1, new CultureInfo("en")), new("Norsk", 2, new CultureInfo("no")) },
+                new List<AvailableLanguage> { new("English", 1, new CultureInfo("en")), new("Norsk", 2, new CultureInfo("no")) },
                 120,
                 80,
                 new UiOptions());
@@ -38,16 +40,16 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Tests
             var model = new LocalizationResourceApiModel(
                 new List<LocalizationResource>
                 {
-                    new LocalizationResource("the-key1")
+                    new("the-key1", false)
                     {
-                        Translations = new List<LocalizationResourceTranslation>
+                        Translations = new LocalizationResourceTranslationCollection(false)
                         {
-                            new LocalizationResourceTranslation { Language = "", Value = "Invariant" },
-                            new LocalizationResourceTranslation { Language = "en", Value = "English" }
+                            new() { Language = "", Value = "Invariant" }, new() { Language = "en", Value = "English" }
                         }
                     }
                 },
-                new List<CultureInfo> { new CultureInfo("en"), new CultureInfo("no") },
+                new List<AvailableLanguage> { new("English", 1, new CultureInfo("en")), new("Norsk", 2, new CultureInfo("no")) },
+                new List<AvailableLanguage> { new("English", 1, new CultureInfo("en")), new("Norsk", 2, new CultureInfo("no")) },
                 120,
                 80,
                 new UiOptions());

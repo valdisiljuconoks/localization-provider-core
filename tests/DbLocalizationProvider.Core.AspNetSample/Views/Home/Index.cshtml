@@ -37,20 +37,16 @@
     document.getElementById('placeHolder2').innerHTML = window.jsl10nNO.DbLocalizationProvider.Core.AspNetSample.Resources.SampleResources.SomeHtmlResource;
 </script>
 
-<h2>Current Culture: @currentCulture</h2>
+<h2>Current Culture (RequestCultureFeature): @currentCulture</h2>
+<h2>CurrentUICulture: @CultureInfo.CurrentUICulture</h2>
 
 <div>Translate&lt;SampleResources&gt;(PageHeader2) - @localized.PageHeader2</div>
 <div>ViewData["TestString"] ("Shared.Yes") = @ViewData["TestString"]</div>
-<div>Translate.GetString(() => {}, Culture, placeholder) = @LocalizationProvider.Current.GetString(() => SampleResources.PropertyWithPlaceholders, new CultureInfo("no"), "replaced value")</div>
-<div>Translate.GetString(() => {}, Culture) = @LocalizationProvider.Current.GetString(() => SampleResources.PropertyWithPlaceholders, new CultureInfo("no"))</div>
+<div>Translate.GetString(() => {}, Culture, placeholder) = @Provider.GetString(() => SampleResources.PropertyWithPlaceholders, new CultureInfo("no"), "replaced value")</div>
+<div>Translate.GetString(() => {}, Culture) = @Provider.GetString(() => SampleResources.PropertyWithPlaceholders, new CultureInfo("no"))</div>
 <div>IViewLocalizer.GetString() = @Localizer.GetString(() => SampleResources.PageHeader)</div>
 <div>IViewLocalizer["..."] = @Localizer["DbLocalizationProvider.Core.AspNetSample.Resources.SampleResources.PageHeader"]</div>
 <div>IHtmlLocalizer&lt;T&gt;.GetString() = @Localizer2.GetString(r => r.PageHeader2)</div>
-
-
-<div>
-    <div>IHtmlLocalizer.WithCulture("no") = @(Localizer2.WithCulture(new CultureInfo("no")).GetString(() => SampleResources.PageHeader))</div>
-</div>
 
 <hr/>
 

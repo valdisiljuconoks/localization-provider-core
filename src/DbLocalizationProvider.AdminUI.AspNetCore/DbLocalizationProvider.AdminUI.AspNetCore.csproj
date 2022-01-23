@@ -1,19 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <PackageId>LocalizationProvider.AdminUI.AspNetCore</PackageId>
-    <Version>6.4.0</Version>
-    <AssemblyVersion>6.4.0.0</AssemblyVersion>
-    <FileVersion>6.4.0.0</FileVersion>
+    <TargetFramework>net5.0</TargetFramework>
+    <Version>7.0.0</Version>
+    <PackageVersion>7.0.0</PackageVersion>
+    <AssemblyVersion>7.0.0.0</AssemblyVersion>
+    <FileVersion>7.0.0.0</FileVersion>
     <Authors>Valdis Iljuconoks, https://tech-fellow.net</Authors>
     <Company>Valdis Iljuconoks, https://tech-fellow.net</Company>
     <Product>DbLocalizationProvider</Product>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Database driven localization provider. Admin UI for Asp.Net Core apps.</Description>
+    <Copyright>Tech Fellow Consulting, Copyright © 2022</Copyright>
     <PackageProjectUrl>https://github.com/valdisiljuconoks/localization-provider-core/</PackageProjectUrl>
-    <Copyright>Tech Fellow Consulting, Copyright © 2020</Copyright>
+    <RepositoryUrl>https://github.com/valdisiljuconoks/localization-provider-core/</RepositoryUrl>
     <PackageTags>Localization Provider DbLocalization DbLocalizationProvider LocalizationProvider Database Driven AdminUI AspNetCore NetCore</PackageTags>
+    <PackageId>LocalizationProvider.AdminUI.AspNetCore</PackageId>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\lib\localization-provider\strongname.snk</AssemblyOriginatorKeyFile>
@@ -22,6 +24,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,76 +33,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\css\all.min.css" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.eot" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.svg" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.ttf" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.woff" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.woff2" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.eot" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.svg" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.ttf" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.woff" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.woff2" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.eot" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.svg" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.ttf" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.woff" />
-    <None Remove="node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.woff2" />
-    <None Remove="node_modules\axios\dist\axios.min.js" />
-    <None Remove="node_modules\axios\dist\axios.min.map" />
-    <None Remove="node_modules\bootstrap\dist\css\bootstrap.min.css" />
-    <None Remove="node_modules\bootstrap\dist\js\bootstrap.js" />
-    <None Remove="node_modules\jquery\dist\core.js" />
-    <None Remove="node_modules\jquery\dist\jquery.js" />
-    <None Remove="node_modules\popper.js\dist\umd\popper-utils.js" />
-    <None Remove="node_modules\popper.js\dist\umd\popper.js" />
-    <None Remove="node_modules\vue-ads-table-tree\dist\vue-ads-table-tree.css" />
-    <None Remove="node_modules\vue-ads-table-tree\dist\vue-ads-table-tree.umd.min.js" />
-    <None Remove="node_modules\vue-directive-tooltip\css\index.css" />
-    <None Remove="node_modules\vue-directive-tooltip\css\index.css.map" />
-    <None Remove="node_modules\vue-directive-tooltip\css\index.min.css" />
-    <None Remove="node_modules\vue-directive-tooltip\dist\vueDirectiveTooltip.min.js" />
-    <None Remove="node_modules\vue\dist\vue.min.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\css\all.min.css" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-brands-400.eot" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-brands-400.svg" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-brands-400.ttf" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-brands-400.woff" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-brands-400.woff2" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-regular-400.eot" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-regular-400.svg" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-regular-400.ttf" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-regular-400.woff" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-regular-400.woff2" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-solid-900.eot" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-solid-900.svg" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-solid-900.ttf" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-solid-900.woff" />
-    <EmbeddedResource Include="node_modules\@fortawesome\fontawesome-free\webfonts\fa-solid-900.woff2" />
-    <EmbeddedResource Include="node_modules\axios\dist\axios.min.js" />
-    <EmbeddedResource Include="node_modules\axios\dist\axios.min.map" />
-    <EmbeddedResource Include="node_modules\bootstrap\dist\css\bootstrap.min.css" />
-    <EmbeddedResource Include="node_modules\bootstrap\dist\js\bootstrap.js" />
-    <EmbeddedResource Include="node_modules\jquery\dist\core.js" />
-    <EmbeddedResource Include="node_modules\jquery\dist\jquery.js" />
-    <EmbeddedResource Include="node_modules\popper.js\dist\umd\popper-utils.js" />
-    <EmbeddedResource Include="node_modules\popper.js\dist\umd\popper.js" />
-    <EmbeddedResource Include="node_modules\vue-ads-table-tree\dist\vue-ads-table-tree.css" />
-    <EmbeddedResource Include="node_modules\vue-ads-table-tree\dist\vue-ads-table-tree.umd.min.js" />
-    <EmbeddedResource Include="node_modules\vue-directive-tooltip\css\index.css" />
-    <EmbeddedResource Include="node_modules\vue-directive-tooltip\css\index.css.map" />
-    <EmbeddedResource Include="node_modules\vue-directive-tooltip\css\index.min.css" />
-    <EmbeddedResource Include="node_modules\vue-directive-tooltip\dist\vueDirectiveTooltip.min.js" />
-    <EmbeddedResource Include="node_modules\vue\dist\vue.min.js" />
+    <None Include="package-lock.json" />
+    <None Include="package.json" />
   </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -116,9 +56,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="package-lock.json" />
-    <None Include="package.json" />
+    <_AssetsItems Include="$(SolutionDir)\src\DbLocalizationProvider.AdminUI.AspNetCore\wwwroot\**\*.*" />
   </ItemGroup>
+
+  <Target Name="CopyAssets" AfterTargets="Build">
+    <Copy SourceFiles="@(_AssetsItems)" DestinationFolder="..\..\tests\DbLocalizationProvider.Core.AspNetSample\wwwroot\_content\DbLocalizationProvider.AdminUI.AspNetCore\%(RecursiveDir)" />
+  </Target>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <ItemGroup>

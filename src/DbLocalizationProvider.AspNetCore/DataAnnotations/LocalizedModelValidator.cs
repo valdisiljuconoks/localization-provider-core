@@ -1,9 +1,10 @@
-﻿using System;
+// Copyright (c) Valdis Iljuconoks. All rights reserved.
+// Licensed under Apache-2.0. See the LICENSE file in the project root for more information
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using DbLocalizationProvider.DataAnnotations;
-using DbLocalizationProvider.Internal;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations
@@ -12,11 +13,18 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
     public class LocalizedModelValidator : IModelValidator
     {
         private readonly ValidationAttribute _attribute;
+        private readonly ResourceKeyBuilder _keyBuilder;
+        private readonly ModelMetadataLocalizationHelper _metadataHelper;
         private static readonly object _emptyValidationContextInstance = new object();
 
-        public LocalizedModelValidator(ValidationAttribute attribute)
+        public LocalizedModelValidator(
+            ValidationAttribute attribute,
+            ResourceKeyBuilder keyBuilder,
+            ModelMetadataLocalizationHelper metadataHelper)
         {
             _attribute = attribute;
+            _keyBuilder = keyBuilder;
+            _metadataHelper = metadataHelper;
         }
 
         public IEnumerable<ModelValidationResult> Validate(ModelValidationContext validationContext)
@@ -46,13 +54,14 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             var result = _attribute.GetValidationResult(validationContext.Model, context);
             if(result != ValidationResult.Success)
             {
-                var resourceKey = ResourceKeyBuilder.BuildResourceKey(metadata.ContainerType, metadata.PropertyName, _attribute);
-                var translation = ModelMetadataLocalizationHelper.GetTranslation(resourceKey);
+                var resourceKey = _keyBuilder.BuildResourceKey(metadata.ContainerType, metadata.PropertyName, _attribute);
+                var translation = _metadataHelper.GetTranslation(resourceKey);
                 var errorMessage = !string.IsNullOrEmpty(translation) ? translation : result.ErrorMessage;
 
                 var validationResults = new List<ModelValidationResult>();
-                if(result.MemberNames != null)
-                    foreach(var resultMemberName in result.MemberNames)
+                if (result.MemberNames != null)
+                {
+                    foreach (var resultMemberName in result.MemberNames)
                     {
                         // ModelValidationResult.MemberName is used by invoking validators (such as ModelValidator) to
                         // append construct the ModelKey for ModelStateDictionary. When validating at type level we
@@ -68,9 +77,12 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
 
                         validationResults.Add(validationResult);
                     }
+                }
 
                 if(validationResults.Count == 0)
+                {
                     validationResults.Add(new ModelValidationResult(null, errorMessage));
+                }
 
                 return validationResults;
             }

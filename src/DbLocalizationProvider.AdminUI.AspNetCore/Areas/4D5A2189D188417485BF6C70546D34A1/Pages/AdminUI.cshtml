@@ -1,6 +1,6 @@
-﻿
-@page "{handler?}"
+﻿@page "{handler?}"
 
+@using DbLocalizationProvider
 @using DbLocalizationProvider.AdminUI.AspNetCore
 @using DbLocalizationProvider.AspNetCore
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -8,7 +8,8 @@
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUIViewModel
 
 @inject IHtmlLocalizer<Resources> Localizer
-@inject UiConfigurationContext Config
+@inject ConfigurationContext ConfigContext
+@inject UiConfigurationContext UiContext
 
 @{
     Layout = null;
@@ -21,9 +22,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@Localizer.GetString(_ => _.Title)</title>
-    <link rel="stylesheet" href="res/node_modules.bootstrap.dist.css.bootstrap.min.css">
-    <link rel="stylesheet" href="res/node_modules.vue_directive_tooltip.css.index.min.css">
-    <link rel="stylesheet" href="res/node_modules._fortawesome.fontawesome_free.css.all.min.css">
+    @Model.IncludeStyle("bootstrap.min.css")
+    @Model.IncludeStyle("vueDirectiveTooltip.css")
+    @Model.IncludeStyle("fontawesome-all.min.css")
     <style type="text/css">
         body {
             margin: 10px;
@@ -126,6 +127,24 @@
             transform: scale(1.1);
         }
 
+        .modal_open {
+            position: fixed;
+        }
+
+        .modal-body {
+            margin: 20px 0;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .visible-language-list {
+            padding: 0;
+        }
+
+        .visible-language-list li {
+            list-style: none;
+        }
+
         .translation {
             color: blue;
             text-decoration: underline;
@@ -140,11 +159,44 @@
         i.fas.fa-cog {
             margin-right: 5px;
         }
+
+        table {
+            text-align: left;
+            position: relative;
+            border-collapse: collapse;
+        }
+
+        table tr th, table tr td, .table .thead-dark th {
+            border: 1px solid #dee2e6;
+            padding: 5px;
+        }
+
+        .table thead th {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+        }
+
+        table tbody:nth-of-type(1) tr:nth-of-type(1) td {
+            border-top: none !important;
+        }
+
+        .table thead th {
+            border-top: none !important;
+            border-bottom: none !important;
+            box-shadow: inset 0 2px 0 #000000,
+                        inset 0 -2px 0 #000000;
+            padding: 2px 0;
+        }
+
+        table thead th {
+            background-clip: padding-box
+        }
     </style>
 
-    @if(!string.IsNullOrEmpty(UiConfigurationContext.Current.CustomCssPath))
+    @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
     {
-        <link rel="stylesheet" href="@UiConfigurationContext.Current.CustomCssPath">
+        <link rel="stylesheet" href="@UiContext.CustomCssPath">
     }
 </head>
 <body class="container-fluid">
@@ -154,7 +206,8 @@
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</span>
+                    <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
+                    <div>({{model.language }})</div>
                 </div>
                 <div class="modal-body">
                     <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
@@ -171,23 +224,62 @@
     </div>
 </script>
 
+<script type="text/x-template" id="modal-languages-template">
+    <div class="modal-mask" transition="languages-modal" @@keydown.esc="$emit('close')">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <span name="header" class="header">@Localizer.GetString(_ => _.AvailableLanguages)</span>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <ul class="visible-language-list">
+                            <li>
+                                <input id="selectall" name="SelectAll" type="checkbox" @@change="$emit('select-all', { $event })" v-model="model.allLanguagesChecked" />
+                                <label for="selectall"><span>@Localizer.GetString(_ => _.SelectAll)</span></label>
+                            </li>
+                            <li v-for="lng in model.supportedLanguages">
+                                <input :id="lng.code" :value="lng.code" name="language" type="checkbox" v-model="model.checkedLanguages" />
+                                <label :for="lng.code"><span>{{ lng.titleDisplay }}</span></label>
+                            </li>
+                        </ul>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                <slot name="footer">
+                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@Localizer.GetString(_ => _.Save)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@Localizer.GetString(_ => _.Cancel)</button>
+                </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
 <div id="app" v-cloak>
     <div style="min-height: 75px;" class="row align-items-center">
         <div class="col-lg-6">
             <span class="float-left">
                 <span class="h1">@Localizer.GetString(_ => _.Header)</span>
+                <psan><small>(v@(UiContext.Version.Value))</small></psan>
             </span>
         </div>
         <div class="col-lg-6">
             <div class="float-right">
-                <a href="?handler=Export&format=json" role="button" class="btn btn-light">@Localizer.GetString(_ => _.Export)</a>
+                <div class="btn-group dropdown">
+                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Localizer.GetString(_ => _.Export)</button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
+                        @foreach (var exportProvider in ConfigContext.Export.Providers)
+                        {
+                            <a href="?handler=Export&format=@exportProvider.ProviderId" class="dropdown-item">@exportProvider.FormatName</a>
+                        }
+                    </div>
+                </div>
                 <a href="?handler=CleanCache" onclick="return confirm('@Localizer.GetString(_ => _.CleanCacheConfirmation)');" role="button" class="btn btn-light">@Localizer.GetString(_ => _.CleanCache)</a>
                 @*<div class="btn-group">
                     <button type="button" class="btn btn-light">@Localizer.GetString(_ => _.Import)</button>
                 </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-light">@Localizer.GetString(_ => _.Languages)</button>
-                </div>*@
+                *@
                 <div class="btn-group dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@Localizer.GetString(_ => _.Settings)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
@@ -195,11 +287,13 @@
                         <a class="dropdown-item" :class="{ 'dropdown-item-checked': model.options.showOnlyEmptyResources }" href="#" @@click="toggleEmptyResources">@Localizer.GetString(_ => _.ShowOnlyEmptyResources)</a>
                         <a class="dropdown-item dropdown-item-checked disabled" href="#">@Localizer.GetString(_ => _.TableView)</a>
                         <a class="dropdown-item" href="#" @@click="showTreeView">@Localizer.GetString(_ => _.TreeView)</a>
+                        <a class="dropdown-item" href="#" @@click="openLanguagesModal">@Localizer.GetString(_ => _.Languages)</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <langmodal v-if="model.showLanguagesModal" v-on:select-all="selectAllLanguages" @@save="saveLanguages" @@close="model.showLanguagesModal = false" :model="model"></langmodal>
     <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
     <div class="row">
         <div class="form-group offset-lg-9 col-lg-3">
@@ -208,15 +302,15 @@
     </div>
     <span class="error">{{model.error}}</span>
     <div classs="table-responsive">
-        <table v-show="!model.loading" class="table table-bordered table-hover table-sm">
+        <table v-show="!model.loading" class="table table-hover table-sm">
             <thead class="thead-dark">
             <tr>
                 <th>@Localizer.GetString(_ => _.ResourceKeyColumn)</th>
                 <th v-if="model.options.showInvariantCulture">@Localizer.GetString(_ => _.InvariantCultureColumn)</th>
-                <th v-for="lang in model.supportedLanguages" scope="col">{{lang.titleDisplay}}</th>
+                <th v-for="lang in model.visibleLanguages" scope="col">{{lang.display}}</th>
                 <th>@Localizer.GetString(_ => _.HiddenColumn)</th>
                 <th>@Localizer.GetString(_ => _.FromCodeColumn)</th>
-                @if (!Config.HideDeleteButton)
+                @if (!UiContext.HideDeleteButton)
                 {
                     <th>@Localizer.GetString(_ => _.DeleteColumn)</th>
                 }
@@ -229,14 +323,14 @@
                 <td v-if="model.options.showInvariantCulture">
                     <span>{{ resource["_"] }}</span>
                 </td>
-                <td v-for="lang in model.supportedLanguages">
+                <td v-for="lang in model.visibleLanguages">
                     <span class="translation" @@click="edit(resource, lang.code)" v-show="resource[lang.code] && resource[lang.code].trim() != ''">{{ resource[lang.code] }}</span>
                     <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] != null && resource[lang.code].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</span>
                     <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] == null">N/A</span>
                 </td>
                 <td>{{ resource.isHidden }}</td>
                 <td>{{ resource.isFromCode }}</td>
-                @if (!Config.HideDeleteButton)
+                @if (!UiContext.HideDeleteButton)
                 {
                     <td><a href="#" class="btn" v-bind:class="{ disabled: resource.isFromCode }" @@click="deleteResource(resource)"><i class="fas fa-trash"></i></a></td>
                 }
@@ -245,14 +339,21 @@
     </div>
 </div>
 
-<script src="res/node_modules.jquery.dist.jquery.js"></script>
-<script src="res/node_modules.popper.js.dist.umd.popper.js"></script>
-<script src="res/node_modules.bootstrap.dist.js.bootstrap.js"></script>
-<script src="res/node_modules.vue.dist.vue.min.js"></script>
-<script src="res/node_modules.axios.dist.axios.min.js"></script>
-<script src="res/node_modules.vue_directive_tooltip.dist.vueDirectiveTooltip.min.js"></script>
+@Model.IncludeScript("jquery.min.js")
+@Model.IncludeScript("popper.min.js")
+@Model.IncludeScript("bootstrap.min.js")
+@Model.IncludeScript("vue.min.js")
+@Model.IncludeScript("axios.min.js")
+@Model.IncludeScript("vueDirectiveTooltip.min.js")
 
 <script type="text/javascript">
+    Vue.component('langmodal', {
+        template: '#modal-languages-template',
+        props: {
+            model: Object
+        },
+    });
+
     Vue.component('modal', {
         template: '#modal-template',
         props: {
@@ -278,8 +379,12 @@
     var vm = {
         resources: [],
         supportedLanguages: [],
+        visibleLanguages: [],
         loading: true,
         showModal: false,
+        showLanguagesModal: false,
+        checkedLanguages: [],
+        allLanguagesChecked: false,
         currentResource: {},
         searchKeyword: '',
         error: '',
@@ -303,6 +408,9 @@
                         var result = response.data;
                         this.model.resources = result.resources;
                         this.model.supportedLanguages = result.languages;
+                        this.model.visibleLanguages = result.visibleLanguages;
+                        this.model.checkedLanguages = $.map(result.visibleLanguages, function (l) { return l.code; });
+                        this.model.allLanguagesChecked = this.model.supportedLanguages.length == this.model.visibleLanguages.length;
                         this.model.loading = false;
                         this.model.error = '';
                         this.model.options = result.options;
@@ -365,6 +473,32 @@
 
             showTreeView() {
                 window.location.href = window.location.origin + window.location.pathname + 'tree/';
+            },
+
+            openLanguagesModal() {
+                this.model.showLanguagesModal = true;
+            },
+
+            selectAllLanguages(event) {
+                if(event.$event.target.checked)
+                {
+                    // select all languages
+                    this.model.checkedLanguages = $.map(this.model.supportedLanguages, function (l) { return l.code; });
+                }
+                else {
+                    this.model.checkedLanguages = [];
+                }
+            },
+
+            saveLanguages() {
+                this.model.showLanguagesModal = false;
+                this.model.visibleLanguages = [];
+
+                for (const checkedLanguage of this.model.checkedLanguages) {
+                    this.model.visibleLanguages.push(this.model.supportedLanguages.find(({ code}) => code === checkedLanguage));
+                }
+
+                document.cookie = "LocalizationProvider_VisibleLanguages=invariant|" + this.model.checkedLanguages.join('|');
             }
         },
         computed: {
