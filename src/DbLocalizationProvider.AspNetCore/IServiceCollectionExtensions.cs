@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AspNetCore.Cache;
+using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Internal;
@@ -12,6 +13,7 @@ using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Refactoring;
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -124,7 +126,9 @@ namespace DbLocalizationProvider.AspNetCore
                 //    });
 
                 services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, ConfigureModelMetadataDetailsProviders>());
-                services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
+                //services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
+
+                services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedAttributeAdapterProvider>();
             }
 
             services.AddHttpContextAccessor();
