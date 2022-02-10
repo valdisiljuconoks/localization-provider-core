@@ -117,17 +117,7 @@ namespace DbLocalizationProvider.AspNetCore
             // setup model metadata providers
             if (ctx.ModelMetadataProviders.ReplaceProviders)
             {
-                //services.Configure<MvcOptions>(
-                //    opt =>
-                //    {
-                //        opt.ModelMetadataDetailsProviders.Add(
-                //            new LocalizedDisplayMetadataProvider(
-                //                new ModelMetadataLocalizationHelper(localizationProvider, keyBuilder, ctx), ctx));
-                //    });
-
                 services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, ConfigureModelMetadataDetailsProviders>());
-                //services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
-
                 services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedAttributeAdapterProvider>();
             }
 

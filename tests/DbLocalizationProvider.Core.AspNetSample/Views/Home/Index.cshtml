@@ -58,6 +58,8 @@
 
 <hr/>
 
+<h2>Data Annotations</h2>
+
 <div>
     HtmlHelper.LabelFor(UserName) - @Html.LabelFor(m => m.UserName)
 </div>
@@ -81,6 +83,9 @@
 </div>
 
 <form asp-controller="Home" asp-action="Index" method="post">
+    <div asp-validation-summary="All" class="validation-summary-errors">
+        <span>Please correct the following errors:</span>
+    </div>
     <div>
         <label asp-for="UserName"></label>
         <input asp-for="UserName"/>
@@ -90,6 +95,41 @@
         <label asp-for="Password"></label>
         <input asp-for="Password" type="password"/>
         <span asp-validation-for="Password"></span>
+    </div>
+    <div>
+        <label asp-for="EmailAddress"></label>
+        <input asp-for="EmailAddress"/>
+        <span asp-validation-for="EmailAddress"></span>
+    </div>
+    <div>
+        <label asp-for="Phone"></label>
+        <input asp-for="Phone"/>
+        <span asp-validation-for="Phone"></span>
+    </div>
+    <div>
+        <label asp-for="Url"></label>
+        <input asp-for="Url"/>
+        <span asp-validation-for="Url"></span>
+    </div>
+    <div>
+        <label asp-for="MaxLength"></label>
+        <input asp-for="MaxLength"/>
+        <span asp-validation-for="MaxLength"></span>
+    </div>
+    <div>
+        <label asp-for="MinLength"></label>
+        <input asp-for="MinLength"/>
+        <span asp-validation-for="MinLength"></span>
+    </div>
+    <div>
+        <label asp-for="Range"></label>
+        <input asp-for="Range"/>
+        <span asp-validation-for="Range"></span>
+    </div>
+    <div>
+        <label asp-for="RegularExpression"></label>
+        <input asp-for="RegularExpression"/>
+        <span asp-validation-for="RegularExpression"></span>
     </div>
     <fieldset>
         <legend>Address</legend>

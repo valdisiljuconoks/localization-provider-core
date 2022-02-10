@@ -43,5 +43,26 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
                     validationContext.ModelMetadata.PropertyName,
                     Attribute));
         }
+
+        /// <summary>
+        /// Gets the error message.
+        /// </summary>
+        /// <param name="validationContext">The context to use in message creation.</param>
+        /// <param name="arguments">Arguments to pass to error message formatting procedure.</param>
+        /// <returns>The localized error message.</returns>
+        public string GetErrorMessage(ModelValidationContextBase validationContext, params object[] arguments)
+        {
+            if (validationContext == null)
+            {
+                throw new ArgumentNullException(nameof(validationContext));
+            }
+
+            return _stringLocalizer?.GetString(
+                _resourceKeyBuilder.BuildResourceKey(
+                    validationContext.ModelMetadata.ContainerType,
+                    validationContext.ModelMetadata.PropertyName,
+                    Attribute),
+                arguments);
+        }
     }
 }

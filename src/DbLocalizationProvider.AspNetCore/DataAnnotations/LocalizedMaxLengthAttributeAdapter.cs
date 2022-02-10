@@ -10,19 +10,17 @@ using Microsoft.Extensions.Localization;
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations
 {
     /// <inheritdoc />
-    public class LocalizedStringLengthAttributeAdapter : LocalizedAttributeAdapterBase<StringLengthAttribute>
+    public class LocalizedMaxLengthAttributeAdapter : LocalizedAttributeAdapterBase<MaxLengthAttribute>
     {
         private readonly string _max;
-        private readonly string _min;
 
         /// <inheritdoc />
-        public LocalizedStringLengthAttributeAdapter(
-            StringLengthAttribute attribute,
+        public LocalizedMaxLengthAttributeAdapter(
+            MaxLengthAttribute attribute,
             IStringLocalizer stringLocalizer,
             ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
         {
-            _max = Attribute.MaximumLength.ToString(CultureInfo.InvariantCulture);
-            _min = Attribute.MinimumLength.ToString(CultureInfo.InvariantCulture);
+            _max = Attribute.Length.ToString(CultureInfo.InvariantCulture);
         }
 
         /// <inheritdoc />
@@ -34,17 +32,8 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             }
 
             MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, "data-val-length", GetErrorMessage(context, _min, _max));
-
-            if (Attribute.MaximumLength != int.MaxValue)
-            {
-                MergeAttribute(context.Attributes, "data-val-length-max", _max);
-            }
-
-            if (Attribute.MinimumLength != 0)
-            {
-                MergeAttribute(context.Attributes, "data-val-length-min", _min);
-            }
+            MergeAttribute(context.Attributes, "data-val-maxlength", GetErrorMessage(context, Attribute.Length));
+            MergeAttribute(context.Attributes, "data-val-maxlength-max", _max);
         }
     }
 }

@@ -3,27 +3,34 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations
 {
     /// <inheritdoc />
-    public class LocalizedStringLengthAttributeAdapter : LocalizedAttributeAdapterBase<StringLengthAttribute>
+    public class LocalizedDataTypeAttributeAdapter : LocalizedAttributeAdapterBase<DataTypeAttribute>
     {
-        private readonly string _max;
-        private readonly string _min;
-
         /// <inheritdoc />
-        public LocalizedStringLengthAttributeAdapter(
-            StringLengthAttribute attribute,
+        public LocalizedDataTypeAttributeAdapter(
+            DataTypeAttribute attribute,
+            string ruleName,
             IStringLocalizer stringLocalizer,
             ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
         {
-            _max = Attribute.MaximumLength.ToString(CultureInfo.InvariantCulture);
-            _min = Attribute.MinimumLength.ToString(CultureInfo.InvariantCulture);
+            if (string.IsNullOrEmpty(ruleName))
+            {
+                throw new ArgumentNullException(nameof(ruleName));
+            }
+
+            RuleName = ruleName;
         }
+
+        /// <summary>
+        /// Name of the rule to check.
+        /// </summary>
+        public string RuleName { get; set; }
 
         /// <inheritdoc />
         public override void AddValidation(ClientModelValidationContext context)
@@ -34,17 +41,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             }
 
             MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, "data-val-length", GetErrorMessage(context, _min, _max));
-
-            if (Attribute.MaximumLength != int.MaxValue)
-            {
-                MergeAttribute(context.Attributes, "data-val-length-max", _max);
-            }
-
-            if (Attribute.MinimumLength != 0)
-            {
-                MergeAttribute(context.Attributes, "data-val-length-min", _min);
-            }
+            MergeAttribute(context.Attributes, RuleName, GetErrorMessage(context, Attribute.GetDataTypeName()));
         }
     }
 }
