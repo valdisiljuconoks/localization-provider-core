@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AdminUI.AspNetCore.Queries;
@@ -16,14 +18,18 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.Core.AspNetSample
 {
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -137,6 +143,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 //_.UseAzureTables("UseDevelopmentStorage=true");
 
                 _.ManualResourceProvider = new SomeManualResources();
+                _.ModelMetadataProviders.ReplaceProviders = true;
                 _.FlexibleRefactoringMode = true;
             });
 
@@ -144,17 +151,8 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 .AddDbLocalizationProviderAdminUI(_ =>
                 {
                     _.RootUrl = "/localization-admin";
-
-                    //_.AuthorizedAdminRoles.Clear();
-                    //_.AuthorizedAdminRoles.Add("Administrators");
-
-                    //_.AuthorizedEditorRoles.Clear();
-                    //_.AuthorizedEditorRoles.Add("Translators");
-
                     //_.AccessPolicyOptions = builder => builder.AddRequirements(new RolesAuthorizationRequirement(new [] { "test" }));
-
                     _.ShowInvariantCulture = true;
-
                     _.ShowHiddenResources = false;
                     _.DefaultView = ResourceListView.Tree;
                     _.CustomCssPath = "/css/custom-adminui.css";

@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.AspNetCore.Cache;
+using DbLocalizationProvider.AspNetCore.DataAnnotations;
 using DbLocalizationProvider.AspNetCore.Queries;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Internal;
@@ -12,6 +13,7 @@ using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Refactoring;
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
@@ -115,16 +117,8 @@ namespace DbLocalizationProvider.AspNetCore
             // setup model metadata providers
             if (ctx.ModelMetadataProviders.ReplaceProviders)
             {
-                //services.Configure<MvcOptions>(
-                //    opt =>
-                //    {
-                //        opt.ModelMetadataDetailsProviders.Add(
-                //            new LocalizedDisplayMetadataProvider(
-                //                new ModelMetadataLocalizationHelper(localizationProvider, keyBuilder, ctx), ctx));
-                //    });
-
                 services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, ConfigureModelMetadataDetailsProviders>());
-                services.TryAddEnumerable(ServiceDescriptor.Transient<IConfigureOptions<MvcViewOptions>, ConfigureMvcViews>());
+                services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedAttributeAdapterProvider>();
             }
 
             services.AddHttpContextAccessor();

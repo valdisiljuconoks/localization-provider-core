@@ -9,32 +9,32 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
     [Hidden]
     public class Resources
     {
-        public string Title = "Admin UI";
-        public string Header = "Localization Resource Editor";
-        public string Export = "Export";
-        public string Import = "Import";
-        public string TableView = "Table View";
-        public string TreeView = "Tree View";
-        public string Languages = "Languages";
-        public string Settings = "Settings";
-        public string ShowHiddenResources = "Show Hidden Resources";
-        public string Save = "Ok, Save!";
-        public string Cancel = "Cancel";
-        public string Remove = "Remove";
-        public string SelectAll = "(Select All)";
-        public string RemoveConfirmation = "Do you want to remove this translation?";
-        public string SearchPlaceholder = "if it gets too noisy, type filter here...";
-        public string ResourceKeyColumn = "Key";
-        public string InvariantCultureColumn = "Invariant";
-        public string HiddenColumn = "Is Hidden?";
-        public string FromCodeColumn = "From code?";
-        public string DeleteColumn = "Delete?";
-        public string DeleteConfirmation = "Do you want to throw out this resource?";
-        public string ShowOnlyEmptyResources = "Show Only Empty Resources";
-        public string EmptyTranslation = "Empty";
-        public string CleanCache = "Clean Cache";
-        public string CleanCacheConfirmation = "Wanna start with clean cache state?";
-        public string ErrorLoadingResources = "There was an error while loading resources. Please check logs for more details!";
-        public string AvailableLanguages = "Available Languages";
+        public static string Title = "Admin UI";
+        public static string Header = "Localization Resource Editor";
+        public static string Export = "Export";
+        public static string Import = "Import";
+        public static string TableView = "Table View";
+        public static string TreeView = "Tree View";
+        public static string Languages = "Languages";
+        public static string Settings = "Settings";
+        public static string ShowHiddenResources = "Show Hidden Resources";
+        public static string Save = "Ok, Save!";
+        public static string Cancel = "Cancel";
+        public static string Remove = "Remove";
+        public static string SelectAll = "(Select All)";
+        public static string RemoveConfirmation = "Do you want to remove this translation?";
+        public static string SearchPlaceholder = "if it gets too noisy, type filter here...";
+        public static string ResourceKeyColumn = "Key";
+        public static string InvariantCultureColumn = "Invariant";
+        public static string HiddenColumn = "Is Hidden?";
+        public static string FromCodeColumn = "From code?";
+        public static string DeleteColumn = "Delete?";
+        public static string DeleteConfirmation = "Do you want to throw out this resource?";
+        public static string ShowOnlyEmptyResources = "Show Only Empty Resources";
+        public static string EmptyTranslation = "Empty";
+        public static string CleanCache = "Clean Cache";
+        public static string CleanCacheConfirmation = "Wanna start with clean cache state?";
+        public static string ErrorLoadingResources = "There was an error while loading resources. Please check logs for more details!";
+        public static string AvailableLanguages = "Available Languages";
     }
 }

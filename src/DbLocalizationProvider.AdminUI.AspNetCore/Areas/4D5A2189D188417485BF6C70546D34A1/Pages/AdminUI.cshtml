@@ -7,7 +7,8 @@
 
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUIViewModel
 
-@inject IHtmlLocalizer<Resources> Localizer
+@*@inject IHtmlLocalizer<Resources> Localizer*@
+@inject ILocalizationProvider LocalizationProvider
 @inject ConfigurationContext ConfigContext
 @inject UiConfigurationContext UiContext
 
@@ -21,7 +22,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@Localizer.GetString(_ => _.Title)</title>
+    <title>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Title)</title>
     @Model.IncludeStyle("bootstrap.min.css")
     @Model.IncludeStyle("vueDirectiveTooltip.css")
     @Model.IncludeStyle("fontawesome-all.min.css")
@@ -214,9 +215,9 @@
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
-                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@Localizer.GetString(_ => _.Save)</button>
-                    <button class="modal-default-button btn btn-danger" :disabled="!model.isModified" @@click="$emit('remove')">@Localizer.GetString(_ => _.Remove)</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@Localizer.GetString(_ => _.Cancel)</button>
+                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
+                    <button class="modal-default-button btn btn-danger" :disabled="!model.isModified" @@click="$emit('remove')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Remove)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
                 </slot>
                 </div>
             </div>
@@ -229,14 +230,14 @@
         <div class="modal-wrapper">
             <div class="modal-container">
                 <div class="modal-header">
-                    <span name="header" class="header">@Localizer.GetString(_ => _.AvailableLanguages)</span>
+                    <span name="header" class="header">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.AvailableLanguages)</span>
                 </div>
                 <div class="modal-body">
                     <form>
                         <ul class="visible-language-list">
                             <li>
                                 <input id="selectall" name="SelectAll" type="checkbox" @@change="$emit('select-all', { $event })" v-model="model.allLanguagesChecked" />
-                                <label for="selectall"><span>@Localizer.GetString(_ => _.SelectAll)</span></label>
+                                <label for="selectall"><span>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SelectAll)</span></label>
                             </li>
                             <li v-for="lng in model.supportedLanguages">
                                 <input :id="lng.code" :value="lng.code" name="language" type="checkbox" v-model="model.checkedLanguages" />
@@ -247,8 +248,8 @@
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
-                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@Localizer.GetString(_ => _.Save)</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@Localizer.GetString(_ => _.Cancel)</button>
+                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
                 </slot>
                 </div>
             </div>
@@ -260,14 +261,14 @@
     <div style="min-height: 75px;" class="row align-items-center">
         <div class="col-lg-6">
             <span class="float-left">
-                <span class="h1">@Localizer.GetString(_ => _.Header)</span>
+                <span class="h1">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Header)</span>
                 <psan><small>(v@(UiContext.Version.Value))</small></psan>
             </span>
         </div>
         <div class="col-lg-6">
             <div class="float-right">
                 <div class="btn-group dropdown">
-                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Localizer.GetString(_ => _.Export)</button>
+                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
                         @foreach (var exportProvider in ConfigContext.Export.Providers)
                         {
@@ -275,19 +276,19 @@
                         }
                     </div>
                 </div>
-                <a href="?handler=CleanCache" onclick="return confirm('@Localizer.GetString(_ => _.CleanCacheConfirmation)');" role="button" class="btn btn-light">@Localizer.GetString(_ => _.CleanCache)</a>
+                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
                 @*<div class="btn-group">
-                    <button type="button" class="btn btn-light">@Localizer.GetString(_ => _.Import)</button>
+                    <button type="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
                 </div>
                 *@
                 <div class="btn-group dropdown">
-                    <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@Localizer.GetString(_ => _.Settings)</button>
+                    <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Settings)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" :class="{ 'dropdown-item-checked': model.options.showHiddenResources }" href="#" @@click="toggleHiddenResources">@Localizer.GetString(_ => _.ShowHiddenResources)</a>
-                        <a class="dropdown-item" :class="{ 'dropdown-item-checked': model.options.showOnlyEmptyResources }" href="#" @@click="toggleEmptyResources">@Localizer.GetString(_ => _.ShowOnlyEmptyResources)</a>
-                        <a class="dropdown-item dropdown-item-checked disabled" href="#">@Localizer.GetString(_ => _.TableView)</a>
-                        <a class="dropdown-item" href="#" @@click="showTreeView">@Localizer.GetString(_ => _.TreeView)</a>
-                        <a class="dropdown-item" href="#" @@click="openLanguagesModal">@Localizer.GetString(_ => _.Languages)</a>
+                        <a class="dropdown-item" :class="{ 'dropdown-item-checked': model.options.showHiddenResources }" href="#" @@click="toggleHiddenResources">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ShowHiddenResources)</a>
+                        <a class="dropdown-item" :class="{ 'dropdown-item-checked': model.options.showOnlyEmptyResources }" href="#" @@click="toggleEmptyResources">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ShowOnlyEmptyResources)</a>
+                        <a class="dropdown-item dropdown-item-checked disabled" href="#">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.TableView)</a>
+                        <a class="dropdown-item" href="#" @@click="showTreeView">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.TreeView)</a>
+                        <a class="dropdown-item" href="#" @@click="openLanguagesModal">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Languages)</a>
                     </div>
                 </div>
             </div>
@@ -297,7 +298,7 @@
     <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
     <div class="row">
         <div class="form-group offset-lg-9 col-lg-3">
-            <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@Localizer.GetString(_ => _.SearchPlaceholder)"/>
+            <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder)"/>
         </div>
     </div>
     <span class="error">{{model.error}}</span>
@@ -305,14 +306,14 @@
         <table v-show="!model.loading" class="table table-hover table-sm">
             <thead class="thead-dark">
             <tr>
-                <th>@Localizer.GetString(_ => _.ResourceKeyColumn)</th>
-                <th v-if="model.options.showInvariantCulture">@Localizer.GetString(_ => _.InvariantCultureColumn)</th>
+                <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ResourceKeyColumn)</th>
+                <th v-if="model.options.showInvariantCulture">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.InvariantCultureColumn)</th>
                 <th v-for="lang in model.visibleLanguages" scope="col">{{lang.display}}</th>
-                <th>@Localizer.GetString(_ => _.HiddenColumn)</th>
-                <th>@Localizer.GetString(_ => _.FromCodeColumn)</th>
+                <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.HiddenColumn)</th>
+                <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.FromCodeColumn)</th>
                 @if (!UiContext.HideDeleteButton)
                 {
-                    <th>@Localizer.GetString(_ => _.DeleteColumn)</th>
+                    <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.DeleteColumn)</th>
                 }
             </tr>
             </thead>
@@ -325,7 +326,7 @@
                 </td>
                 <td v-for="lang in model.visibleLanguages">
                     <span class="translation" @@click="edit(resource, lang.code)" v-show="resource[lang.code] && resource[lang.code].trim() != ''">{{ resource[lang.code] }}</span>
-                    <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] != null && resource[lang.code].trim() == ''">@Localizer.GetString(_ => _.EmptyTranslation)</span>
+                    <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] != null && resource[lang.code].trim() == ''">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.EmptyTranslation)</span>
                     <span class="translation empty" @@click="edit(resource, lang.code)" v-show="resource[lang.code] == null">N/A</span>
                 </td>
                 <td>{{ resource.isHidden }}</td>
@@ -415,7 +416,7 @@
                         this.model.error = '';
                         this.model.options = result.options;
                     } else {
-                        this.model.error = '@Localizer.GetString(_ => _.ErrorLoadingResources)';
+                        this.model.error = '@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ErrorLoadingResources)';
                     }
                 }).catch(function(error) { alert('error retrieving resources: ' + error); });
             },
@@ -445,7 +446,7 @@
             },
 
             remove() {
-                if (confirm('@Localizer.GetString(_ => _.RemoveConfirmation)')) {
+                if (confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.RemoveConfirmation)')) {
                     this.model.showModal = false;
                     axios.post('api/service/remove', this.model.currentResource);
                     var editedResource = this.model.resources.find((r) => { return r.key == this.model.currentResource.key; });
@@ -456,7 +457,7 @@
             },
 
             deleteResource(resource) {
-                if(confirm('@Localizer.GetString(_ => _.DeleteConfirmation)')) {
+                if(confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.DeleteConfirmation)')) {
                     axios.post('api/service/delete', resource).then(() => {
                         this.model.resources.splice(this.model.resources.indexOf(resource), 1);
                     });

@@ -37,10 +37,12 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             var propertyName = context.Key.Name;
             var containerType = context.Key.ContainerType;
 
-            if(containerType == null) return;
+            if (containerType == null)
+            {
+                return;
+            }
 
-            var currentMetaData = modelMetadata.DisplayName?.Invoke();
-            if (currentMetaData == null) return;
+            var currentMetaData = modelMetadata.DisplayName?.Invoke() ?? propertyName;
 
             modelMetadata.DisplayName = () => !_configurationContext.ShouldLookupResource(currentMetaData)
                 ? _metadataHelper.GetTranslation(currentMetaData)
