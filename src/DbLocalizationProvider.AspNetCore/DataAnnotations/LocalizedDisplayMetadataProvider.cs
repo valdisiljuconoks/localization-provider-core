@@ -3,6 +3,8 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
+using DbLocalizationProvider.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations
@@ -44,15 +46,23 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
 
             var currentMetaData = modelMetadata.DisplayName?.Invoke() ?? propertyName;
 
-            modelMetadata.DisplayName = () => !_configurationContext.ShouldLookupResource(currentMetaData)
-                ? _metadataHelper.GetTranslation(currentMetaData)
-                : _metadataHelper.GetTranslation(containerType, propertyName);
-
-            var displayAttribute = theAttributes.OfType<DisplayAttribute>().FirstOrDefault();
-            if(displayAttribute?.Description != null)
+            if (containerType.GetCustomAttribute<LocalizedModelAttribute>() == null
+                && containerType.GetCustomAttribute<LocalizedResourceAttribute>() == null)
             {
-                modelMetadata.Description = () =>
-                    _metadataHelper.GetTranslation(containerType, $"{propertyName}-Description");
+                modelMetadata.DisplayName = () => currentMetaData;
+            }
+            else
+            {
+                modelMetadata.DisplayName = () => !_configurationContext.ShouldLookupResource(currentMetaData)
+                    ? _metadataHelper.GetTranslation(currentMetaData)
+                    : _metadataHelper.GetTranslation(containerType, propertyName);
+
+                var displayAttribute = theAttributes.OfType<DisplayAttribute>().FirstOrDefault();
+                if (displayAttribute?.Description != null)
+                {
+                    modelMetadata.Description = () =>
+                        _metadataHelper.GetTranslation(containerType, $"{propertyName}-Description");
+                }
             }
         }
     }
