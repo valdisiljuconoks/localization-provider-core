@@ -22,6 +22,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         /// Use this method if you wanna see AdminUI under given path.
         /// </summary>
         /// <param name="app">Whatever</param>
+        /// <exception cref="ArgumentNullException">Is thrown if <see cref="UiConfigurationContext.RootUrl"/> is not set.</exception>
         /// <returns>If you want to chain calls further, you can use the same application builder that was used.</returns>
         public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app)
         {

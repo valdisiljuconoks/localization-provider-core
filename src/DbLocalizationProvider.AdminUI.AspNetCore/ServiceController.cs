@@ -107,9 +107,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         private LocalizationResourceApiTreeModel PrepareTreeViewModel()
         {
             var (resources, languages) = GetResources();
+            var visibleLanguages = GetVisibleLanguages(languages);
+
             var result = new LocalizationResourceApiTreeModel(resources,
                                                               languages,
-                                                              languages,
+                                                              visibleLanguages ?? languages,
                                                               _config.MaxResourceKeyPopupTitleLength,
                                                               _config.MaxResourceKeyDisplayLength,
                                                               BuildOptions());

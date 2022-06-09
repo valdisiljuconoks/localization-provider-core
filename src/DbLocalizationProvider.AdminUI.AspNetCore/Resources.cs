@@ -36,5 +36,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public static string CleanCacheConfirmation = "Wanna start with clean cache state?";
         public static string ErrorLoadingResources = "There was an error while loading resources. Please check logs for more details!";
         public static string AvailableLanguages = "Available Languages";
+        public static string XliffLanguages = "Select XLIFF Export Languages";
+        public static string XliffLanguagesSource = "Source Language";
+        public static string XliffLanguagesTarget = "Target Language";
     }
 }
