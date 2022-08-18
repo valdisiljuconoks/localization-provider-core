@@ -233,6 +233,29 @@
     </div>
 </script>
 
+<script type="text/x-template" id="modal-key-template">
+    <div class="modal-mask" transition="modal" @@keydown.esc="$emit('close')">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
+                    <div>({{model.language }})</div>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="1" cols="50" v-model="model.key" id="model-key-template-key" ref="keyEditor" placeholder="Resource Key"></textarea>
+                    <textarea rows="6" cols="50" v-model="model.translation" id="model-key-template-translation" ref="keyTranslationEditor" placeholder="Translation"></textarea>
+                </div>
+                <div class="modal-footer">
+                <slot name="footer">
+                    <button class="modal-default-button btn btn-primary" @@click="$emit('add')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-template" id="modal-languages-template">
     <div class="modal-mask" transition="languages-modal" @@keydown.esc="$emit('close')">
         <div class="modal-wrapper">
@@ -316,6 +339,7 @@
         <div class="col-lg-6">
             <div class="float-right">
                 <div class="btn-group dropdown">
+                    <a href="#" @@click="newResourceModal()" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</a>
                     <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
                         @foreach (var exportProvider in ConfigContext.Export.Providers)
@@ -341,9 +365,12 @@
             </div>
         </div>
     </div>
+
     <langmodal v-if="model.showLanguagesModal" v-on:select-all="selectAllLanguages" @@save="saveLanguages" @@close="model.showLanguagesModal = false" :model="model"></langmodal>
     <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
+    <addmodal v-if="model.showAddModal" @@add="addResource" @@close="model.showAddModal = false" :model="model.currentResource"></addmodal>
     <xlifflangmodal v-if="model.showXliffLanguagesModal" @@export="exportXliff" @@close="model.showXliffLanguagesModal = false" :model="model"></xlifflangmodal>
+
     <div class="row">
         <div class="form-group offset-lg-9 col-lg-3">
             <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder)"/>
@@ -425,6 +452,21 @@
         }
     });
 
+        Vue.component('addmodal', {
+        template: '#modal-key-template',
+        props: {
+            model: Object
+        },
+        data: function() {
+            return {
+                open: false
+            };
+        },
+        mounted: function() {
+            this.$refs.keyEditor.focus();
+        }
+    });
+
     Vue.use(vueDirectiveTooltip, {
         delay: 500,
         placement: 'top',
@@ -438,6 +480,7 @@
         visibleLanguages: [],
         loading: true,
         showModal: false,
+        showAddModal: false,
         showLanguagesModal: false,
         checkedLanguages: [],
         allLanguagesChecked: false,
@@ -493,6 +536,7 @@
 
             save() {
                 this.model.showModal = false;
+                this.model.showAddModal = false;
                 axios.post('api/service/save', this.model.currentResource);
 
                 // update viewmodel
@@ -501,6 +545,19 @@
                     editedResource[this.model.currentResource.language] = this.model.currentResource.translation;
                     editedResource.isModified = true;
                 }
+            },
+
+            newResourceModal() {
+                this.model.currentResource.language = this.model.visibleLanguages[0].code;
+                this.model.showAddModal = true;
+            },
+
+            addResource() {
+                console.log('addResource executed');
+                this.model.showAddModal = false;
+                axios.post('api/service/add', this.model.currentResource);
+
+                this.loadData();
             },
 
             remove() {

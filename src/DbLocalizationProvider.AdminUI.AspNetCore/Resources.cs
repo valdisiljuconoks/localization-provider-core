@@ -11,6 +11,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
     {
         public static string Title = "Admin UI";
         public static string Header = "Localization Resource Editor";
+        public static string Add = "Add";
         public static string Export = "Export";
         public static string Import = "Import";
         public static string TableView = "Table View";
