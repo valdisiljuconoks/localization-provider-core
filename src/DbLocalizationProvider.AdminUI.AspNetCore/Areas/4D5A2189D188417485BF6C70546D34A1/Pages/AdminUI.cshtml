@@ -553,7 +553,6 @@
             },
 
             addResource() {
-                console.log('addResource executed');
                 this.model.showAddModal = false;
                 axios.post('api/service/add', this.model.currentResource);
 
