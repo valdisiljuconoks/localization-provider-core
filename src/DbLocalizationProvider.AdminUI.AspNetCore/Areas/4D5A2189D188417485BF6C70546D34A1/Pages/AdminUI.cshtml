@@ -242,8 +242,8 @@
                     <div>({{model.language }})</div>
                 </div>
                 <div class="modal-body">
-                    <textarea rows="1" cols="50" v-model="model.key" id="model-key-template-key" ref="keyEditor" placeholder="Resource Key"></textarea>
-                    <textarea rows="6" cols="50" v-model="model.translation" id="model-key-template-translation" ref="keyTranslationEditor" placeholder="Translation"></textarea>
+                    <input type="text" v-model="model.key" class="form-control" id="model-key-template-key" ref="keyEditor" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ResourceKey)" />
+                    <textarea rows="6" cols="50" v-model="model.translation" id="model-key-template-translation" ref="keyTranslationEditor" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Translation)"></textarea>
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
@@ -338,8 +338,8 @@
         </div>
         <div class="col-lg-6">
             <div class="float-right">
+                <a href="#" @@click="newResourceModal()" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</a>
                 <div class="btn-group dropdown">
-                    <a href="#" @@click="newResourceModal()" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</a>
                     <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
                         @foreach (var exportProvider in ConfigContext.Export.Providers)
@@ -452,7 +452,7 @@
         }
     });
 
-        Vue.component('addmodal', {
+    Vue.component('addmodal', {
         template: '#modal-key-template',
         props: {
             model: Object

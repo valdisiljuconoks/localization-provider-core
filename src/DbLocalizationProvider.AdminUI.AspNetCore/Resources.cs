@@ -40,5 +40,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public static string XliffLanguages = "Select XLIFF Export Languages";
         public static string XliffLanguagesSource = "Source Language";
         public static string XliffLanguagesTarget = "Target Language";
+        public static string ResourceKey = "Resource Key";
+        public static string Translation = "Translation";
     }
 }

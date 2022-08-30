@@ -53,9 +53,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
         public JsonResult Add([FromBody] AddResourceAndTranslationRequestModel model)
         {
-            var resource = new LocalizationResource(model.Key, true);
-            resource.IsHidden = false;
-            resource.IsModified = true;
+            var resource = new LocalizationResource(model.Key, true) { IsHidden = false, IsModified = true };
             resource.Translations.Add(new LocalizationResourceTranslation { Value = model.Translation, Language = model.Language });
 
             var createNewResourceCmd = new CreateNewResource.Command(resource);
