@@ -3,6 +3,8 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
+using DbLocalizationProvider.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations
@@ -43,6 +45,14 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
             }
 
             var currentMetaData = modelMetadata.DisplayName?.Invoke() ?? propertyName;
+
+            // if container type does not have known attributes - we should not even look for a translation
+            if (containerType.GetCustomAttribute<LocalizedModelAttribute>() == null
+                && containerType.GetCustomAttribute<LocalizedResourceAttribute>() == null)
+            {
+                modelMetadata.DisplayName = () => currentMetaData;
+                return;
+            }
 
             modelMetadata.DisplayName = () => !_configurationContext.ShouldLookupResource(currentMetaData)
                 ? _metadataHelper.GetTranslation(currentMetaData)
