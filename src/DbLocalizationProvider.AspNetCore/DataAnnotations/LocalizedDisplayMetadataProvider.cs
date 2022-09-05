@@ -46,23 +46,23 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations
 
             var currentMetaData = modelMetadata.DisplayName?.Invoke() ?? propertyName;
 
-            // if container type does not have known attributes - we should not even look for a translation
             if (containerType.GetCustomAttribute<LocalizedModelAttribute>() == null
                 && containerType.GetCustomAttribute<LocalizedResourceAttribute>() == null)
             {
                 modelMetadata.DisplayName = () => currentMetaData;
-                return;
             }
-
-            modelMetadata.DisplayName = () => !_configurationContext.ShouldLookupResource(currentMetaData)
-                ? _metadataHelper.GetTranslation(currentMetaData)
-                : _metadataHelper.GetTranslation(containerType, propertyName);
-
-            var displayAttribute = theAttributes.OfType<DisplayAttribute>().FirstOrDefault();
-            if(displayAttribute?.Description != null)
+            else
             {
-                modelMetadata.Description = () =>
-                    _metadataHelper.GetTranslation(containerType, $"{propertyName}-Description");
+                modelMetadata.DisplayName = () => !_configurationContext.ShouldLookupResource(currentMetaData)
+                    ? _metadataHelper.GetTranslation(currentMetaData)
+                    : _metadataHelper.GetTranslation(containerType, propertyName);
+
+                var displayAttribute = theAttributes.OfType<DisplayAttribute>().FirstOrDefault();
+                if (displayAttribute?.Description != null)
+                {
+                    modelMetadata.Description = () =>
+                        _metadataHelper.GetTranslation(containerType, $"{propertyName}-Description");
+                }
             }
         }
     }

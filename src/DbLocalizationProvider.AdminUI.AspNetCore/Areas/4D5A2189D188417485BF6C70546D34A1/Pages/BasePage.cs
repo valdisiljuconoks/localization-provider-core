@@ -82,7 +82,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
             var resourcesQuery = new GetAllResources.Query(true);
             var resources = _queryExecutor.Execute(resourcesQuery);
 
-            var result = exporter.Export(resources.ToList(), null);
+            var result = exporter.Export(resources.ToList(), Request.Query?.ToDictionary(x => x.Key, x => x.Value.ToArray()));
 
             return new FileContentResult(Encoding.UTF8.GetBytes(result.SerializedData), result.FileMimeType)
             {

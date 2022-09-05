@@ -6,8 +6,14 @@ using DbLocalizationProvider.Export;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Configuration
 {
+    /// <summary>
+    /// Settings class to be used by plug-in providers
+    /// </summary>
     public class ProviderSettings
     {
-        public List<IResourceExporter> Exporters { get; set; } = new List<IResourceExporter>();
+        /// <summary>
+        /// List of exporters configured by plug-ins
+        /// </summary>
+        public List<IResourceExporter> Exporters { get; set; } = new();
     }
 }

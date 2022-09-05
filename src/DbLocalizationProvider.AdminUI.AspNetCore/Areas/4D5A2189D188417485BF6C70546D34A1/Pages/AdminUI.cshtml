@@ -35,6 +35,10 @@
             font-size: 24px;
         }
 
+        h2 {
+            font-size: 18px;
+        }
+
         [v-cloak] {
             display: none;
         }
@@ -193,6 +197,10 @@
         table thead th {
             background-clip: padding-box
         }
+
+        .export-xliff-container {
+            display: flex;
+        }
     </style>
 
     @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
@@ -225,6 +233,29 @@
     </div>
 </script>
 
+<script type="text/x-template" id="modal-key-template">
+    <div class="modal-mask" transition="modal" @@keydown.esc="$emit('close')">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
+                    <div>({{model.language }})</div>
+                </div>
+                <div class="modal-body">
+                    <input type="text" v-model="model.key" class="form-control" id="model-key-template-key" ref="keyEditor" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ResourceKey)" />
+                    <textarea rows="6" cols="50" v-model="model.translation" id="model-key-template-translation" ref="keyTranslationEditor" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Translation)"></textarea>
+                </div>
+                <div class="modal-footer">
+                <slot name="footer">
+                    <button class="modal-default-button btn btn-primary" @@click="$emit('add')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-template" id="modal-languages-template">
     <div class="modal-mask" transition="languages-modal" @@keydown.esc="$emit('close')">
         <div class="modal-wrapper">
@@ -247,10 +278,50 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                <slot name="footer">
-                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
-                </slot>
+                    <slot name="footer">
+                        <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
+                        <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                    </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-template" id="modal-export-xliff-languages">
+    <div class="modal-mask" transition="languages-modal" @@keydown.esc="$emit('close')">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <span name="header" class="header">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.XliffLanguages)</span>
+                </div>
+                <div class="modal-body">
+                    <form class="export-xliff-container">
+                        <div>
+                            <div><h2>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.XliffLanguagesSource)</h2></div>
+                            <ul class="visible-language-list">
+                                <li v-for="lng in model.visibleLanguages">
+                                    <input :id="lng.code" :value="lng.code" name="sourceLanguage" type="radio" v-model="model.sourceLanguage" />
+                                    <label :for="lng.code"><span>{{ lng.titleDisplay }}</span></label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <div><h2>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.XliffLanguagesTarget)</h2></div>
+                            <ul class="visible-language-list">
+                                <li v-for="lng in model.visibleLanguages">
+                                    <input :id="lng.code" :value="lng.code" name="targetLanguage" type="radio" v-model="model.targetLanguage" />
+                                    <label :for="lng.code"><span>{{ lng.titleDisplay }}</span></label>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <slot name="footer">
+                        <button class="modal-default-button btn btn-primary" @@click="$emit('export')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
+                        <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                    </slot>
                 </div>
             </div>
         </div>
@@ -267,20 +338,20 @@
         </div>
         <div class="col-lg-6">
             <div class="float-right">
+                <a href="#" @@click="newResourceModal()" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</a>
                 <div class="btn-group dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
                         @foreach (var exportProvider in ConfigContext.Export.Providers)
                         {
-                            <a href="?handler=Export&format=@exportProvider.ProviderId" class="dropdown-item">@exportProvider.FormatName</a>
+                            <a href="#" class="dropdown-item" @@click="handleExportCommand('@exportProvider.ProviderId')">@exportProvider.FormatName</a>
                         }
                     </div>
                 </div>
                 <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
-                @*<div class="btn-group">
-                    <button type="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-light disabled">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
                 </div>
-                *@
                 <div class="btn-group dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Settings)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
@@ -294,8 +365,12 @@
             </div>
         </div>
     </div>
+
     <langmodal v-if="model.showLanguagesModal" v-on:select-all="selectAllLanguages" @@save="saveLanguages" @@close="model.showLanguagesModal = false" :model="model"></langmodal>
     <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
+    <addmodal v-if="model.showAddModal" @@add="addResource" @@close="model.showAddModal = false" :model="model.currentResource"></addmodal>
+    <xlifflangmodal v-if="model.showXliffLanguagesModal" @@export="exportXliff" @@close="model.showXliffLanguagesModal = false" :model="model"></xlifflangmodal>
+
     <div class="row">
         <div class="form-group offset-lg-9 col-lg-3">
             <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder)"/>
@@ -352,7 +427,14 @@
         template: '#modal-languages-template',
         props: {
             model: Object
-        },
+        }
+    });
+
+    Vue.component('xlifflangmodal', {
+        template: '#modal-export-xliff-languages',
+        props: {
+            model: Object
+        }
     });
 
     Vue.component('modal', {
@@ -370,6 +452,21 @@
         }
     });
 
+    Vue.component('addmodal', {
+        template: '#modal-key-template',
+        props: {
+            model: Object
+        },
+        data: function() {
+            return {
+                open: false
+            };
+        },
+        mounted: function() {
+            this.$refs.keyEditor.focus();
+        }
+    });
+
     Vue.use(vueDirectiveTooltip, {
         delay: 500,
         placement: 'top',
@@ -383,6 +480,7 @@
         visibleLanguages: [],
         loading: true,
         showModal: false,
+        showAddModal: false,
         showLanguagesModal: false,
         checkedLanguages: [],
         allLanguagesChecked: false,
@@ -394,7 +492,10 @@
             showHiddenResources: false,
             showOnlyEmptyResources: false,
             showDeleteButton: true
-        }
+        },
+        showXliffLanguagesModal: false,
+        sourceLanguage: '',
+        targetLanguage: ''
     };
 
     var app = new Vue({
@@ -435,6 +536,7 @@
 
             save() {
                 this.model.showModal = false;
+                this.model.showAddModal = false;
                 axios.post('api/service/save', this.model.currentResource);
 
                 // update viewmodel
@@ -443,6 +545,18 @@
                     editedResource[this.model.currentResource.language] = this.model.currentResource.translation;
                     editedResource.isModified = true;
                 }
+            },
+
+            newResourceModal() {
+                this.model.currentResource.language = this.model.visibleLanguages[0].code;
+                this.model.showAddModal = true;
+            },
+
+            addResource() {
+                this.model.showAddModal = false;
+                axios.post('api/service/add', this.model.currentResource);
+
+                this.loadData();
             },
 
             remove() {
@@ -496,10 +610,23 @@
                 this.model.visibleLanguages = [];
 
                 for (const checkedLanguage of this.model.checkedLanguages) {
-                    this.model.visibleLanguages.push(this.model.supportedLanguages.find(({ code}) => code === checkedLanguage));
+                    this.model.visibleLanguages.push(this.model.supportedLanguages.find(({ code }) => code === checkedLanguage));
                 }
 
                 document.cookie = "LocalizationProvider_VisibleLanguages=invariant|" + this.model.checkedLanguages.join('|');
+            },
+
+            handleExportCommand(format) {
+                if (format === 'xliff') {
+                    this.model.showXliffLanguagesModal = true;
+                } else {
+                    window.location.href = '?handler=Export&format=' + format;
+                }
+            },
+
+            exportXliff() {
+                this.model.showXliffLanguagesModal = false;
+                window.location.href = '?handler=Export&format=xliff&sourceLang=' + this.model.sourceLanguage + '&targetLang=' + this.model.targetLanguage;
             }
         },
         computed: {

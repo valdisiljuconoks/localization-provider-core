@@ -51,6 +51,17 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             return ServiceOperationResult.Ok;
         }
 
+        public JsonResult Add([FromBody] AddResourceAndTranslationRequestModel model)
+        {
+            var resource = new LocalizationResource(model.Key, true) { IsHidden = false, IsModified = true };
+            resource.Translations.Add(new LocalizationResourceTranslation { Value = model.Translation, Language = model.Language });
+
+            var createNewResourceCmd = new CreateNewResource.Command(resource);
+            _commandExecutor.Execute(createNewResourceCmd);
+
+            return ServiceOperationResult.Ok;
+        }
+
         [HttpPost]
         public JsonResult Remove([FromBody] RemoveTranslationRequestModel model)
         {
@@ -107,9 +118,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         private LocalizationResourceApiTreeModel PrepareTreeViewModel()
         {
             var (resources, languages) = GetResources();
+            var visibleLanguages = GetVisibleLanguages(languages);
+
             var result = new LocalizationResourceApiTreeModel(resources,
                                                               languages,
-                                                              languages,
+                                                              visibleLanguages ?? languages,
                                                               _config.MaxResourceKeyPopupTitleLength,
                                                               _config.MaxResourceKeyDisplayLength,
                                                               BuildOptions());
