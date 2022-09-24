@@ -41,9 +41,9 @@ namespace DbLocalizationProvider.AspNetCore
                 context.Logger?.Info($"{nameof(context.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
             }
 
-            if (context.ManualResourceProvider != null)
+            foreach (var provider in serviceFactory.GetServices<IManualResourceProvider>())
             {
-                sync.RegisterManually(context.ManualResourceProvider.GetResources());
+                sync.RegisterManually(provider.GetResources());
             }
 
             context.Logger?.Info("DbLocalizationProvider initialized.");

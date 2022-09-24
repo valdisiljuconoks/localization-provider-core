@@ -114,6 +114,12 @@ namespace DbLocalizationProvider.AspNetCore
                 ctx.FallbackLanguages.Then(CultureInfo.InvariantCulture);
             }
 
+            // add manual resource providers
+            foreach (var providerType in ctx.ManualResourceProviders.Providers)
+            {
+                services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(IManualResourceProvider), providerType));
+            }
+
             // setup model metadata providers
             if (ctx.ModelMetadataProviders.ReplaceProviders)
             {

@@ -142,7 +142,7 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
                 //_.UseAzureTables("UseDevelopmentStorage=true");
 
-                _.ManualResourceProvider = new SomeManualResources();
+                _.ManualResourceProviders.Add<SomeManualResources>();
                 _.ModelMetadataProviders.ReplaceProviders = true;
                 _.FlexibleRefactoringMode = true;
             });
