@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using DbLocalizationProvider.AdminUI.AspNetCore;
-using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
 using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
@@ -201,7 +200,6 @@ namespace DbLocalizationProvider.Core.AspNetSample
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
 
-                endpoints.MapDbLocalizationAdminUI();
                 endpoints.MapDbLocalizationClientsideProvider();
 
                 endpoints.MapHealthChecks("healthz");

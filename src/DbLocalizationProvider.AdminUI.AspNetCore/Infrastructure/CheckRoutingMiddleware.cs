@@ -11,7 +11,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure
     public class CheckRoutingMiddleware
     {
         private readonly RequestDelegate _next;
-        private static ConcurrentDictionary<string, object> _middlewareNames = new ConcurrentDictionary<string, object>();
+        private static ConcurrentDictionary<string, object> _middlewareNames = new();
         private static string markerMiddlewareName = typeof(AdminUIMarkerMiddleware).FullName;
 
         public CheckRoutingMiddleware(RequestDelegate next)

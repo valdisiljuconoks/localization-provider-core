@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.AdminUI.AspNetCore.Models;
+using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AdminUI.AspNetCore.Security;
 using DbLocalizationProvider.AdminUI.Models;
 using DbLocalizationProvider.Commands;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
+    [DynamicRoute(Name = "LocAdminUIRoute")]
     [Authorize(Policy = AccessPolicy.Name)]
     public class ServiceController : ControllerBase
     {
@@ -31,18 +33,21 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         }
 
         [HttpGet]
+        [Route("get", Name = "LocAdminGet")]
         public IActionResult Get()
         {
             return new ApiResponse(PrepareViewModel());
         }
 
         [HttpGet]
+        [Route("gettree", Name = "LocAdminGetTree")]
         public ApiResponse GetTree()
         {
             return new ApiResponse(PrepareTreeViewModel());
         }
 
         [HttpPost]
+        [Route("save", Name = "LocAdminSave")]
         public JsonResult Save([FromBody] CreateOrUpdateTranslationRequestModel model)
         {
             var cmd = new CreateOrUpdateTranslation.Command(model.Key, new CultureInfo(model.Language), model.Translation);
@@ -51,6 +56,8 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
             return ServiceOperationResult.Ok;
         }
 
+        [HttpPost]
+        [Route("add", Name = "LocAdminAdd")]
         public JsonResult Add([FromBody] AddResourceAndTranslationRequestModel model)
         {
             var resource = new LocalizationResource(model.Key, true) { IsHidden = false, IsModified = true };
@@ -63,6 +70,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         }
 
         [HttpPost]
+        [Route("remove", Name = "LocAdminRemove")]
         public JsonResult Remove([FromBody] RemoveTranslationRequestModel model)
         {
             var cmd = new RemoveTranslation.Command(model.Key, new CultureInfo(model.Language));
@@ -72,6 +80,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         }
 
         [HttpPost]
+        [Route("delete", Name = "LocAdminDelete")]
         public JsonResult Delete([FromBody] DeleteResourceRequestModel model)
         {
             if (!_config.HideDeleteButton)

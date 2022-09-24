@@ -6,6 +6,7 @@ using DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure;
 using DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 using DbLocalizationProvider.AdminUI.AspNetCore.Security;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -34,9 +35,6 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
 
             services.AddSingleton(_ => context);
 
-            // this is required for dynamic endpoint routing (if one is used in the app)
-            services.AddSingleton<AdminUIDynamicRouteValueTransformer>();
-
             // add support for admin ui razor class library pages
             services.Configure<RazorPagesOptions>(_ =>
             {
@@ -62,6 +60,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
                                       policy => policy.AddRequirements(new CheckAdministratorsRoleRequirement()));
                 });
             }
+
+            services.TryAddEnumerable(ServiceDescriptor.Transient
+                                          <IApplicationModelProvider, ServiceControllerDynamicRouteProvider>());
 
             return new DbLocalizationProviderBuilder(services, context);
         }
