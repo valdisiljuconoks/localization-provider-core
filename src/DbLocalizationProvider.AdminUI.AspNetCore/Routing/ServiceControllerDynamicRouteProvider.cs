@@ -15,10 +15,7 @@ public class ServiceControllerDynamicRouteProvider : IApplicationModelProvider
         _context = context;
     }
 
-    public void OnProvidersExecuting(ApplicationModelProviderContext context)
-    {
-
-    }
+    public void OnProvidersExecuting(ApplicationModelProviderContext context) { }
 
     public void OnProvidersExecuted(ApplicationModelProviderContext context)
     {

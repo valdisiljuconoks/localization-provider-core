@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore
 {
-    [DynamicRoute(Name = "LocAdminUIRoute")]
+    [Route("/localization-admin/api/service", Name = "LocAdminUIRoute")]
     [Authorize(Policy = AccessPolicy.Name)]
     public class ServiceController : ControllerBase
     {
