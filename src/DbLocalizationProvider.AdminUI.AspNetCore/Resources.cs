@@ -14,6 +14,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public static string Add = "Add";
         public static string Export = "Export";
         public static string Import = "Import";
+        public static string Validate = "Validate";
         public static string TableView = "Table View";
         public static string TreeView = "Tree View";
         public static string Languages = "Languages";
@@ -42,5 +43,13 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore
         public static string XliffLanguagesTarget = "Target Language";
         public static string ResourceKey = "Resource Key";
         public static string Translation = "Translation";
+        public static string ImportViewTitle = "Import Localization Resources";
+        public static string InsertsLabel = "Inserts";
+        public static string UpdatesLabel = "Updates";
+        public static string DeletesLabel = "Deletes";
+        public static string ImportChooseActionLabel = "Choose";
+        public static string ImportOperationLabel = "Operation";
+        public static string Close = "Close";
+
     }
 }
