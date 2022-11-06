@@ -115,29 +115,38 @@ public class Startup
 
 ## Securing Admin UI
 
-AdminUI by default is secured via roles which you can configure yourself via `Configure` method on startup:
+AdminUI by default is secured with user roles access policy requirement.
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
+public class CheckAdministratorsRoleRequirement
+    : AuthorizationHandler<CheckAdministratorsRoleRequirement>, IAuthorizationRequirement
 {
-    services.AddDbLocalizationProviderAdminUI(_ =>
+    protected override Task HandleRequirementAsync(
+        AuthorizationHandlerContext context,
+        CheckAdministratorsRoleRequirement requirement)
     {
-        ...
-        _.AuthorizedAdminRoles.Add("Admins");
-        _.AuthorizedEditorRoles.Add("Translators");
-    });
+        if (context.User.IsInRole("Administrators"))
+        {
+            context.Succeed(requirement);
+        }
+        else
+        {
+            context.Fail();
+        }
+
+        return Task.CompletedTask;
+    }
 }
 ```
-
-In order for you to get this working, if you are using ASP.NET Identity infrastructure - you need to enable roles based access in your setup:
+If you want to customize access policy - you can configure it via `Configure` method on startup:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddDbContext<...>(...);
-    
     services
-        .AddDefaultIdentity<...>(...)
-        .AddRoles<IdentityRole>();
+        .AddDbLocalizationProviderAdminUI(_ =>
+        {
+            _.AccessPolicyOptions = builder => builder.AddRequirements(...);
+        });
 }
 ```
