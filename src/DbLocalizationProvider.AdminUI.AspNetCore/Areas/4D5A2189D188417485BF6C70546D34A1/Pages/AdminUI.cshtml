@@ -96,6 +96,10 @@
             font-family: Helvetica, Arial, sans-serif;
         }
 
+        .modal-container.wide {
+            width: 90% !important;
+        }
+
         .modal-header {
             padding: 0;
         }
@@ -201,6 +205,31 @@
         .export-xliff-container {
             display: flex;
         }
+
+
+        tr.insert {
+            background-color: #eaffea;
+        }
+
+        tr.delete {
+            background-color: #ffecec;
+        }
+
+        tr.update {
+            background-color: #fff6e7;
+        }
+
+            tr.update td.translation-changed {
+                background-color: #ffe7ba;
+            }
+
+            tr.update td.translation-changed.existing {
+                text-decoration: line-through;
+            }
+
+        td.translation-changed {
+            font-weight: bold;
+        }
     </style>
 
     @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
@@ -249,6 +278,66 @@
                 <slot name="footer">
                     <button class="modal-default-button btn btn-primary" @@click="$emit('add')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</button>
                     <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                </slot>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-template" id="modal-import-template">
+    <div class="modal-mask" transition="modal" @@keydown.esc="$emit('close')">
+        <div class="modal-wrapper">
+            <div class="modal-container wide">
+                <div class="modal-header">
+                    <div name="header" class="header">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ImportViewTitle)</div>
+                </div>
+                <div class="modal-body">
+                    <div v-show="isValidate">
+                    <input type="file" class="form-control" id="model-import-template-file" ref="fileinput" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)" />
+                    </div>
+                    <div v-show="isImport && !vmessages.length">
+                        <input type="checkbox" value="2" v-model="chkUpdated" v-on:change="toggleUpdated"> @LocalizationProvider.GetStringWithInvariantFallback(() => Resources.UpdatesLabel) {{ updatedItems.length}}<br/>
+                        <input type="checkbox" value="3" v-model="chkDeleted" v-on:change="toggleDeleted"> @LocalizationProvider.GetStringWithInvariantFallback(() => Resources.DeletesLabel) {{ deletedItems.length}} <br/>
+                        <input type="checkbox" value="1" v-model="chkInserted" v-on:change="toggleInserted"> @LocalizationProvider.GetStringWithInvariantFallback(() => Resources.InsertsLabel) {{ insertedItems.length}}<br/>
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th></th>
+                                    <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ResourceKeyColumn)</th>
+                                    <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ImportOperationLabel)</th>
+                                    <th v-for="item in allLanguages" colspan="2">
+                                        {{ item.display }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tr v-for="item in allItems" :class="changeTypes[item.changeType].toLowerCase()">
+                                <td><input type="checkbox" :value="item.id" v-model="item.selected"></td>
+                                <td>{{item.existingResource.resourceKey}}</td>
+                                <td>{{changeTypes[item.changeType]}}</td>
+                                <template v-for="lang in allLanguages">
+                                    <td :class="{ 'translation-changed existing': isTranslationChanged(item, lang) }">
+                                        <span v-if="isLanguageChanged(item, lang)">{{ findByLanguage(item.existingResource.translations, lang) }}</span>
+                                    </td>
+                                    <td :class="{ 'translation-changed': isTranslationChanged(item, lang) }">
+                                        <span v-if="isLanguageChanged(item, lang)">{{ findByLanguage(item.importingResource.translations, lang) }}</span>
+                                    </td>
+                                </template>
+                            </tr>
+                        </table>
+                    </div>
+                    <div v-show="vmessages.length">
+                        <template v-for="item in vmessages">
+                            <div>{{item}}</div>
+                        </template>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <slot name="footer">
+                    <button class="modal-default-button btn btn-primary" v-if="isImport && !vmessages.length" @@click="importFile">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
+                    <button class="modal-default-button btn btn-primary" v-if="isValidate  && !vmessages.length" @@click="validateFile">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Validate)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('cancel')" v-if="!vmessages.length">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                    <button class="modal-default-button btn btn-default" @@click="$emit('close')" v-if="vmessages.length">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Close)</button>
                 </slot>
                 </div>
             </div>
@@ -348,10 +437,10 @@
                         }
                     </div>
                 </div>
-                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-light disabled">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
+                    <button type="button" class="btn btn-light" @@click="importModal()">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
                 </div>
+                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
                 <div class="btn-group dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Settings)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
@@ -370,7 +459,7 @@
     <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
     <addmodal v-if="model.showAddModal" @@add="addResource" @@close="model.showAddModal = false" :model="model.currentResource"></addmodal>
     <xlifflangmodal v-if="model.showXliffLanguagesModal" @@export="exportXliff" @@close="model.showXliffLanguagesModal = false" :model="model"></xlifflangmodal>
-
+        <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal>
     <div class="row">
         <div class="form-group offset-lg-9 col-lg-3">
             <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder)"/>
@@ -467,6 +556,106 @@
         }
     });
 
+    Vue.component('importmodal', {
+        template: '#modal-import-template',
+        props: {
+            model: Object
+        },
+        data: function() {
+            return {
+                open: false,
+                isImport: false,
+                isValidate: true,
+                deletedItems : [],
+                updatedItems : [],
+                insertedItems: [],
+                allItems: [],
+                changeTypes: ["","Insert","Update","Delete"],
+                allLanguages: [],
+                chkUpdated:false,
+                chkInserted:false,
+                chkDeleted: false,
+                vmessages:[]
+            };
+        },
+        methods: {
+            importFile() {
+                axios.post('api/service/import',this.allItems)
+                    .then(response => {
+                        this.vmessages = response.data;
+                    });
+            },
+            toggleUpdated() {
+                this.toggleChangeType(2, this.chkUpdated);
+            },
+            toggleInserted() {
+                this.toggleChangeType(1, this.chkInserted);
+            },
+            toggleDeleted() {
+                this.toggleChangeType(3, this.chkDeleted);
+            },
+            toggleChangeType(typeId, selected) {
+                for (var i = 0; i < this.allItems.length; i++) {
+                    if (this.allItems[i].changeType == typeId) {
+                        this.allItems[i].selected = selected;
+                    }
+                }
+            },
+            validateFile() {
+                var that = this;
+                let formData = new FormData();
+                formData.append('importFile', this.$refs.fileinput.files[0]);
+                axios.post('api/service/validate',
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                  })
+                .then((response) => {
+                    that.isImport = true;
+                    that.isValidate = false;
+                    that.insertedItems = [];
+                    that.updatedItems = [];
+                    that.deletedItems = [];
+                    that.allLanguages = [];
+                    that.allItems = response.data;
+
+                    for (var i = 0; i < response.data.length; i++) {
+                        var item = response.data[i];
+                        for (var j = 0; j < item.changedLanguages.length; j++) {
+                            if (!that.allLanguages.filter(l => l.code == item.changedLanguages[j].code).length) {
+                                that.allLanguages.push(item.changedLanguages[j]);
+                            }
+                        }
+
+                        switch(item.changeType) {
+                            case 1:
+                                that.insertedItems.push(item);
+                                break;
+                            case 2:
+                                that.updatedItems.push(item);
+                                break;
+                            case 3:
+                                that.deletedItems.push(item);
+                                break;
+                        }
+                    }
+                });
+            },
+            isLanguageChanged(item, lang) {
+                return item.changedLanguages.filter(l => l.code == lang.code).length;
+            },
+            isTranslationChanged(item, lang) {
+                return this.isLanguageChanged(item, lang) && item.changeType == 2;
+            },
+            findByLanguage(translations, lang) {
+                var foundTranslation = translations.filter(t => t.language == lang.code);
+                return foundTranslation.length ? foundTranslation[0].value : '';
+            }
+        }
+    });
+
     Vue.use(vueDirectiveTooltip, {
         delay: 500,
         placement: 'top',
@@ -482,9 +671,11 @@
         showModal: false,
         showAddModal: false,
         showLanguagesModal: false,
+        showImportModal: false,
         checkedLanguages: [],
         allLanguagesChecked: false,
         currentResource: {},
+        filemodel: {},
         searchKeyword: '',
         error: '',
         options: {
@@ -548,8 +739,18 @@
             },
 
             newResourceModal() {
-                this.model.currentResource.language = this.model.visibleLanguages[0].code;
+                this.model.currentResource = {
+                    titleKey: '',
+                    key: '',
+                    translation: '',
+                    language: this.model.visibleLanguages[0].code
+                };
+
                 this.model.showAddModal = true;
+            },
+
+            importModal() {
+                this.model.showImportModal = true;
             },
 
             addResource() {
