@@ -96,6 +96,10 @@
             font-family: Helvetica, Arial, sans-serif;
         }
 
+        .modal-container.wide {
+            width: 90% !important;
+        }
+
         .modal-header {
             padding: 0;
         }
@@ -201,6 +205,31 @@
         .export-xliff-container {
             display: flex;
         }
+
+
+        tr.insert {
+            background-color: #eaffea;
+        }
+
+        tr.delete {
+            background-color: #ffecec;
+        }
+
+        tr.update {
+            background-color: #fff6e7;
+        }
+
+            tr.update td.translation-changed {
+                background-color: #ffe7ba;
+            }
+
+            tr.update td.translation-changed.existing {
+                text-decoration: line-through;
+            }
+
+        td.translation-changed {
+            font-weight: bold;
+        }
     </style>
 
     @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
@@ -259,7 +288,7 @@
 <script type="text/x-template" id="modal-import-template">
     <div class="modal-mask" transition="modal" @@keydown.esc="$emit('close')">
         <div class="modal-wrapper">
-            <div class="modal-container">
+            <div class="modal-container wide">
                 <div class="modal-header">
                     <div name="header" class="header">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ImportViewTitle)</div>
                 </div>
@@ -271,29 +300,29 @@
                         <input type="checkbox" value="2" v-model="chkUpdated" v-on:change="toggleUpdated"> @LocalizationProvider.GetStringWithInvariantFallback(() => Resources.UpdatesLabel) {{ updatedItems.length}}<br/>
                         <input type="checkbox" value="3" v-model="chkDeleted" v-on:change="toggleDeleted"> @LocalizationProvider.GetStringWithInvariantFallback(() => Resources.DeletesLabel) {{ deletedItems.length}} <br/>
                         <input type="checkbox" value="1" v-model="chkInserted" v-on:change="toggleInserted"> @LocalizationProvider.GetStringWithInvariantFallback(() => Resources.InsertsLabel) {{ insertedItems.length}}<br/>
-                        <table>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td v-for="item in allLanguages" colspan="2">
-                                    {{item}}
-                                </td>
-                            </tr>
-                            <tr v-for="item in allItems">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th></th>
+                                    <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ResourceKeyColumn)</th>
+                                    <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ImportOperationLabel)</th>
+                                    <th v-for="item in allLanguages" colspan="2">
+                                        {{ item.display }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tr v-for="item in allItems" :class="changeTypes[item.changeType].toLowerCase()">
                                 <td><input type="checkbox" :value="item.id" v-model="item.selected"></td>
                                 <td>{{item.existingResource.resourceKey}}</td>
                                 <td>{{changeTypes[item.changeType]}}</td>
-                                <td v-for="lang in allLanguages">
-                                    <template v-for="ritem in item.existingResource.translations">
-                                        <span v-if="ritem.language==lang">{{ritem.value}}</span>
-                                    </template>
-                                </td>
-                                <td v-for="lang in allLanguages">
-                                    <template v-for="ritem in item.importingResource.translations">
-                                        <span v-if="ritem.language==lang">{{ritem.value}}</span>
-                                    </template>
-                                </td>
+                                <template v-for="lang in allLanguages">
+                                    <td :class="{ 'translation-changed existing': isTranslationChanged(item, lang) }">
+                                        <span v-if="isLanguageChanged(item, lang)">{{ findByLanguage(item.existingResource.translations, lang) }}</span>
+                                    </td>
+                                    <td :class="{ 'translation-changed': isTranslationChanged(item, lang) }">
+                                        <span v-if="isLanguageChanged(item, lang)">{{ findByLanguage(item.importingResource.translations, lang) }}</span>
+                                    </td>
+                                </template>
                             </tr>
                         </table>
                     </div>
@@ -315,7 +344,6 @@
         </div>
     </div>
 </script>
-
 
 <script type="text/x-template" id="modal-languages-template">
     <div class="modal-mask" transition="languages-modal" @@keydown.esc="$emit('close')">
@@ -409,10 +437,10 @@
                         }
                     </div>
                 </div>
-                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
                 <div class="btn-group">
                     <button type="button" class="btn btn-light" @@click="importModal()">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
                 </div>
+                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
                 <div class="btn-group dropdown">
                     <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-cog"></i>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Settings)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
@@ -431,7 +459,7 @@
     <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
     <addmodal v-if="model.showAddModal" @@add="addResource" @@close="model.showAddModal = false" :model="model.currentResource"></addmodal>
     <xlifflangmodal v-if="model.showXliffLanguagesModal" @@export="exportXliff" @@close="model.showXliffLanguagesModal = false" :model="model"></xlifflangmodal>
-    <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal> 
+        <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal>
     <div class="row">
         <div class="form-group offset-lg-9 col-lg-3">
             <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder)"/>
@@ -553,7 +581,7 @@
         methods: {
             importFile() {
                 axios.post('api/service/import',this.allItems)
-                    .then(response => { 
+                    .then(response => {
                         this.vmessages = response.data;
                     });
             },
@@ -577,14 +605,14 @@
                 var that = this;
                 let formData = new FormData();
                 formData.append('importFile', this.$refs.fileinput.files[0]);
-                axios.post('api/service/validate', 
+                axios.post('api/service/validate',
                     formData,
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                   })
-                .then((response) => { 
+                .then((response) => {
                     that.isImport = true;
                     that.isValidate = false;
                     that.insertedItems = [];
@@ -592,27 +620,39 @@
                     that.deletedItems = [];
                     that.allLanguages = [];
                     that.allItems = response.data;
+
                     for (var i = 0; i < response.data.length; i++) {
                         var item = response.data[i];
                         for (var j = 0; j < item.changedLanguages.length; j++) {
-                            if (that.allLanguages.indexOf(item.changedLanguages[j]) < 0) {
+                            if (!that.allLanguages.filter(l => l.code == item.changedLanguages[j].code).length) {
                                 that.allLanguages.push(item.changedLanguages[j]);
                             }
                         }
-                        if (item.changeType == 3) {
-                            that.deletedItems.push(item);
-                        } else {
-                            if (item.changeType == 2) {
+
+                        switch(item.changeType) {
+                            case 1:
+                                that.insertedItems.push(item);
+                                break;
+                            case 2:
                                 that.updatedItems.push(item);
-                            } else {
-                                if (item.changeType == 1) {
-                                    that.insertedItems.push(item);
-                                }
-                            }
+                                break;
+                            case 3:
+                                that.deletedItems.push(item);
+                                break;
                         }
                     }
                 });
-            },            
+            },
+            isLanguageChanged(item, lang) {
+                return item.changedLanguages.filter(l => l.code == lang.code).length;
+            },
+            isTranslationChanged(item, lang) {
+                return this.isLanguageChanged(item, lang) && item.changeType == 2;
+            },
+            findByLanguage(translations, lang) {
+                var foundTranslation = translations.filter(t => t.language == lang.code);
+                return foundTranslation.length ? foundTranslation[0].value : '';
+            }
         }
     });
 
@@ -699,7 +739,13 @@
             },
 
             newResourceModal() {
-                this.model.currentResource.language = this.model.visibleLanguages[0].code;
+                this.model.currentResource = {
+                    titleKey: '',
+                    key: '',
+                    translation: '',
+                    language: this.model.visibleLanguages[0].code
+                };
+
                 this.model.showAddModal = true;
             },
 
