@@ -146,6 +146,10 @@
             overflow-y: auto;
         }
 
+        .half {
+            width: 50%;
+        }
+
         .visible-language-list {
             padding: 0;
         }
@@ -206,7 +210,6 @@
             display: flex;
         }
 
-
         tr.insert {
             background-color: #eaffea;
         }
@@ -229,6 +232,10 @@
 
         td.translation-changed {
             font-weight: bold;
+        }
+
+        #model-import-template-file {
+            border: none;
         }
     </style>
 
@@ -288,7 +295,7 @@
 <script type="text/x-template" id="modal-import-template">
     <div class="modal-mask" transition="modal" @@keydown.esc="$emit('close')">
         <div class="modal-wrapper">
-            <div class="modal-container wide">
+            <div class="modal-container" :class="{ 'wide' : isImport }">
                 <div class="modal-header">
                     <div name="header" class="header">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ImportViewTitle)</div>
                 </div>
@@ -386,7 +393,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="export-xliff-container">
-                        <div>
+                        <div class="half">
                             <div><h2>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.XliffLanguagesSource)</h2></div>
                             <ul class="visible-language-list">
                                 <li v-for="lng in model.visibleLanguages">
@@ -395,7 +402,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div>
+                        <div class="half">
                             <div><h2>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.XliffLanguagesTarget)</h2></div>
                             <ul class="visible-language-list">
                                 <li v-for="lng in model.visibleLanguages">
@@ -459,7 +466,7 @@
     <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
     <addmodal v-if="model.showAddModal" @@add="addResource" @@close="model.showAddModal = false" :model="model.currentResource"></addmodal>
     <xlifflangmodal v-if="model.showXliffLanguagesModal" @@export="exportXliff" @@close="model.showXliffLanguagesModal = false" :model="model"></xlifflangmodal>
-        <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal>
+    <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal>
     <div class="row">
         <div class="form-group offset-lg-9 col-lg-3">
             <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder)"/>
