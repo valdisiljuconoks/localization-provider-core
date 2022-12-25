@@ -8,26 +8,25 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore
+namespace DbLocalizationProvider.AdminUI.AspNetCore;
+
+public class ApiResponse : IActionResult
 {
-    public class ApiResponse : IActionResult
+    private static readonly JsonSerializerSettings _jsonSerializerSettings =
+        new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+
+    private readonly BaseApiModel _response;
+
+    public ApiResponse(BaseApiModel response)
     {
-        private static readonly JsonSerializerSettings _jsonSerializerSettings =
-            new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+        _response = response;
+    }
 
-        private readonly BaseApiModel _response;
-
-        public ApiResponse(BaseApiModel response)
-        {
-            _response = response;
-        }
-
-        public Task ExecuteResultAsync(ActionContext context)
-        {
-            return context.HttpContext.Response.WriteAsync(
-                JsonConvert.SerializeObject(
-                    _response,
-                    _jsonSerializerSettings));
-        }
+    public Task ExecuteResultAsync(ActionContext context)
+    {
+        return context.HttpContext.Response.WriteAsync(
+            JsonConvert.SerializeObject(
+                _response,
+                _jsonSerializerSettings));
     }
 }

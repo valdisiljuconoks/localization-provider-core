@@ -3,26 +3,25 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore
+namespace DbLocalizationProvider.AdminUI.AspNetCore;
+
+/// <inheritdoc />
+public class DbLocalizationProviderBuilder : IDbLocalizationProviderAdminUIBuilder
 {
-    /// <inheritdoc />
-    public class DbLocalizationProviderBuilder : IDbLocalizationProviderAdminUIBuilder
+    /// <summary>
+    /// Creates new instance of builder.
+    /// </summary>
+    /// <param name="services">Service collection.</param>
+    /// <param name="context">Configuration context.</param>
+    public DbLocalizationProviderBuilder(IServiceCollection services, UiConfigurationContext context)
     {
-        /// <summary>
-        /// Creates new instance of builder.
-        /// </summary>
-        /// <param name="services">Service collection.</param>
-        /// <param name="context">Configuration context.</param>
-        public DbLocalizationProviderBuilder(IServiceCollection services, UiConfigurationContext context)
-        {
-            Services = services;
-            UiContext = context;
-        }
-
-        /// <inheritdoc />
-        public IServiceCollection Services { get; }
-
-        /// <inheritdoc />
-        public UiConfigurationContext UiContext { get; }
+        Services = services;
+        UiContext = context;
     }
+
+    /// <inheritdoc />
+    public IServiceCollection Services { get; }
+
+    /// <inheritdoc />
+    public UiConfigurationContext UiContext { get; }
 }

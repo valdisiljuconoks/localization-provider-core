@@ -9,26 +9,25 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore
+namespace DbLocalizationProvider.AdminUI.AspNetCore;
+
+public class ValidationResponse : IActionResult
 {
-    public class ValidationResponse : IActionResult
+    private static readonly JsonSerializerSettings _jsonSerializerSettings =
+        new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+
+    private readonly ICollection<DetectedImportChange> _response;
+
+    public ValidationResponse(ICollection<DetectedImportChange> response)
     {
-        private static readonly JsonSerializerSettings _jsonSerializerSettings =
-            new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+        _response = response;
+    }
 
-        private readonly ICollection<DetectedImportChange> _response;
-
-        public ValidationResponse(ICollection<DetectedImportChange> response)
-        {
-            _response = response;
-        }
-
-        public Task ExecuteResultAsync(ActionContext context)
-        {
-            return context.HttpContext.Response.WriteAsync(
-                JsonConvert.SerializeObject(
-                    _response,
-                    _jsonSerializerSettings));
-        }
+    public Task ExecuteResultAsync(ActionContext context)
+    {
+        return context.HttpContext.Response.WriteAsync(
+            JsonConvert.SerializeObject(
+                _response,
+                _jsonSerializerSettings));
     }
 }

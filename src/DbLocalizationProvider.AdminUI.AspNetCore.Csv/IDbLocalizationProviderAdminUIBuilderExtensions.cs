@@ -6,24 +6,23 @@ using DbLocalizationProvider.Csv;
 using Microsoft.Extensions.DependencyInjection;
 
 // ReSharper disable once CheckNamespace
-namespace DbLocalizationProvider.AdminUI.AspNetCore
+namespace DbLocalizationProvider.AdminUI.AspNetCore;
+
+/// <summary>
+/// Do I really need to document extension classes?
+/// </summary>
+public static class IDbLocalizationProviderAdminUIBuilderExtensions
 {
     /// <summary>
-    /// Do I really need to document extension classes?
+    ///Adds support for export and import in Csv format
     /// </summary>
-    public static class IDbLocalizationProviderAdminUIBuilderExtensions
+    /// <param name="builder">Service collection</param>
+    /// <returns></returns>
+    public static IDbLocalizationProviderAdminUIBuilder AddCsvSupport(
+        this IDbLocalizationProviderAdminUIBuilder builder)
     {
-        /// <summary>
-        ///Adds support for export and import in Csv format
-        /// </summary>
-        /// <param name="builder">Service collection</param>
-        /// <returns></returns>
-        public static IDbLocalizationProviderAdminUIBuilder AddCsvSupport(
-            this IDbLocalizationProviderAdminUIBuilder builder)
-        {
-            builder.Services.Configure<ProviderSettings>(s => s.Exporters.Add(new CsvResourceExporter()));
+        builder.Services.Configure<ProviderSettings>(s => s.Exporters.Add(new CsvResourceExporter()));
 
-            return builder;
-        }
+        return builder;
     }
 }

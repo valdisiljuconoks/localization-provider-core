@@ -7,62 +7,61 @@ using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+/// <inheritdoc />
+public abstract class LocalizedAttributeAdapterBase<T> : AttributeAdapterBase<T> where T : ValidationAttribute
 {
+    private readonly IStringLocalizer _stringLocalizer;
+
+    /// <summary>
+    /// Resource key builder.
+    /// </summary>
+    protected ResourceKeyBuilder _resourceKeyBuilder;
+
     /// <inheritdoc />
-    public abstract class LocalizedAttributeAdapterBase<T> : AttributeAdapterBase<T> where T : ValidationAttribute
+    protected LocalizedAttributeAdapterBase(
+        T attribute,
+        IStringLocalizer stringLocalizer,
+        ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer)
     {
-        private readonly IStringLocalizer _stringLocalizer;
+        _stringLocalizer = stringLocalizer;
+        _resourceKeyBuilder = resourceKeyBuilder;
+    }
 
-        /// <summary>
-        /// Resource key builder.
-        /// </summary>
-        protected ResourceKeyBuilder _resourceKeyBuilder;
-
-        /// <inheritdoc />
-        protected LocalizedAttributeAdapterBase(
-            T attribute,
-            IStringLocalizer stringLocalizer,
-            ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer)
+    /// <inheritdoc />
+    public override string GetErrorMessage(ModelValidationContextBase validationContext)
+    {
+        if (validationContext == null)
         {
-            _stringLocalizer = stringLocalizer;
-            _resourceKeyBuilder = resourceKeyBuilder;
+            throw new ArgumentNullException(nameof(validationContext));
         }
 
-        /// <inheritdoc />
-        public override string GetErrorMessage(ModelValidationContextBase validationContext)
-        {
-            if (validationContext == null)
-            {
-                throw new ArgumentNullException(nameof(validationContext));
-            }
+        return _stringLocalizer?.GetString(
+            _resourceKeyBuilder.BuildResourceKey(
+                validationContext.ModelMetadata.ContainerType,
+                validationContext.ModelMetadata.PropertyName,
+                Attribute));
+    }
 
-            return _stringLocalizer?.GetString(
-                _resourceKeyBuilder.BuildResourceKey(
-                    validationContext.ModelMetadata.ContainerType,
-                    validationContext.ModelMetadata.PropertyName,
-                    Attribute));
+    /// <summary>
+    /// Gets the error message.
+    /// </summary>
+    /// <param name="validationContext">The context to use in message creation.</param>
+    /// <param name="arguments">Arguments to pass to error message formatting procedure.</param>
+    /// <returns>The localized error message.</returns>
+    public string GetErrorMessage(ModelValidationContextBase validationContext, params object[] arguments)
+    {
+        if (validationContext == null)
+        {
+            throw new ArgumentNullException(nameof(validationContext));
         }
 
-        /// <summary>
-        /// Gets the error message.
-        /// </summary>
-        /// <param name="validationContext">The context to use in message creation.</param>
-        /// <param name="arguments">Arguments to pass to error message formatting procedure.</param>
-        /// <returns>The localized error message.</returns>
-        public string GetErrorMessage(ModelValidationContextBase validationContext, params object[] arguments)
-        {
-            if (validationContext == null)
-            {
-                throw new ArgumentNullException(nameof(validationContext));
-            }
-
-            return _stringLocalizer?.GetString(
-                _resourceKeyBuilder.BuildResourceKey(
-                    validationContext.ModelMetadata.ContainerType,
-                    validationContext.ModelMetadata.PropertyName,
-                    Attribute),
-                arguments);
-        }
+        return _stringLocalizer?.GetString(
+            _resourceKeyBuilder.BuildResourceKey(
+                validationContext.ModelMetadata.ContainerType,
+                validationContext.ModelMetadata.PropertyName,
+                Attribute),
+            arguments);
     }
 }

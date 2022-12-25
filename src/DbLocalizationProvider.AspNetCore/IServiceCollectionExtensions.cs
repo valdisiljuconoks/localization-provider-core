@@ -23,116 +23,115 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ILogger = DbLocalizationProvider.Logging.ILogger;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore;
+
+/// <summary>
+/// Extension for adding localization provider services to the service collection.
+/// </summary>
+public static class IServiceCollectionExtensions
 {
     /// <summary>
-    /// Extension for adding localization provider services to the service collection.
+    /// Adds the database localization provider.
     /// </summary>
-    public static class IServiceCollectionExtensions
+    /// <param name="services">The service collection.</param>
+    /// <param name="setup">The setup callback.</param>
+    /// <returns></returns>
+    public static IDbLocalizationProviderBuilder AddDbLocalizationProvider(
+        this IServiceCollection services,
+        Action<ConfigurationContext> setup = null)
     {
-        /// <summary>
-        /// Adds the database localization provider.
-        /// </summary>
-        /// <param name="services">The service collection.</param>
-        /// <param name="setup">The setup callback.</param>
-        /// <returns></returns>
-        public static IDbLocalizationProviderBuilder AddDbLocalizationProvider(
-            this IServiceCollection services,
-            Action<ConfigurationContext> setup = null)
+        var ctx = new ConfigurationContext();
+        var factory = ctx.TypeFactory;
+
+        // setup default implementations
+        factory.ForQuery<GetAllResources.Query>().DecorateWith<CachedGetAllResourcesHandler>();
+        factory.ForQuery<DetermineDefaultCulture.Query>().SetHandler<DetermineDefaultCulture.Handler>();
+        factory.ForCommand<ClearCache.Command>().SetHandler<ClearCacheHandler>();
+
+        // set to default in-memory provider
+        // only if we have IMemoryCache service registered
+        if (services.FirstOrDefault(d => d.ServiceType == typeof(IMemoryCache)) != null)
         {
-            var ctx = new ConfigurationContext();
-            var factory = ctx.TypeFactory;
-
-            // setup default implementations
-            factory.ForQuery<GetAllResources.Query>().DecorateWith<CachedGetAllResourcesHandler>();
-            factory.ForQuery<DetermineDefaultCulture.Query>().SetHandler<DetermineDefaultCulture.Handler>();
-            factory.ForCommand<ClearCache.Command>().SetHandler<ClearCacheHandler>();
-
-            // set to default in-memory provider
-            // only if we have IMemoryCache service registered
-            if (services.FirstOrDefault(d => d.ServiceType == typeof(IMemoryCache)) != null)
-            {
-                services.AddSingleton<ICacheManager, InMemoryCacheManager>();
-            }
-
-            // run custom configuration setup (if any)
-            setup?.Invoke(ctx);
-
-            services.AddSingleton<ScanState>();
-            services.AddSingleton<ResourceKeyBuilder>();
-            services.AddSingleton<OldResourceKeyBuilder>();
-            services.AddSingleton<ExpressionHelper>();
-            services.AddSingleton<QueryExecutor>();
-            services.AddSingleton<IQueryExecutor>(sp => sp.GetRequiredService<QueryExecutor>());
-            services.AddSingleton<CommandExecutor>();
-            services.AddSingleton<ICommandExecutor>(sp => sp.GetRequiredService<CommandExecutor>());
-            services.AddSingleton<DiscoveredTranslationBuilder>();
-            services.AddSingleton(_ => ctx.FallbackList);
-            services.AddSingleton(_ => ctx);
-            services.AddSingleton(sp =>
-            {
-                factory.SetServiceFactory(sp.GetService);
-                return factory;
-            });
-
-            // add all registered handlers to DI (in order to use service factory callback from DI lib)
-            foreach (var handler in factory.GetAllHandlers())
-            {
-                services.AddTransient(handler);
-            }
-
-            // add all registered handlers to DI (in order to use service factory callback from DI lib)
-            foreach (var (service, implementation) in factory.GetAllTransientServiceMappings())
-            {
-                services.AddTransient(service, implementation);
-            }
-
-            services.AddSingleton<ILogger>(p => new LoggerAdapter(p.GetService<ILogger<LoggerAdapter>>()));
-
-            services.AddSingleton<TypeDiscoveryHelper>();
-            services.AddTransient<IResourceTypeScanner, LocalizedModelTypeScanner>();
-            services.AddTransient<IResourceTypeScanner, LocalizedResourceTypeScanner>();
-            services.AddTransient<IResourceTypeScanner, LocalizedEnumTypeScanner>();
-            services.AddTransient<IResourceTypeScanner, LocalizedForeignResourceTypeScanner>();
-
-            services.AddSingleton<LocalizationProvider>();
-            services.AddSingleton<ILocalizationProvider>(sp => sp.GetRequiredService<LocalizationProvider>());
-
-            services.AddTransient<ISynchronizer, Synchronizer>();
-            services.AddTransient<Synchronizer>();
-
-            services.AddSingleton<DbStringLocalizerFactory>();
-            services.AddSingleton<IStringLocalizerFactory>(p => p.GetRequiredService<DbStringLocalizerFactory>());
-            services.AddSingleton<DbHtmlLocalizerFactory>();
-            services.AddSingleton<IHtmlLocalizerFactory>(p => p.GetRequiredService<DbHtmlLocalizerFactory>());
-            services.AddTransient<IViewLocalizer, DbViewLocalizer>();
-            services.AddTransient(typeof(IHtmlLocalizer<>), typeof(DbHtmlLocalizer<>));
-
-            // we need to check whether invariant fallback is correctly configured
-            if (ctx.EnableInvariantCultureFallback && !ctx.FallbackLanguages.Contains(CultureInfo.InvariantCulture))
-            {
-                ctx.FallbackLanguages.Then(CultureInfo.InvariantCulture);
-            }
-
-            // add manual resource providers
-            foreach (var providerType in ctx.ManualResourceProviders.Providers)
-            {
-                services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(IManualResourceProvider), providerType));
-            }
-
-            // setup model metadata providers
-            if (ctx.ModelMetadataProviders.ReplaceProviders)
-            {
-                services.TryAddEnumerable(
-                    ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, ConfigureModelMetadataDetailsProviders>());
-                services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedAttributeAdapterProvider>();
-                services.TryAddEnumerable(
-                    ServiceDescriptor.Transient<IConfigureOptions<MvcDataAnnotationsLocalizationOptions>, DataAnnotationLocalizerProviderSetup>());
-            }
-
-            services.AddHttpContextAccessor();
-
-            return new DbLocalizationProviderBuilder(services, ctx);
+            services.AddSingleton<ICacheManager, InMemoryCacheManager>();
         }
+
+        // run custom configuration setup (if any)
+        setup?.Invoke(ctx);
+
+        services.AddSingleton<ScanState>();
+        services.AddSingleton<ResourceKeyBuilder>();
+        services.AddSingleton<OldResourceKeyBuilder>();
+        services.AddSingleton<ExpressionHelper>();
+        services.AddSingleton<QueryExecutor>();
+        services.AddSingleton<IQueryExecutor>(sp => sp.GetRequiredService<QueryExecutor>());
+        services.AddSingleton<CommandExecutor>();
+        services.AddSingleton<ICommandExecutor>(sp => sp.GetRequiredService<CommandExecutor>());
+        services.AddSingleton<DiscoveredTranslationBuilder>();
+        services.AddSingleton(_ => ctx.FallbackList);
+        services.AddSingleton(_ => ctx);
+        services.AddSingleton(sp =>
+        {
+            factory.SetServiceFactory(sp.GetService);
+            return factory;
+        });
+
+        // add all registered handlers to DI (in order to use service factory callback from DI lib)
+        foreach (var handler in factory.GetAllHandlers())
+        {
+            services.AddTransient(handler);
+        }
+
+        // add all registered handlers to DI (in order to use service factory callback from DI lib)
+        foreach (var (service, implementation) in factory.GetAllTransientServiceMappings())
+        {
+            services.AddTransient(service, implementation);
+        }
+
+        services.AddSingleton<ILogger>(p => new LoggerAdapter(p.GetService<ILogger<LoggerAdapter>>()));
+
+        services.AddSingleton<TypeDiscoveryHelper>();
+        services.AddTransient<IResourceTypeScanner, LocalizedModelTypeScanner>();
+        services.AddTransient<IResourceTypeScanner, LocalizedResourceTypeScanner>();
+        services.AddTransient<IResourceTypeScanner, LocalizedEnumTypeScanner>();
+        services.AddTransient<IResourceTypeScanner, LocalizedForeignResourceTypeScanner>();
+
+        services.AddSingleton<LocalizationProvider>();
+        services.AddSingleton<ILocalizationProvider>(sp => sp.GetRequiredService<LocalizationProvider>());
+
+        services.AddTransient<ISynchronizer, Synchronizer>();
+        services.AddTransient<Synchronizer>();
+
+        services.AddSingleton<DbStringLocalizerFactory>();
+        services.AddSingleton<IStringLocalizerFactory>(p => p.GetRequiredService<DbStringLocalizerFactory>());
+        services.AddSingleton<DbHtmlLocalizerFactory>();
+        services.AddSingleton<IHtmlLocalizerFactory>(p => p.GetRequiredService<DbHtmlLocalizerFactory>());
+        services.AddTransient<IViewLocalizer, DbViewLocalizer>();
+        services.AddTransient(typeof(IHtmlLocalizer<>), typeof(DbHtmlLocalizer<>));
+
+        // we need to check whether invariant fallback is correctly configured
+        if (ctx.EnableInvariantCultureFallback && !ctx.FallbackLanguages.Contains(CultureInfo.InvariantCulture))
+        {
+            ctx.FallbackLanguages.Then(CultureInfo.InvariantCulture);
+        }
+
+        // add manual resource providers
+        foreach (var providerType in ctx.ManualResourceProviders.Providers)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(IManualResourceProvider), providerType));
+        }
+
+        // setup model metadata providers
+        if (ctx.ModelMetadataProviders.ReplaceProviders)
+        {
+            services.TryAddEnumerable(
+                ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, ConfigureModelMetadataDetailsProviders>());
+            services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedAttributeAdapterProvider>();
+            services.TryAddEnumerable(
+                ServiceDescriptor.Transient<IConfigureOptions<MvcDataAnnotationsLocalizationOptions>, DataAnnotationLocalizerProviderSetup>());
+        }
+
+        services.AddHttpContextAccessor();
+
+        return new DbLocalizationProviderBuilder(services, ctx);
     }
 }

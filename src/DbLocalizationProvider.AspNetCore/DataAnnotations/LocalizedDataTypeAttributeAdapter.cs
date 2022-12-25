@@ -7,41 +7,40 @@ using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+/// <inheritdoc />
+public class LocalizedDataTypeAttributeAdapter : LocalizedAttributeAdapterBase<DataTypeAttribute>
 {
     /// <inheritdoc />
-    public class LocalizedDataTypeAttributeAdapter : LocalizedAttributeAdapterBase<DataTypeAttribute>
+    public LocalizedDataTypeAttributeAdapter(
+        DataTypeAttribute attribute,
+        string ruleName,
+        IStringLocalizer stringLocalizer,
+        ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
     {
-        /// <inheritdoc />
-        public LocalizedDataTypeAttributeAdapter(
-            DataTypeAttribute attribute,
-            string ruleName,
-            IStringLocalizer stringLocalizer,
-            ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
+        if (string.IsNullOrEmpty(ruleName))
         {
-            if (string.IsNullOrEmpty(ruleName))
-            {
-                throw new ArgumentNullException(nameof(ruleName));
-            }
-
-            RuleName = ruleName;
+            throw new ArgumentNullException(nameof(ruleName));
         }
 
-        /// <summary>
-        /// Name of the rule to check.
-        /// </summary>
-        public string RuleName { get; set; }
+        RuleName = ruleName;
+    }
 
-        /// <inheritdoc />
-        public override void AddValidation(ClientModelValidationContext context)
+    /// <summary>
+    /// Name of the rule to check.
+    /// </summary>
+    public string RuleName { get; set; }
+
+    /// <inheritdoc />
+    public override void AddValidation(ClientModelValidationContext context)
+    {
+        if (context == null)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, RuleName, GetErrorMessage(context, Attribute.GetDataTypeName()));
+            throw new ArgumentNullException(nameof(context));
         }
+
+        MergeAttribute(context.Attributes, "data-val", "true");
+        MergeAttribute(context.Attributes, RuleName, GetErrorMessage(context, Attribute.GetDataTypeName()));
     }
 }

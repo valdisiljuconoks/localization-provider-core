@@ -3,18 +3,17 @@
 
 using System;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore;
+
+/// <summary>
+/// Configurator called just before the service usage. This is an option for specific runtime implementation to configure stuff.
+/// </summary>
+public interface IUsageConfigurator
 {
     /// <summary>
-    /// Configurator called just before the service usage. This is an option for specific runtime implementation to configure stuff.
+    /// Callback to influence configuration content and do some pre-usage magic (if needed).
     /// </summary>
-    public interface IUsageConfigurator
-    {
-        /// <summary>
-        /// Callback to influence configuration content and do some pre-usage magic (if needed).
-        /// </summary>
-        /// <param name="context">Configuration context.</param>
-        /// <param name="serviceProvider">Service provider.</param>
-        public void Configure(ConfigurationContext context, IServiceProvider serviceProvider);
-    }
+    /// <param name="context">Configuration context.</param>
+    /// <param name="serviceProvider">Service provider.</param>
+    public void Configure(ConfigurationContext context, IServiceProvider serviceProvider);
 }

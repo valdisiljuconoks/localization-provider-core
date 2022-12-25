@@ -4,20 +4,19 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure
+namespace DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure;
+
+public class AdminUIMarkerMiddleware
 {
-    public class AdminUIMarkerMiddleware
+    private readonly RequestDelegate _next;
+
+    public AdminUIMarkerMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
+        _next = next;
+    }
 
-        public AdminUIMarkerMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
-        public Task Invoke(HttpContext context)
-        {
-            return _next(context);
-        }
+    public Task Invoke(HttpContext context)
+    {
+        return _next(context);
     }
 }

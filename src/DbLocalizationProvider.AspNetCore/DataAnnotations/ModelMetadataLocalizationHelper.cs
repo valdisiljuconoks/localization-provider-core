@@ -3,58 +3,57 @@
 
 using System;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+/// <summary>
+/// Model metadata helper.
+/// </summary>
+public class ModelMetadataLocalizationHelper
 {
+    private readonly ILocalizationProvider _localizationProvider;
+    private readonly ResourceKeyBuilder _keyBuilder;
+    private readonly ConfigurationContext _configurationContext;
+
     /// <summary>
-    /// Model metadata helper.
+    /// Creates new instance of this class.
     /// </summary>
-    public class ModelMetadataLocalizationHelper
+    /// <param name="localizationProvider">Localization provider itself.</param>
+    /// <param name="keyBuilder">Resource key builder.</param>
+    /// <param name="configurationContext">Configuration settings.</param>
+    public ModelMetadataLocalizationHelper(
+        ILocalizationProvider localizationProvider,
+        ResourceKeyBuilder keyBuilder,
+        ConfigurationContext configurationContext)
     {
-        private readonly ILocalizationProvider _localizationProvider;
-        private readonly ResourceKeyBuilder _keyBuilder;
-        private readonly ConfigurationContext _configurationContext;
+        _localizationProvider = localizationProvider ?? throw new ArgumentNullException(nameof(localizationProvider));
+        _keyBuilder = keyBuilder ?? throw new ArgumentNullException(nameof(keyBuilder));
+        _configurationContext = configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
+    }
 
-        /// <summary>
-        /// Creates new instance of this class.
-        /// </summary>
-        /// <param name="localizationProvider">Localization provider itself.</param>
-        /// <param name="keyBuilder">Resource key builder.</param>
-        /// <param name="configurationContext">Configuration settings.</param>
-        public ModelMetadataLocalizationHelper(
-            ILocalizationProvider localizationProvider,
-            ResourceKeyBuilder keyBuilder,
-            ConfigurationContext configurationContext)
+    internal string GetTranslation(string resourceKey)
+    {
+        var result = resourceKey;
+        if (!_configurationContext.EnableLocalization())  return result;
+
+        var localizedDisplayName = _localizationProvider.GetString(resourceKey);
+        result = localizedDisplayName;
+
+        // for the legacy purposes - we need to look for this resource translation using display name
+        // once again - this will make sure that existing XPath resources are still working
+        if (localizedDisplayName != null && !_configurationContext.ShouldLookupResource(localizedDisplayName))
         {
-            _localizationProvider = localizationProvider ?? throw new ArgumentNullException(nameof(localizationProvider));
-            _keyBuilder = keyBuilder ?? throw new ArgumentNullException(nameof(keyBuilder));
-            _configurationContext = configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
+            result = _localizationProvider.GetString(localizedDisplayName);
         }
 
-        internal string GetTranslation(string resourceKey)
-        {
-            var result = resourceKey;
-            if (!_configurationContext.EnableLocalization())  return result;
+        // If other data annotations exists except for [Display], an exception is thrown when display name is ""
+        // It should be null to avoid exception as ModelMetadata.GetDisplayName only checks for null and not String.Empty
+        return string.IsNullOrWhiteSpace(localizedDisplayName) ? null : result;
+    }
 
-            var localizedDisplayName = _localizationProvider.GetString(resourceKey);
-            result = localizedDisplayName;
+    internal string GetTranslation(Type containerType, string propertyName)
+    {
+        var resourceKey = _keyBuilder.BuildResourceKey(containerType, propertyName);
 
-            // for the legacy purposes - we need to look for this resource translation using display name
-            // once again - this will make sure that existing XPath resources are still working
-            if (localizedDisplayName != null && !_configurationContext.ShouldLookupResource(localizedDisplayName))
-            {
-                result = _localizationProvider.GetString(localizedDisplayName);
-            }
-
-            // If other data annotations exists except for [Display], an exception is thrown when display name is ""
-            // It should be null to avoid exception as ModelMetadata.GetDisplayName only checks for null and not String.Empty
-            return string.IsNullOrWhiteSpace(localizedDisplayName) ? null : result;
-        }
-
-        internal string GetTranslation(Type containerType, string propertyName)
-        {
-            var resourceKey = _keyBuilder.BuildResourceKey(containerType, propertyName);
-
-            return GetTranslation(resourceKey);
-        }
+        return GetTranslation(resourceKey);
     }
 }

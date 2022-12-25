@@ -7,44 +7,43 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
-{
-    /// <inheritdoc />
-    public class LocalizedStringLengthAttributeAdapter : LocalizedAttributeAdapterBase<StringLengthAttribute>
-    {
-        private readonly string _max;
-        private readonly string _min;
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 
-        /// <inheritdoc />
-        public LocalizedStringLengthAttributeAdapter(
-            StringLengthAttribute attribute,
-            IStringLocalizer stringLocalizer,
-            ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
+/// <inheritdoc />
+public class LocalizedStringLengthAttributeAdapter : LocalizedAttributeAdapterBase<StringLengthAttribute>
+{
+    private readonly string _max;
+    private readonly string _min;
+
+    /// <inheritdoc />
+    public LocalizedStringLengthAttributeAdapter(
+        StringLengthAttribute attribute,
+        IStringLocalizer stringLocalizer,
+        ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
+    {
+        _max = Attribute.MaximumLength.ToString(CultureInfo.InvariantCulture);
+        _min = Attribute.MinimumLength.ToString(CultureInfo.InvariantCulture);
+    }
+
+    /// <inheritdoc />
+    public override void AddValidation(ClientModelValidationContext context)
+    {
+        if (context == null)
         {
-            _max = Attribute.MaximumLength.ToString(CultureInfo.InvariantCulture);
-            _min = Attribute.MinimumLength.ToString(CultureInfo.InvariantCulture);
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <inheritdoc />
-        public override void AddValidation(ClientModelValidationContext context)
+        MergeAttribute(context.Attributes, "data-val", "true");
+        MergeAttribute(context.Attributes, "data-val-length", GetErrorMessage(context, _min, _max));
+
+        if (Attribute.MaximumLength != int.MaxValue)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            MergeAttribute(context.Attributes, "data-val-length-max", _max);
+        }
 
-            MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, "data-val-length", GetErrorMessage(context, _min, _max));
-
-            if (Attribute.MaximumLength != int.MaxValue)
-            {
-                MergeAttribute(context.Attributes, "data-val-length-max", _max);
-            }
-
-            if (Attribute.MinimumLength != 0)
-            {
-                MergeAttribute(context.Attributes, "data-val-length-min", _min);
-            }
+        if (Attribute.MinimumLength != 0)
+        {
+            MergeAttribute(context.Attributes, "data-val-length-min", _min);
         }
     }
 }

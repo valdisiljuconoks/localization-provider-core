@@ -6,27 +6,26 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+/// <inheritdoc />
+public class LocalizedRequiredAttributeAdapter : LocalizedAttributeAdapterBase<RequiredAttribute>
 {
     /// <inheritdoc />
-    public class LocalizedRequiredAttributeAdapter : LocalizedAttributeAdapterBase<RequiredAttribute>
+    public LocalizedRequiredAttributeAdapter(
+        RequiredAttribute attribute,
+        IStringLocalizer stringLocalizer,
+        ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder) { }
+
+    /// <inheritdoc />
+    public override void AddValidation(ClientModelValidationContext context)
     {
-        /// <inheritdoc />
-        public LocalizedRequiredAttributeAdapter(
-            RequiredAttribute attribute,
-            IStringLocalizer stringLocalizer,
-            ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder) { }
-
-        /// <inheritdoc />
-        public override void AddValidation(ClientModelValidationContext context)
+        if (context == null)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, "data-val-required", GetErrorMessage(context));
+            throw new ArgumentNullException(nameof(context));
         }
+
+        MergeAttribute(context.Attributes, "data-val", "true");
+        MergeAttribute(context.Attributes, "data-val-required", GetErrorMessage(context));
     }
 }

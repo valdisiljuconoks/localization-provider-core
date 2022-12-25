@@ -3,21 +3,20 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore
+namespace DbLocalizationProvider.AdminUI.AspNetCore;
+
+/// <summary>
+/// Localization provider builder interface to capture service collection and configuration context.
+/// </summary>
+public interface IDbLocalizationProviderAdminUIBuilder
 {
     /// <summary>
-    /// Localization provider builder interface to capture service collection and configuration context.
+    /// Service collection.
     /// </summary>
-    public interface IDbLocalizationProviderAdminUIBuilder
-    {
-        /// <summary>
-        /// Service collection.
-        /// </summary>
-        public IServiceCollection Services { get; }
+    public IServiceCollection Services { get; }
 
-        /// <summary>
-        /// Configuration context.
-        /// </summary>
-        public UiConfigurationContext UiContext { get; }
-    }
+    /// <summary>
+    /// Configuration context.
+    /// </summary>
+    public UiConfigurationContext UiContext { get; }
 }

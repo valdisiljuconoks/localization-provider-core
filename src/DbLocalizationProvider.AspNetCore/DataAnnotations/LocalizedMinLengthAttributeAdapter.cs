@@ -7,33 +7,32 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+/// <inheritdoc />
+public class LocalizedMinLengthAttributeAdapter : LocalizedAttributeAdapterBase<MinLengthAttribute>
 {
+    private readonly string _min;
+
     /// <inheritdoc />
-    public class LocalizedMinLengthAttributeAdapter : LocalizedAttributeAdapterBase<MinLengthAttribute>
+    public LocalizedMinLengthAttributeAdapter(
+        MinLengthAttribute attribute,
+        IStringLocalizer stringLocalizer,
+        ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
     {
-        private readonly string _min;
+        _min = Attribute.Length.ToString(CultureInfo.InvariantCulture);
+    }
 
-        /// <inheritdoc />
-        public LocalizedMinLengthAttributeAdapter(
-            MinLengthAttribute attribute,
-            IStringLocalizer stringLocalizer,
-            ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
+    /// <inheritdoc />
+    public override void AddValidation(ClientModelValidationContext context)
+    {
+        if (context == null)
         {
-            _min = Attribute.Length.ToString(CultureInfo.InvariantCulture);
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <inheritdoc />
-        public override void AddValidation(ClientModelValidationContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, "data-val-minlength", GetErrorMessage(context, Attribute.Length));
-            MergeAttribute(context.Attributes, "data-val-minlength-min", _min);
-        }
+        MergeAttribute(context.Attributes, "data-val", "true");
+        MergeAttribute(context.Attributes, "data-val-minlength", GetErrorMessage(context, Attribute.Length));
+        MergeAttribute(context.Attributes, "data-val-minlength-min", _min);
     }
 }

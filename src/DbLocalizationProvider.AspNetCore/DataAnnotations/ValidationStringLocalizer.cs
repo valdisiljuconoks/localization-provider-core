@@ -9,95 +9,94 @@ using System.Linq;
 using DbLocalizationProvider.Internal;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+public class ValidationStringLocalizer : IStringLocalizer, ILocalizationServicesAccessor, ICultureAwareStringLocalizer
 {
-    public class ValidationStringLocalizer : IStringLocalizer, ILocalizationServicesAccessor, ICultureAwareStringLocalizer
+    private readonly Type _containerType;
+    private readonly CultureInfo _culture;
+    private readonly ResourceKeyBuilder _keyBuilder;
+    private readonly ILocalizationProvider _localizationProvider;
+    private readonly string _propertyName;
+    private readonly ValidationAttribute _validatorMetadata;
+
+    public ValidationStringLocalizer(
+        Type containerType,
+        string propertyName,
+        ValidationAttribute validatorMetadata,
+        ILocalizationProvider localizationProvider,
+        ResourceKeyBuilder keyBuilder,
+        ExpressionHelper expressionHelper)
+        : this(containerType,
+               propertyName,
+               validatorMetadata,
+               CultureInfo.CurrentUICulture,
+               localizationProvider,
+               keyBuilder,
+               expressionHelper) { }
+
+    private ValidationStringLocalizer(
+        Type containerType,
+        string propertyName,
+        ValidationAttribute validatorMetadata,
+        CultureInfo culture,
+        ILocalizationProvider localizationProvider,
+        ResourceKeyBuilder keyBuilder,
+        ExpressionHelper expressionHelper)
     {
-        private readonly Type _containerType;
-        private readonly CultureInfo _culture;
-        private readonly ResourceKeyBuilder _keyBuilder;
-        private readonly ILocalizationProvider _localizationProvider;
-        private readonly string _propertyName;
-        private readonly ValidationAttribute _validatorMetadata;
+        _containerType = containerType;
+        _propertyName = propertyName;
+        _validatorMetadata = validatorMetadata;
+        _culture = culture;
+        _localizationProvider = localizationProvider;
+        _keyBuilder = keyBuilder;
+        ExpressionHelper = expressionHelper;
+    }
 
-        public ValidationStringLocalizer(
-            Type containerType,
-            string propertyName,
-            ValidationAttribute validatorMetadata,
-            ILocalizationProvider localizationProvider,
-            ResourceKeyBuilder keyBuilder,
-            ExpressionHelper expressionHelper)
-            : this(containerType,
-                   propertyName,
-                   validatorMetadata,
-                   CultureInfo.CurrentUICulture,
-                   localizationProvider,
-                   keyBuilder,
-                   expressionHelper) { }
+    public IStringLocalizer ChangeLanguage(CultureInfo language)
+    {
+        return new ValidationStringLocalizer(_containerType,
+                                             _propertyName,
+                                             _validatorMetadata,
+                                             language,
+                                             _localizationProvider,
+                                             _keyBuilder,
+                                             ExpressionHelper);
+    }
 
-        private ValidationStringLocalizer(
-            Type containerType,
-            string propertyName,
-            ValidationAttribute validatorMetadata,
-            CultureInfo culture,
-            ILocalizationProvider localizationProvider,
-            ResourceKeyBuilder keyBuilder,
-            ExpressionHelper expressionHelper)
+    public ExpressionHelper ExpressionHelper { get; }
+
+    public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+    {
+        return Enumerable.Empty<LocalizedString>();
+    }
+
+    public IStringLocalizer WithCulture(CultureInfo culture)
+    {
+        return ChangeLanguage(culture);
+    }
+
+    public LocalizedString this[string name]
+    {
+        get
         {
-            _containerType = containerType;
-            _propertyName = propertyName;
-            _validatorMetadata = validatorMetadata;
-            _culture = culture;
-            _localizationProvider = localizationProvider;
-            _keyBuilder = keyBuilder;
-            ExpressionHelper = expressionHelper;
+            var value = _localizationProvider.GetString(
+                _keyBuilder.BuildResourceKey(_containerType, _propertyName, _validatorMetadata));
+
+            return new LocalizedString(name, value ?? name, value == null);
         }
+    }
 
-        public IStringLocalizer ChangeLanguage(CultureInfo language)
+    public LocalizedString this[string name, params object[] arguments]
+    {
+        get
         {
-            return new ValidationStringLocalizer(_containerType,
-                                                 _propertyName,
-                                                 _validatorMetadata,
-                                                 language,
-                                                 _localizationProvider,
-                                                 _keyBuilder,
-                                                 ExpressionHelper);
-        }
+            var value = _localizationProvider.GetStringByCulture(
+                _keyBuilder.BuildResourceKey(_containerType, _propertyName, _validatorMetadata),
+                _culture,
+                arguments);
 
-        public ExpressionHelper ExpressionHelper { get; }
-
-        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-        {
-            return Enumerable.Empty<LocalizedString>();
-        }
-
-        public IStringLocalizer WithCulture(CultureInfo culture)
-        {
-            return ChangeLanguage(culture);
-        }
-
-        public LocalizedString this[string name]
-        {
-            get
-            {
-                var value = _localizationProvider.GetString(
-                    _keyBuilder.BuildResourceKey(_containerType, _propertyName, _validatorMetadata));
-
-                return new LocalizedString(name, value ?? name, value == null);
-            }
-        }
-
-        public LocalizedString this[string name, params object[] arguments]
-        {
-            get
-            {
-                var value = _localizationProvider.GetStringByCulture(
-                    _keyBuilder.BuildResourceKey(_containerType, _propertyName, _validatorMetadata),
-                    _culture,
-                    arguments);
-
-                return new LocalizedString(name, value ?? name, value == null);
-            }
+            return new LocalizedString(name, value ?? name, value == null);
         }
     }
 }

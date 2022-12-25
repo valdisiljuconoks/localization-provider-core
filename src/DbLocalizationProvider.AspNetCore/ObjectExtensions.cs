@@ -3,41 +3,40 @@
 
 using System.Reflection;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore;
+
+/// <summary>
+/// Some reflection related extensions on <see cref="object" /> type.
+/// </summary>
+internal static class ObjectExtensions
 {
     /// <summary>
-    /// Some reflection related extensions on <see cref="object" /> type.
     /// </summary>
-    internal static class ObjectExtensions
+    /// <typeparam name="T"></typeparam>
+    /// <param name="instance"></param>
+    /// <param name="fieldName"></param>
+    /// <returns></returns>
+    internal static T GetField<T>(this object instance, string fieldName) where T : class
     {
-        /// <summary>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <param name="fieldName"></param>
-        /// <returns></returns>
-        internal static T GetField<T>(this object instance, string fieldName) where T : class
-        {
-            var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var field = instance.GetType().GetField(fieldName, bindFlags);
+        var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+        var field = instance.GetType().GetField(fieldName, bindFlags);
 
-            return field?.GetValue(instance) as T;
-        }
+        return field?.GetValue(instance) as T;
+    }
 
-        internal static T GetField<T, TBase>(this object instance, string fieldName) where T : class
-        {
-            var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var field = typeof(TBase).GetField(fieldName, bindFlags);
+    internal static T GetField<T, TBase>(this object instance, string fieldName) where T : class
+    {
+        var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+        var field = typeof(TBase).GetField(fieldName, bindFlags);
 
-            return field?.GetValue(instance) as T;
-        }
+        return field?.GetValue(instance) as T;
+    }
 
-        internal static void SetField<T>(this object instance, string fieldName, object value)
-        {
-            var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
-            var field = typeof(T).GetField(fieldName, bindFlags);
+    internal static void SetField<T>(this object instance, string fieldName, object value)
+    {
+        var bindFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+        var field = typeof(T).GetField(fieldName, bindFlags);
 
-            field?.SetValue(instance, value);
-        }
+        field?.SetValue(instance, value);
     }
 }

@@ -8,30 +8,29 @@ using System.Linq;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Queries;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore.Queries
+namespace DbLocalizationProvider.AdminUI.AspNetCore.Queries;
+
+public class AvailableLanguagesHandler : IQueryHandler<AvailableLanguages.Query, IEnumerable<AvailableLanguage>>
 {
-    public class AvailableLanguagesHandler : IQueryHandler<AvailableLanguages.Query, IEnumerable<AvailableLanguage>>
+    private readonly IEnumerable<AvailableLanguage> _supportedLanguages;
+
+    public AvailableLanguagesHandler()
     {
-        private readonly IEnumerable<AvailableLanguage> _supportedLanguages;
+        _supportedLanguages = new List<AvailableLanguage>();
+    }
 
-        public AvailableLanguagesHandler()
+    public AvailableLanguagesHandler(IList<CultureInfo> supportedLanguages)
+    {
+        if (supportedLanguages == null)
         {
-            _supportedLanguages = new List<AvailableLanguage>();
+            throw new ArgumentNullException(nameof(supportedLanguages));
         }
 
-        public AvailableLanguagesHandler(IList<CultureInfo> supportedLanguages)
-        {
-            if (supportedLanguages == null)
-            {
-                throw new ArgumentNullException(nameof(supportedLanguages));
-            }
+        _supportedLanguages = supportedLanguages.Select((l, ix) => new AvailableLanguage(l.EnglishName, ix, l));
+    }
 
-            _supportedLanguages = supportedLanguages.Select((l, ix) => new AvailableLanguage(l.EnglishName, ix, l));
-        }
-
-        public IEnumerable<AvailableLanguage> Execute(AvailableLanguages.Query query)
-        {
-            return _supportedLanguages;
-        }
+    public IEnumerable<AvailableLanguage> Execute(AvailableLanguages.Query query)
+    {
+        return _supportedLanguages;
     }
 }

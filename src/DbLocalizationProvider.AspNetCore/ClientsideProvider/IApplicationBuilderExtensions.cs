@@ -10,35 +10,34 @@ using Microsoft.Extensions.Hosting;
 using AppContext = DbLocalizationProvider.AspNetCore.ClientsideProvider.AppContext;
 
 // ReSharper disable once CheckNamespace
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore;
+
+public static class IApplicationBuilderClientsideExtensions
 {
-    public static class IApplicationBuilderClientsideExtensions
+    private static ICacheManager _cache;
+
+    /// <summary>
+    /// Makes sure that usage of the clientside resource provider is added to your app.
+    /// </summary>
+    /// <param name="builder">Application builder instance passed in by framework.</param>
+    /// <returns>Returns the same builder for the fluent API.</returns>
+    public static IApplicationBuilder UseDbLocalizationClientsideProvider(this IApplicationBuilder builder)
     {
-        private static ICacheManager _cache;
+        AppContext.Configure(builder.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
+        _cache = builder.ApplicationServices.GetRequiredService<ICacheManager>();
 
-        /// <summary>
-        /// Makes sure that usage of the clientside resource provider is added to your app.
-        /// </summary>
-        /// <param name="builder">Application builder instance passed in by framework.</param>
-        /// <returns>Returns the same builder for the fluent API.</returns>
-        public static IApplicationBuilder UseDbLocalizationClientsideProvider(this IApplicationBuilder builder)
-        {
-            AppContext.Configure(builder.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
-            _cache = builder.ApplicationServices.GetRequiredService<ICacheManager>();
+        var cacheManager = builder.ApplicationServices.GetService<ICacheManager>();
+        cacheManager.OnRemove += OnRemove;
+        builder.ApplicationServices
+            .GetRequiredService<IHostApplicationLifetime>()
+            .ApplicationStopping
+            .Register(() => cacheManager.OnRemove -= OnRemove);
 
-            var cacheManager = builder.ApplicationServices.GetService<ICacheManager>();
-            cacheManager.OnRemove += OnRemove;
-            builder.ApplicationServices
-                .GetRequiredService<IHostApplicationLifetime>()
-                .ApplicationStopping
-                .Register(() => cacheManager.OnRemove -= OnRemove);
+        return builder;
+    }
 
-            return builder;
-        }
-
-        private static void OnRemove(CacheEventArgs args)
-        {
-            CacheHelper.CacheManagerOnRemove(args, _cache);
-        }
+    private static void OnRemove(CacheEventArgs args)
+    {
+        CacheHelper.CacheManagerOnRemove(args, _cache);
     }
 }

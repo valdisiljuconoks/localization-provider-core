@@ -8,53 +8,52 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+/// <inheritdoc />
+public class LocalizedCompareAttributeAdapter : LocalizedAttributeAdapterBase<CompareAttribute>
 {
+    private readonly string _otherProperty;
+
     /// <inheritdoc />
-    public class LocalizedCompareAttributeAdapter : LocalizedAttributeAdapterBase<CompareAttribute>
+    public LocalizedCompareAttributeAdapter(
+        CompareAttribute attribute,
+        IStringLocalizer stringLocalizer,
+        ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
     {
-        private readonly string _otherProperty;
+        _otherProperty = "*." + attribute.OtherProperty;
+    }
 
-        /// <inheritdoc />
-        public LocalizedCompareAttributeAdapter(
-            CompareAttribute attribute,
-            IStringLocalizer stringLocalizer,
-            ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
+    /// <inheritdoc />
+    public override void AddValidation(ClientModelValidationContext context)
+    {
+        if (context == null)
         {
-            _otherProperty = "*." + attribute.OtherProperty;
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <inheritdoc />
-        public override void AddValidation(ClientModelValidationContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+        MergeAttribute(context.Attributes, "data-val", "true");
+        MergeAttribute(context.Attributes, "data-val-equalto", GetErrorMessage(context, GetOtherPropertyDisplayName(context, Attribute)));
+        MergeAttribute(context.Attributes, "data-val-equalto-other", _otherProperty);
+    }
 
-            MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, "data-val-equalto", GetErrorMessage(context, GetOtherPropertyDisplayName(context, Attribute)));
-            MergeAttribute(context.Attributes, "data-val-equalto-other", _otherProperty);
+    private static string GetOtherPropertyDisplayName(
+        ModelValidationContextBase validationContext,
+        CompareAttribute attribute)
+    {
+        // The System.ComponentModel.DataAnnotations.CompareAttribute doesn't populate the
+        // OtherPropertyDisplayName until after IsValid() is called. Therefore, at the time we get
+        // the error message for client validation, the display name is not populated and won't be used.
+        var otherPropertyDisplayName = attribute.OtherPropertyDisplayName;
+        if (otherPropertyDisplayName != null || validationContext.ModelMetadata.ContainerType == null)
+        {
+            return attribute.OtherProperty;
         }
 
-        private static string GetOtherPropertyDisplayName(
-            ModelValidationContextBase validationContext,
-            CompareAttribute attribute)
-        {
-            // The System.ComponentModel.DataAnnotations.CompareAttribute doesn't populate the
-            // OtherPropertyDisplayName until after IsValid() is called. Therefore, at the time we get
-            // the error message for client validation, the display name is not populated and won't be used.
-            var otherPropertyDisplayName = attribute.OtherPropertyDisplayName;
-            if (otherPropertyDisplayName != null || validationContext.ModelMetadata.ContainerType == null)
-            {
-                return attribute.OtherProperty;
-            }
+        var otherProperty = validationContext.MetadataProvider.GetMetadataForProperty(
+            validationContext.ModelMetadata.ContainerType,
+            attribute.OtherProperty);
 
-            var otherProperty = validationContext.MetadataProvider.GetMetadataForProperty(
-                validationContext.ModelMetadata.ContainerType,
-                attribute.OtherProperty);
-
-            return otherProperty != null ? otherProperty.GetDisplayName() : attribute.OtherProperty;
-        }
+        return otherProperty != null ? otherProperty.GetDisplayName() : attribute.OtherProperty;
     }
 }

@@ -4,16 +4,15 @@
 using System.Collections.Generic;
 using DbLocalizationProvider.Export;
 
-namespace DbLocalizationProvider.AdminUI.AspNetCore.Configuration
+namespace DbLocalizationProvider.AdminUI.AspNetCore.Configuration;
+
+/// <summary>
+/// Settings class to be used by plug-in providers
+/// </summary>
+public class ProviderSettings
 {
     /// <summary>
-    /// Settings class to be used by plug-in providers
+    /// List of exporters configured by plug-ins
     /// </summary>
-    public class ProviderSettings
-    {
-        /// <summary>
-        /// List of exporters configured by plug-ins
-        /// </summary>
-        public List<IResourceExporter> Exporters { get; set; } = new();
-    }
+    public List<IResourceExporter> Exporters { get; set; } = new();
 }

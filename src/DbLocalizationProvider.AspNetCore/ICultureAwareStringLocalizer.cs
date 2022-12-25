@@ -4,18 +4,17 @@
 using System.Globalization;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore;
+
+/// <summary>
+/// Workaround interface for changing language on <see cref="IStringLocalizer"/>
+/// </summary>
+public interface ICultureAwareStringLocalizer
 {
     /// <summary>
-    /// Workaround interface for changing language on <see cref="IStringLocalizer"/>
+    /// Change language of the provider and returns string localizer with specified language.
     /// </summary>
-    public interface ICultureAwareStringLocalizer
-    {
-        /// <summary>
-        /// Change language of the provider and returns string localizer with specified language.
-        /// </summary>
-        /// <param name="language">Language to change to.</param>
-        /// <returns>Localizer with specified language.</returns>
-        IStringLocalizer ChangeLanguage(CultureInfo language);
-    }
+    /// <param name="language">Language to change to.</param>
+    /// <returns>Localizer with specified language.</returns>
+    IStringLocalizer ChangeLanguage(CultureInfo language);
 }

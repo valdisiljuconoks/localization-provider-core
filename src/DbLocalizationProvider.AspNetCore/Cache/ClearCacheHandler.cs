@@ -4,23 +4,22 @@
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Cache;
 
-namespace DbLocalizationProvider.AspNetCore.Cache
+namespace DbLocalizationProvider.AspNetCore.Cache;
+
+public class ClearCacheHandler : ICommandHandler<ClearCache.Command>
 {
-    public class ClearCacheHandler : ICommandHandler<ClearCache.Command>
+    private readonly ICacheManager _cache;
+
+    public ClearCacheHandler(ICacheManager cache)
     {
-        private readonly ICacheManager _cache;
+        _cache = cache;
+    }
 
-        public ClearCacheHandler(ICacheManager cache)
+    public void Execute(ClearCache.Command command)
+    {
+        foreach(var itemToRemove in InMemoryCacheManager.Entries)
         {
-            _cache = cache;
-        }
-
-        public void Execute(ClearCache.Command command)
-        {
-            foreach(var itemToRemove in InMemoryCacheManager.Entries)
-            {
-                _cache.Remove(itemToRemove.Key);
-            }
+            _cache.Remove(itemToRemove.Key);
         }
     }
 }

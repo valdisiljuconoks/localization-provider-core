@@ -7,33 +7,32 @@ using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+/// <inheritdoc />
+public class LocalizedMaxLengthAttributeAdapter : LocalizedAttributeAdapterBase<MaxLengthAttribute>
 {
+    private readonly string _max;
+
     /// <inheritdoc />
-    public class LocalizedMaxLengthAttributeAdapter : LocalizedAttributeAdapterBase<MaxLengthAttribute>
+    public LocalizedMaxLengthAttributeAdapter(
+        MaxLengthAttribute attribute,
+        IStringLocalizer stringLocalizer,
+        ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
     {
-        private readonly string _max;
+        _max = Attribute.Length.ToString(CultureInfo.InvariantCulture);
+    }
 
-        /// <inheritdoc />
-        public LocalizedMaxLengthAttributeAdapter(
-            MaxLengthAttribute attribute,
-            IStringLocalizer stringLocalizer,
-            ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
+    /// <inheritdoc />
+    public override void AddValidation(ClientModelValidationContext context)
+    {
+        if (context == null)
         {
-            _max = Attribute.Length.ToString(CultureInfo.InvariantCulture);
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <inheritdoc />
-        public override void AddValidation(ClientModelValidationContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, "data-val-maxlength", GetErrorMessage(context, Attribute.Length));
-            MergeAttribute(context.Attributes, "data-val-maxlength-max", _max);
-        }
+        MergeAttribute(context.Attributes, "data-val", "true");
+        MergeAttribute(context.Attributes, "data-val-maxlength", GetErrorMessage(context, Attribute.Length));
+        MergeAttribute(context.Attributes, "data-val-maxlength-max", _max);
     }
 }

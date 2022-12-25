@@ -7,74 +7,73 @@ using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore;
+
+/// <summary>
+/// Some extensions for <see cref="IStringLocalizer{T}"/>.
+/// </summary>
+public static class IStringLocalizerOfTExtensions
 {
     /// <summary>
-    /// Some extensions for <see cref="IStringLocalizer{T}"/>.
+    /// Returns resource translation.
     /// </summary>
-    public static class IStringLocalizerOfTExtensions
+    /// <typeparam name="T">Type of the model (resource class).</typeparam>
+    /// <param name="target">Target type for which extension methods are defined.</param>
+    /// <param name="model">Expression of the resource key.</param>
+    /// <param name="formatArguments">Maybe some formatting is needed (like substitution of the placeholders).</param>
+    /// <returns>Resource translation (if any).</returns>
+    public static LocalizedString GetString<T>(
+        this IStringLocalizer<T> target,
+        Expression<Func<T, object>> model,
+        params object[] formatArguments)
     {
-        /// <summary>
-        /// Returns resource translation.
-        /// </summary>
-        /// <typeparam name="T">Type of the model (resource class).</typeparam>
-        /// <param name="target">Target type for which extension methods are defined.</param>
-        /// <param name="model">Expression of the resource key.</param>
-        /// <param name="formatArguments">Maybe some formatting is needed (like substitution of the placeholders).</param>
-        /// <returns>Resource translation (if any).</returns>
-        public static LocalizedString GetString<T>(
-            this IStringLocalizer<T> target,
-            Expression<Func<T, object>> model,
-            params object[] formatArguments)
-        {
-            return target[GetResourceName(target, model), formatArguments];
-        }
-
-        /// <summary>
-        /// Returns resource translation by given language.
-        /// </summary>
-        /// <typeparam name="T">Type of the model (resource class).</typeparam>
-        /// <param name="target">Target type for which extension methods are defined.</param>
-        /// <param name="model">Expression of the resource key.</param>
-        /// <param name="language"></param>
-        /// <param name="formatArguments">Maybe some formatting is needed (like substitution of the placeholders).</param>
-        /// <returns>Resource translation (if any).</returns>
-
-        public static LocalizedString GetStringByCulture<T>(
-            this IStringLocalizer<T> target,
-            Expression<Func<T, object>> model,
-            CultureInfo language,
-            params object[] formatArguments)
-        {
-            if (model == null)
-            {
-                throw new ArgumentNullException(nameof(model));
-            }
-
-            if (language == null)
-            {
-                throw new ArgumentNullException(nameof(language));
-            }
-
-            var localizer = target.GetField<DbStringLocalizer>("_localizer");
-            if (localizer is ICultureAwareStringLocalizer cultureAwareLocalizer)
-            {
-                return cultureAwareLocalizer.ChangeLanguage(language)[GetResourceName(target, model), formatArguments];
-            }
-
-            return null;
-        }
-
-        private static string GetResourceName<T>(IStringLocalizer<T> target, LambdaExpression model)
-        {
-            var localizer = target.GetField<DbStringLocalizer>("_localizer");
-            if (localizer != null)
-            {
-                return localizer.ExpressionHelper.GetFullMemberName(model);
-            }
-
-            return string.Empty;
-        }
-
+        return target[GetResourceName(target, model), formatArguments];
     }
+
+    /// <summary>
+    /// Returns resource translation by given language.
+    /// </summary>
+    /// <typeparam name="T">Type of the model (resource class).</typeparam>
+    /// <param name="target">Target type for which extension methods are defined.</param>
+    /// <param name="model">Expression of the resource key.</param>
+    /// <param name="language"></param>
+    /// <param name="formatArguments">Maybe some formatting is needed (like substitution of the placeholders).</param>
+    /// <returns>Resource translation (if any).</returns>
+
+    public static LocalizedString GetStringByCulture<T>(
+        this IStringLocalizer<T> target,
+        Expression<Func<T, object>> model,
+        CultureInfo language,
+        params object[] formatArguments)
+    {
+        if (model == null)
+        {
+            throw new ArgumentNullException(nameof(model));
+        }
+
+        if (language == null)
+        {
+            throw new ArgumentNullException(nameof(language));
+        }
+
+        var localizer = target.GetField<DbStringLocalizer>("_localizer");
+        if (localizer is ICultureAwareStringLocalizer cultureAwareLocalizer)
+        {
+            return cultureAwareLocalizer.ChangeLanguage(language)[GetResourceName(target, model), formatArguments];
+        }
+
+        return null;
+    }
+
+    private static string GetResourceName<T>(IStringLocalizer<T> target, LambdaExpression model)
+    {
+        var localizer = target.GetField<DbStringLocalizer>("_localizer");
+        if (localizer != null)
+        {
+            return localizer.ExpressionHelper.GetFullMemberName(model);
+        }
+
+        return string.Empty;
+    }
+
 }

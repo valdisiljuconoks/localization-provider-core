@@ -3,15 +3,14 @@
 
 using Microsoft.AspNetCore.Http;
 
-namespace DbLocalizationProvider.AspNetCore.ClientsideProvider
-{
-    internal class AppContext
-    {
-        public static IHttpContextAccessor Service { get; private set; }
+namespace DbLocalizationProvider.AspNetCore.ClientsideProvider;
 
-        public static void Configure(IHttpContextAccessor service)
-        {
-            Service = service;
-        }
+internal class AppContext
+{
+    public static IHttpContextAccessor Service { get; private set; }
+
+    public static void Configure(IHttpContextAccessor service)
+    {
+        Service = service;
     }
 }

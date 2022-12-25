@@ -8,37 +8,36 @@ using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
 
-namespace DbLocalizationProvider.AspNetCore.DataAnnotations
+namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
+
+/// <inheritdoc />
+public class LocalizedFileExtensionsAttributeAdapter : LocalizedAttributeAdapterBase<FileExtensionsAttribute>
 {
+    private readonly string _extensions;
+    private readonly string _formattedExtensions;
+
     /// <inheritdoc />
-    public class LocalizedFileExtensionsAttributeAdapter : LocalizedAttributeAdapterBase<FileExtensionsAttribute>
+    public LocalizedFileExtensionsAttributeAdapter(
+        FileExtensionsAttribute attribute,
+        IStringLocalizer stringLocalizer,
+        ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
     {
-        private readonly string _extensions;
-        private readonly string _formattedExtensions;
+        var normalizedExtensions = Attribute.Extensions.Replace(" ", string.Empty).Replace(".", string.Empty).ToLowerInvariant();
+        var parsedExtensions = normalizedExtensions.Split(',').Select(e => "." + e);
+        _formattedExtensions = string.Join(", ", parsedExtensions);
+        _extensions = string.Join(",", parsedExtensions);
+    }
 
-        /// <inheritdoc />
-        public LocalizedFileExtensionsAttributeAdapter(
-            FileExtensionsAttribute attribute,
-            IStringLocalizer stringLocalizer,
-            ResourceKeyBuilder resourceKeyBuilder) : base(attribute, stringLocalizer, resourceKeyBuilder)
+    /// <inheritdoc />
+    public override void AddValidation(ClientModelValidationContext context)
+    {
+        if (context == null)
         {
-            var normalizedExtensions = Attribute.Extensions.Replace(" ", string.Empty).Replace(".", string.Empty).ToLowerInvariant();
-            var parsedExtensions = normalizedExtensions.Split(',').Select(e => "." + e);
-            _formattedExtensions = string.Join(", ", parsedExtensions);
-            _extensions = string.Join(",", parsedExtensions);
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <inheritdoc />
-        public override void AddValidation(ClientModelValidationContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            MergeAttribute(context.Attributes, "data-val", "true");
-            MergeAttribute(context.Attributes, "data-val-fileextensions", GetErrorMessage(context, _formattedExtensions));
-            MergeAttribute(context.Attributes, "data-val-fileextensions-extensions", _extensions);
-        }
+        MergeAttribute(context.Attributes, "data-val", "true");
+        MergeAttribute(context.Attributes, "data-val-fileextensions", GetErrorMessage(context, _formattedExtensions));
+        MergeAttribute(context.Attributes, "data-val-fileextensions-extensions", _extensions);
     }
 }

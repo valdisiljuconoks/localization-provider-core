@@ -3,16 +3,15 @@
 
 using DbLocalizationProvider.Internal;
 
-namespace DbLocalizationProvider.AspNetCore
+namespace DbLocalizationProvider.AspNetCore;
+
+/// <summary>
+/// Interface is more or less used as marker interface to understand whether type has access to various localization provider required services
+/// </summary>
+public interface ILocalizationServicesAccessor
 {
     /// <summary>
-    /// Interface is more or less used as marker interface to understand whether type has access to various localization provider required services
+    /// Expression helper to be used to walk lambdas
     /// </summary>
-    public interface ILocalizationServicesAccessor
-    {
-        /// <summary>
-        /// Expression helper to be used to walk lambdas
-        /// </summary>
-        ExpressionHelper ExpressionHelper { get; }
-    }
+    ExpressionHelper ExpressionHelper { get; }
 }
