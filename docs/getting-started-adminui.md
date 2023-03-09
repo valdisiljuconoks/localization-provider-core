@@ -87,10 +87,8 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            ...
-
             endpoints.MapRazorPages();
-            endpoints.MapDbLocalizationAdminUI();
+            ...
         });
     }
 }
