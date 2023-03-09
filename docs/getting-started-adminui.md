@@ -41,6 +41,22 @@ public class Startup
 ```
 
 You can also configure AdminUI according to your requirements by using passed in UI configuration context (`UiConfigurationContext`).
+
+Following configuration options are available:
+
+| Option | Description |
+|------|------|
+| `MaxResourceKeyDisplayLength` | Maximnum number of symbols to show for resource key. Default 80.  |
+| `MaxResourceKeyPopupTitleLength` | Maximnum number of symbols to show for resource edit window title. Default 80. |
+| `DefaultView` | Which view to show when accessing AdminUI. Default is `Table`. |
+| `ShowInvariantCulture` | Do you want to see invariant culture column? |
+| `ShowHiddenResources` | Do you want to see hidden resources (decorated with `[Hidden]` attribute)? |
+| `CustomCssPath` | Make your AdminUI look familiar using external CSS file. |
+| `RootUrl` | Mapping url of AdminUI (by which URL you will be able to access the user interface). |
+| `HideDeleteButton` | Should `Delete` button be visible? |
+| `AccessPolicyOptions` | How are you going to secure access to AdminUI? |
+| `UseAvailableLanguageListFromStorage` | Flag whether list of available languages should be taked from the underlying storage. |
+
 When you are done with adding these services, next you need to map AdminUI module under some path.
 
 Starting from v6 there are few changes how AdminUI is mapped.
