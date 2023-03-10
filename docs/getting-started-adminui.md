@@ -6,8 +6,43 @@
 > dotnet add package LocalizationProvider.AdminUI.AspNetCore
 ```
 
-## Configure Services
+## Configure Services (.NET 6+)
+For Minimal API syntax use following set of configuration as your starting point to get AdminUI up & running.
 
+```csharp
+using DbLocalizationProvider.AdminUI.AspNetCore;
+using DbLocalizationProvider.AspNetCore;
+
+var builder = WebApplication.CreateBuilder(args);
+var services = builder.Services;
+
+services
+    .AddControllersWithViews()
+    .AddMvcLocalization();
+
+services.AddRazorPages();
+
+services
+    .AddMemoryCache()
+    .AddAuthorization();
+
+var app = builder.Build();
+
+app.UseStaticFiles();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseDbLocalizationProvider();
+app.UseDbLocalizationProviderAdminUI();
+
+app.MapRazorPages();
+app.MapControllers();
+
+app.Run();
+```
+
+## Configure Services (.NET 5)
 In order to add AdminUI module to your Asp.Net Core Mvc application you have to first add services to dependency container (service collection) via `services.AddDbLocalizationProviderAdminUI()` method:
 
 ```csharp
@@ -37,6 +72,26 @@ public class Startup
             c.ShowInvariantCulture = true;
         });
     }
+
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        app.UseRouting();
+        app.UseStaticFiles();
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseDbLocalizationProvider();
+        app.UseDbLocalizationProviderAdminUI();
+
+        ...
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            endpoints.MapRazorPages();
+            ...
+        });
+    }
 }
 ```
 
@@ -57,78 +112,17 @@ Following configuration options are available:
 | `AccessPolicyOptions` | How are you going to secure access to AdminUI? |
 | `UseAvailableLanguageListFromStorage` | Flag whether list of available languages should be taked from the underlying storage. |
 
-When you are done with adding these services, next you need to map AdminUI module under some path.
-
-Starting from v6 there are few changes how AdminUI is mapped.
-
-For **old MVC Routing**:
-
-```csharp
-public class Startup
-{
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-    {
-        app.UseRouting();
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.UseDbLocalizationProvider();
-        app.UseDbLocalizationProviderAdminUI();
-
-        ...
-        app.UseMvc(routes =>
-        {
-            routes.MapDbLocalizationAdminUI();
-        });
-    }
-}
-```
-
-For **Endpoint routing**:
-
-```csharp
-public class Startup
-{
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-    {
-        app.UseRouting();
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.UseDbLocalizationProvider();
-        app.UseDbLocalizationProviderAdminUI();
-
-        ...
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            endpoints.MapRazorPages();
-            ...
-        });
-    }
-}
-```
-
 ## Accessing AdminUI
-
 By default administration UI is mapped on `/localization-admin` path. You can customize path via `app.AddDbLocalizationProviderAdminUI();`. For example to map to `/loc-admin-ui`, you have to:
 
 ```
-public class Startup
+services.AddDbLocalizationProviderAdminUI(_ =>
 {
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddDbLocalizationProviderAdminUI(_ =>
-        {
-            _.RootUrl = "/loc-admin-ui";
-        });
-    }
-}
+    _.RootUrl = "/loc-admin-ui";
+});
 ```
 
 ## Securing Admin UI
-
 AdminUI by default is secured with user roles access policy requirement.
 
 ```csharp
@@ -155,12 +149,9 @@ public class CheckAdministratorsRoleRequirement
 If you want to customize access policy - you can configure it via `Configure` method on startup:
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services
-        .AddDbLocalizationProviderAdminUI(_ =>
-        {
-            _.AccessPolicyOptions = builder => builder.AddRequirements(...);
-        });
-}
+services
+    .AddDbLocalizationProviderAdminUI(_ =>
+    {
+        _.AccessPolicyOptions = builder => builder.AddRequirements(...);
+    });
 ```
