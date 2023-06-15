@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using DbLocalizationProvider.Export;
+using DbLocalizationProvider.Import;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Configuration;
 
@@ -11,6 +12,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Configuration;
 /// </summary>
 public class ProviderSettings
 {
+    /// <summary>
+    /// List of importers configured by plug-ins
+    /// </summary>
+    public List<IResourceFormatParser> Importers { get; set; } = new();
+
     /// <summary>
     /// List of exporters configured by plug-ins
     /// </summary>

@@ -21,7 +21,11 @@ public static class IDbLocalizationProviderAdminUIBuilderExtensions
     public static IDbLocalizationProviderAdminUIBuilder AddCsvSupport(
         this IDbLocalizationProviderAdminUIBuilder builder)
     {
-        builder.Services.Configure<ProviderSettings>(s => s.Exporters.Add(new CsvResourceExporter()));
+        builder.Services.Configure<ProviderSettings>(s =>
+        {
+            s.Exporters.Add(new CsvResourceExporter());
+            s.Importers.Add(new CsvResourceFormatParser());
+        });
 
         return builder;
     }

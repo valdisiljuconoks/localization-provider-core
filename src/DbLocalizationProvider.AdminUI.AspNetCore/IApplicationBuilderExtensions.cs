@@ -64,11 +64,16 @@ public static class IApplicationBuilderExtensions
                 .SetHandler(() => new AvailableLanguagesHandler(requestOptions.Value.SupportedUICultures));
         }
 
-        // postfix registered providers
+        // postfix registered import/export providers
         var providerSettings = app.ApplicationServices.GetService<IOptions<ProviderSettings>>();
         if (providerSettings != null)
         {
             var context = app.ApplicationServices.GetRequiredService<ConfigurationContext>();
+            foreach (var importer in providerSettings.Value.Importers)
+            {
+                context.Import.Providers.Add(importer);
+            }
+
             foreach (var exporter in providerSettings.Value.Exporters)
             {
                 context.Export.Providers.Add(exporter);

@@ -21,7 +21,11 @@ public static class IDbLocalizationProviderAdminUIBuilderExtensions
     public static IDbLocalizationProviderAdminUIBuilder AddXliffSupport(
         this IDbLocalizationProviderAdminUIBuilder services)
     {
-        services.Services.Configure<ProviderSettings>(s => s.Exporters.Add(new XliffResourceExporter()));
+        services.Services.Configure<ProviderSettings>(s =>
+        {
+            s.Importers.Add(new FormatParser());
+            s.Exporters.Add(new XliffResourceExporter());
+        });
 
         return services;
     }
