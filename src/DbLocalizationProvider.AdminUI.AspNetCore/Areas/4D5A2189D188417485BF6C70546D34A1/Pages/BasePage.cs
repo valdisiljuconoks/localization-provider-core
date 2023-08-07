@@ -38,13 +38,13 @@ public class BasePage : PageModel
     public HtmlString IncludeStyle(string cssFileName)
     {
         return new HtmlString(
-            $"<link rel=\"stylesheet\" href=\"/_content/LocalizationProvider.AdminUI.AspNetCore/css/{cssFileName}\">");
+            $"<link rel=\"stylesheet\" href=\"_content/LocalizationProvider.AdminUI.AspNetCore/css/{cssFileName}\">");
     }
 
     public HtmlString IncludeScript(string scriptFileName)
     {
         return new HtmlString(
-            $"<script src=\"/_content/LocalizationProvider.AdminUI.AspNetCore/js/{scriptFileName}\"></script>");
+            $"<script src=\"_content/LocalizationProvider.AdminUI.AspNetCore/js/{scriptFileName}\"></script>");
     }
 
     public IActionResult OnGet()
