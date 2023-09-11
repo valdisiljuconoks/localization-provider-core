@@ -1,16 +1,18 @@
 ﻿using System;
 
-namespace DbLocalizationProvider.Core.AspNetSample.Resources
+namespace DbLocalizationProvider.Core.AspNetSample.Resources;
+
+public class WeirdCustomAttribute : Attribute
 {
-    public class WeirdCustomAttribute : Attribute
+    public WeirdCustomAttribute(string value)
     {
-        public WeirdCustomAttribute(string value)
-        {
-            Value = value;
-        }
+        Value = value;
+    }
 
-        public string Value { get; }
+    public string Value { get; }
 
-        public override string ToString() => Value;
+    public override string ToString()
+    {
+        return Value;
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace DbLocalizationProvider.Core.AspNetSample.Models.ManageViewModels
+﻿namespace DbLocalizationProvider.Core.AspNetSample.Models.ManageViewModels;
+
+public class ShowRecoveryCodesViewModel
 {
-    public class ShowRecoveryCodesViewModel
-    {
-        public string[] RecoveryCodes { get; set; }
-    }
+    public string[] RecoveryCodes { get; set; }
 }

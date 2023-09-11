@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using DbLocalizationProvider;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Abstractions.Refactoring;
 
@@ -68,7 +67,9 @@ namespace DbLocalizationProvider.Core.AspNetSample.Resources
 
         public static string PropertyWithPlaceholders => "This is a text with some place holders: `{0}`.";
 
-        public static string ThisIsPrettyLongResourceKeyNameJustToTestHowBadItLooksInAdministrativeUserInterfaceResourceListPageTable => "This is pretty long";
+        public static string
+            ThisIsPrettyLongResourceKeyNameJustToTestHowBadItLooksInAdministrativeUserInterfaceResourceListPageTable =>
+            "This is pretty long";
     }
 
     [LocalizedResource]

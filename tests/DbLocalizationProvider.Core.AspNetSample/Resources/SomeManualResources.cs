@@ -2,13 +2,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using DbLocalizationProvider.Sync;
 
-namespace DbLocalizationProvider.Core.AspNetSample.Resources
+namespace DbLocalizationProvider.Core.AspNetSample.Resources;
+
+public class SomeManualResources : IManualResourceProvider
 {
-    public class SomeManualResources : IManualResourceProvider
+    public IEnumerable<ManualResource> GetResources()
     {
-        public IEnumerable<ManualResource> GetResources() => new List<ManualResource>
-        {
-            new ManualResource("Manual.Resource.1", "Invariant translation", CultureInfo.InvariantCulture)
-        };
+        return new List<ManualResource> { new("Manual.Resource.1", "Invariant translation", CultureInfo.InvariantCulture) };
     }
 }
