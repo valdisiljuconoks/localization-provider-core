@@ -7,7 +7,7 @@ public class AdminUIViewModel : BasePage
 {
     public AdminUIViewModel(
         ConfigurationContext configurationContext,
-        UiConfigurationContext  uiContext,
+        UiConfigurationContext uiContext,
         IQueryExecutor queryExecutor,
         ICommandExecutor commandExecutor)
         : base(configurationContext, uiContext, queryExecutor, commandExecutor) { }

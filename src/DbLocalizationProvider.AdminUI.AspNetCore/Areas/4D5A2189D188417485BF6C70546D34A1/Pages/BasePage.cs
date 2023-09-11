@@ -17,11 +17,11 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6
 
 public class BasePage : PageModel
 {
-    private readonly ConfigurationContext _configurationContext;
-    private readonly UiConfigurationContext _uiConfigurationContext;
-    private readonly IQueryExecutor _queryExecutor;
-    private readonly ICommandExecutor _commandExecutor;
     private const string _lastViewCookieName = "LocalizationProvider_LastView";
+    private readonly ICommandExecutor _commandExecutor;
+    private readonly ConfigurationContext _configurationContext;
+    private readonly IQueryExecutor _queryExecutor;
+    private readonly UiConfigurationContext _uiConfigurationContext;
 
     public BasePage(
         ConfigurationContext configurationContext,

@@ -4,13 +4,12 @@
 using System;
 using System.Globalization;
 using System.Linq.Expressions;
-using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Localization;
 
 namespace DbLocalizationProvider.AspNetCore;
 
 /// <summary>
-/// Some extensions for <see cref="IStringLocalizer{T}"/>.
+/// Some extensions for <see cref="IStringLocalizer{T}" />.
 /// </summary>
 public static class IStringLocalizerOfTExtensions
 {
@@ -39,7 +38,6 @@ public static class IStringLocalizerOfTExtensions
     /// <param name="language"></param>
     /// <param name="formatArguments">Maybe some formatting is needed (like substitution of the placeholders).</param>
     /// <returns>Resource translation (if any).</returns>
-
     public static LocalizedString GetStringByCulture<T>(
         this IStringLocalizer<T> target,
         Expression<Func<T, object>> model,
@@ -75,5 +73,4 @@ public static class IStringLocalizerOfTExtensions
 
         return string.Empty;
     }
-
 }

@@ -37,11 +37,11 @@ public class AdminUIVerificationApplicationBuilder : IApplicationBuilder
 
     public IServiceProvider ApplicationServices
     {
-        get { return _inner.ApplicationServices; }
-        set { _inner.ApplicationServices = value; }
+        get => _inner.ApplicationServices;
+        set => _inner.ApplicationServices = value;
     }
 
-    public IFeatureCollection ServerFeatures { get { return _inner.ServerFeatures; } }
+    public IFeatureCollection ServerFeatures => _inner.ServerFeatures;
 
-    public IDictionary<string, object> Properties { get { return _inner.Properties; } }
+    public IDictionary<string, object> Properties => _inner.Properties;
 }

@@ -14,5 +14,5 @@ public class ServiceOperationResult
 
     public string Status { get; set; }
 
-    public static JsonResult Ok => new JsonResult(new ServiceOperationResult("Ok"));
+    public static JsonResult Ok => new(new ServiceOperationResult("Ok"));
 }

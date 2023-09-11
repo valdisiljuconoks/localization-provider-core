@@ -12,10 +12,10 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 // Credits: https://github.com/aspnet/Mvc/blob/dev/src/Microsoft.AspNetCore.Mvc.DataAnnotations/Internal/DataAnnotationsModelValidator.cs
 public class LocalizedModelValidator : IModelValidator
 {
+    private static readonly object _emptyValidationContextInstance = new();
     private readonly ValidationAttribute _attribute;
     private readonly ResourceKeyBuilder _keyBuilder;
     private readonly ModelMetadataLocalizationHelper _metadataHelper;
-    private static readonly object _emptyValidationContextInstance = new object();
 
     public LocalizedModelValidator(
         ValidationAttribute attribute,
@@ -29,14 +29,20 @@ public class LocalizedModelValidator : IModelValidator
 
     public IEnumerable<ModelValidationResult> Validate(ModelValidationContext validationContext)
     {
-        if(validationContext == null)
+        if (validationContext == null)
+        {
             throw new ArgumentNullException(nameof(validationContext));
+        }
 
-        if(validationContext.ModelMetadata == null)
+        if (validationContext.ModelMetadata == null)
+        {
             throw new ArgumentException($"{nameof(validationContext.ModelMetadata)} is null", nameof(validationContext));
+        }
 
-        if(validationContext.MetadataProvider == null)
+        if (validationContext.MetadataProvider == null)
+        {
             throw new ArgumentException($"{nameof(validationContext.MetadataProvider)} in null", nameof(validationContext));
+        }
 
         var metadata = validationContext.ModelMetadata;
         var memberName = metadata.PropertyName;
@@ -45,14 +51,10 @@ public class LocalizedModelValidator : IModelValidator
         var context = new ValidationContext(
             container ?? validationContext.Model ?? _emptyValidationContextInstance,
             validationContext.ActionContext?.HttpContext?.RequestServices,
-            null)
-        {
-            DisplayName = metadata.GetDisplayName(),
-            MemberName = memberName
-        };
+            null) { DisplayName = metadata.GetDisplayName(), MemberName = memberName };
 
         var result = _attribute.GetValidationResult(validationContext.Model, context);
-        if(result != ValidationResult.Success)
+        if (result != ValidationResult.Success)
         {
             var resourceKey = _keyBuilder.BuildResourceKey(metadata.ContainerType, metadata.PropertyName, _attribute);
             var translation = _metadataHelper.GetTranslation(resourceKey);
@@ -79,7 +81,7 @@ public class LocalizedModelValidator : IModelValidator
                 }
             }
 
-            if(validationResults.Count == 0)
+            if (validationResults.Count == 0)
             {
                 validationResults.Add(new ModelValidationResult(null, errorMessage));
             }

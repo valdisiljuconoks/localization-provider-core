@@ -1,7 +1,6 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Cache;
@@ -69,8 +68,8 @@ public class RequestHandler
         {
             windowAlias = false;
         }
-        else if (context.Request.Headers.ContainsKey("X-Requested-With") &&
-                 context.Request.Headers["X-Requested-With"].Contains("XMLHttpRequest"))
+        else if (context.Request.Headers.ContainsKey("X-Requested-With")
+                 && context.Request.Headers["X-Requested-With"].Contains("XMLHttpRequest"))
         {
             windowAlias = false;
         }
@@ -114,8 +113,15 @@ public class RequestHandler
         var settings = new JsonSerializerSettings();
         var converter = new JsonConverter(queryExecutor);
 
-        if (camelCase) settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-        if (debugMode) settings.Formatting = Formatting.Indented;
+        if (camelCase)
+        {
+            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        }
+
+        if (debugMode)
+        {
+            settings.Formatting = Formatting.Indented;
+        }
 
         return JsonConvert.SerializeObject(
             converter.GetJson(filename, languageName, configurationContext.FallbackList, camelCase),

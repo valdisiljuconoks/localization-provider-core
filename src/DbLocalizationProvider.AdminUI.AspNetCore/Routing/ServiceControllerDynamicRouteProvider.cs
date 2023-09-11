@@ -28,7 +28,7 @@ public class ServiceControllerDynamicRouteProvider : IApplicationModelProvider
         }
 
         var selectorModel = serviceControllerModel.Selectors.FirstOrDefault();
-        if (selectorModel is { AttributeRouteModel: { } })
+        if (selectorModel is { AttributeRouteModel: not null })
         {
             selectorModel.AttributeRouteModel.Template = _context.RootUrl + "/api/service";
         }

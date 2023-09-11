@@ -28,17 +28,17 @@ public class DbHtmlLocalizer<TResource> : HtmlLocalizer<TResource>, ILocalizatio
     }
 
     /// <summary>
-    /// Expression helper
-    /// </summary>
-    public ExpressionHelper ExpressionHelper { get; }
-
-    /// <summary>
     /// Changes language of the localizer
     /// </summary>
     /// <param name="language">Language to use</param>
-    /// <returns>The <see cref="IHtmlLocalizer"/> with changed language.</returns>
+    /// <returns>The <see cref="IHtmlLocalizer" /> with changed language.</returns>
     public IHtmlLocalizer ChangeLanguage(CultureInfo language)
     {
         return new DbHtmlLocalizer<TResource>(_factory.ChangeLanguage(language), ExpressionHelper);
     }
+
+    /// <summary>
+    /// Expression helper
+    /// </summary>
+    public ExpressionHelper ExpressionHelper { get; }
 }

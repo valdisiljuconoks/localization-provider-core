@@ -14,15 +14,17 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 /// </summary>
 public class LocalizedDisplayMetadataProvider : IDisplayMetadataProvider
 {
-    private readonly ModelMetadataLocalizationHelper _metadataHelper;
     private readonly ConfigurationContext _configurationContext;
+    private readonly ModelMetadataLocalizationHelper _metadataHelper;
 
     /// <summary>
     /// Initiates new instance of this helper.
     /// </summary>
     /// <param name="metadataHelper">Metadata helper.</param>
     /// <param name="configurationContext">Configuration settings.</param>
-    public LocalizedDisplayMetadataProvider(ModelMetadataLocalizationHelper metadataHelper, ConfigurationContext configurationContext)
+    public LocalizedDisplayMetadataProvider(
+        ModelMetadataLocalizationHelper metadataHelper,
+        ConfigurationContext configurationContext)
     {
         _metadataHelper = metadataHelper;
         _configurationContext = configurationContext;

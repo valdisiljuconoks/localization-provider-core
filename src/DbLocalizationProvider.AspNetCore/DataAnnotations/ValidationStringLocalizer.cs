@@ -71,11 +71,6 @@ public class ValidationStringLocalizer : IStringLocalizer, ILocalizationServices
         return Enumerable.Empty<LocalizedString>();
     }
 
-    public IStringLocalizer WithCulture(CultureInfo culture)
-    {
-        return ChangeLanguage(culture);
-    }
-
     public LocalizedString this[string name]
     {
         get
@@ -98,5 +93,10 @@ public class ValidationStringLocalizer : IStringLocalizer, ILocalizationServices
 
             return new LocalizedString(name, value ?? name, value == null);
         }
+    }
+
+    public IStringLocalizer WithCulture(CultureInfo culture)
+    {
+        return ChangeLanguage(culture);
     }
 }

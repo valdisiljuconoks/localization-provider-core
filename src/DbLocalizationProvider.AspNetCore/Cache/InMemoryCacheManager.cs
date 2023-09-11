@@ -11,7 +11,7 @@ public class InMemoryCacheManager : ICacheManager
 {
     // this is used in cache helper to enumerate over known entries and remove what's needed
     // implemented because there is no way to enumerate keys using built-in cache provider
-    internal static readonly ConcurrentDictionary<string, bool> Entries = new ConcurrentDictionary<string, bool>();
+    internal static readonly ConcurrentDictionary<string, bool> Entries = new();
     private readonly IMemoryCache _memCache;
 
     public InMemoryCacheManager(IMemoryCache memCache)

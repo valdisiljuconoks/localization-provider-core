@@ -19,7 +19,10 @@ internal class CacheHelper
 
     public static string GetContainerName(string key)
     {
-        if(key == null) throw new ArgumentNullException(nameof(key));
+        if (key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
 
         return !key.Contains(_separator) ? null : key.Substring(0, key.IndexOf(_separator, StringComparison.Ordinal));
     }
@@ -27,21 +30,25 @@ internal class CacheHelper
     public static void CacheManagerOnRemove(CacheEventArgs args, ICacheManager cache)
     {
         // TODO: implement IEnumerable on cache manager
-        using(var existingKeys = InMemoryCacheManager.Entries.GetEnumerator())
+        using (var existingKeys = InMemoryCacheManager.Entries.GetEnumerator())
         {
             var entriesToRemove = new List<string>();
-            while(existingKeys.MoveNext())
+            while (existingKeys.MoveNext())
             {
                 var key = CacheKeyHelper.GetResourceKeyFromCacheKey(existingKeys.Current.Key);
                 var containerName = GetContainerName(key);
 
-                if(containerName != null && args.ResourceKey.StartsWith(containerName, StringComparison.InvariantCultureIgnoreCase))
+                if (containerName != null
+                    && args.ResourceKey.StartsWith(containerName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     entriesToRemove.Add(existingKeys.Current.Key);
                 }
             }
 
-            foreach(var entry in entriesToRemove) cache.Remove(entry);
+            foreach (var entry in entriesToRemove)
+            {
+                cache.Remove(entry);
+            }
         }
     }
 }

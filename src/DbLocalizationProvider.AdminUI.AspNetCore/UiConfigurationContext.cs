@@ -65,7 +65,8 @@ public class UiConfigurationContext
     public bool ShowInvariantCulture { get; set; } = false;
 
     /// <summary>
-    /// Sometimes it's worth to look for some hidden treasure. This option will also show resources decorated with <see cref="DbLocalizationProvider.Abstractions.HiddenAttribute"/>.
+    /// Sometimes it's worth to look for some hidden treasure. This option will also show resources decorated with
+    /// <see cref="DbLocalizationProvider.Abstractions.HiddenAttribute" />.
     /// </summary>
     public bool ShowHiddenResources { get; set; } = false;
 
@@ -77,7 +78,10 @@ public class UiConfigurationContext
     /// <summary>
     /// If you find conflicts in your project and somebody already took this address, please set you unique custom address here.
     /// </summary>
-    /// <remarks>This is Url how editors or even maybe admins will be able to access admin panel and mess around with translations. Needs to start with `/` otherwise runtime will blow up.</remarks>
+    /// <remarks>
+    /// This is Url how editors or even maybe admins will be able to access admin panel and mess around with translations. Needs to start
+    /// with `/` otherwise runtime will blow up.
+    /// </remarks>
     public string RootUrl { get; set; } = "/localization-admin";
 
     /// <summary>
@@ -94,7 +98,7 @@ public class UiConfigurationContext
     /// Returns current version of the lib
     /// </summary>
     public Lazy<string> Version =>
-        new Lazy<string>(() => typeof(UiConfigurationContext).Assembly.GetName().Version.ToString());
+        new(() => typeof(UiConfigurationContext).Assembly.GetName().Version.ToString());
 
     /// <summary>
     /// Set this bit to true if you want to generate list of available languages just using languages from underlying storage.

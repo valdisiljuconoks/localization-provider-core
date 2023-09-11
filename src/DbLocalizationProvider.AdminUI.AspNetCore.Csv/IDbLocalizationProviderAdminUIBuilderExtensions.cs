@@ -14,7 +14,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore;
 public static class IDbLocalizationProviderAdminUIBuilderExtensions
 {
     /// <summary>
-    ///Adds support for export and import in Csv format
+    /// Adds support for export and import in Csv format
     /// </summary>
     /// <param name="builder">Service collection</param>
     /// <returns></returns>

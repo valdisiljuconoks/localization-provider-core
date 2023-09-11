@@ -10,13 +10,13 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 
 /// <summary>
-/// Provides a collection of <see cref="IClientModelValidator"/>s.
+/// Provides a collection of <see cref="IClientModelValidator" />s.
 /// </summary>
 public class LocalizedClientModelValidator : IClientModelValidatorProvider
 {
-    private readonly ResourceKeyBuilder _keyBuilder;
-    private readonly ExpressionHelper _expressionHelper;
     private readonly ConfigurationContext _configurationContext;
+    private readonly ExpressionHelper _expressionHelper;
+    private readonly ResourceKeyBuilder _keyBuilder;
     private readonly ILocalizationProvider _localizationProvider;
     private readonly IValidationAttributeAdapterProvider _validationAttributeAdapterProvider;
 
@@ -43,10 +43,10 @@ public class LocalizedClientModelValidator : IClientModelValidatorProvider
     }
 
     /// <summary>
-    /// Creates set of <see cref="IClientModelValidator"/>s by updating
-    /// <see cref="ClientValidatorItem.Validator"/> in <see cref="ClientValidatorProviderContext.Results"/>.
+    /// Creates set of <see cref="IClientModelValidator" />s by updating
+    /// <see cref="ClientValidatorItem.Validator" /> in <see cref="ClientValidatorProviderContext.Results" />.
     /// </summary>
-    /// <param name="context">The <see cref="ClientModelValidationContext"/> associated with this call.</param>
+    /// <param name="context">The <see cref="ClientModelValidationContext" /> associated with this call.</param>
     public void CreateValidators(ClientValidatorProviderContext context)
     {
         if (context == null)

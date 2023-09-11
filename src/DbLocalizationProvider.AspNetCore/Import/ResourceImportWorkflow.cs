@@ -2,14 +2,14 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Commands;
 using DbLocalizationProvider.Import;
-using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Internal;
-using System.Globalization;
+using DbLocalizationProvider.Queries;
 
 namespace DbLocalizationProvider.AspNetCore.Import;
 
@@ -17,25 +17,31 @@ public class ResourceImportWorkflow
 {
     private readonly ICommandExecutor _commandExecutor;
     private readonly IQueryExecutor _queryExecutor;
+
     public ResourceImportWorkflow(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor)
     {
         _commandExecutor = commandExecutor;
         _queryExecutor = queryExecutor;
     }
 
-    public ICollection<DetectedImportChange> DetectChanges(ICollection<LocalizationResource> importingResources, IEnumerable<LocalizationResource> existingResources)
+    public ICollection<DetectedImportChange> DetectChanges(
+        ICollection<LocalizationResource> importingResources,
+        IEnumerable<LocalizationResource> existingResources)
     {
         var result = new List<DetectedImportChange>();
 
         // deleted deletes
         var resourceComparer = new ResourceComparer();
         var deletes = existingResources.Except(importingResources, resourceComparer);
-        result.AddRange(deletes.Select(d => new DetectedImportChange(ChangeType.Delete, LocalizationResource.CreateNonExisting(d.ResourceKey), d)));
+        result.AddRange(deletes.Select(
+                            d => new DetectedImportChange(ChangeType.Delete,
+                                                          LocalizationResource.CreateNonExisting(d.ResourceKey),
+                                                          d)));
 
         foreach (var incomingResource in importingResources.Except(deletes, resourceComparer))
         {
             // clean up nulls from translations
-            foreach (var item in incomingResource.Translations.Where(t => t == null).ToList() )
+            foreach (var item in incomingResource.Translations.Where(t => t == null).ToList())
             {
                 incomingResource.Translations.Remove(item);
             }
@@ -45,7 +51,9 @@ public class ResourceImportWorkflow
             {
                 var comparer = new TranslationComparer(true);
                 var existingTranslations = existing.Translations.Where(_ => _ != null).ToList();
-                var differences = incomingResource.Translations.Except(existingTranslations, comparer).Where(_ => _ != null).ToList();
+                var differences = incomingResource.Translations.Except(existingTranslations, comparer)
+                    .Where(_ => _ != null)
+                    .ToList();
 
                 // some of the translations are different - so marking this resource as potential update
                 if (differences.Any())
@@ -59,7 +67,8 @@ public class ResourceImportWorkflow
                     var detectedChangedLanguages = differences.Select(_ => _.Language).Distinct().ToList();
                     var existingLanguages = existingTranslations.Select(_ => _.Language).Distinct().ToList();
 
-                    if (!differences.All(r => string.IsNullOrEmpty(r.Value)) || !detectedChangedLanguages.Except(existingLanguages).Any())
+                    if (!differences.All(r => string.IsNullOrEmpty(r.Value))
+                        || !detectedChangedLanguages.Except(existingLanguages).Any())
                     {
                         result.Add(new DetectedImportChange(ChangeType.Update, incomingResource, existing)
                         {
@@ -76,11 +85,11 @@ public class ResourceImportWorkflow
                     new DetectedImportChange(ChangeType.Insert,
                                              incomingResource,
                                              LocalizationResource.CreateNonExisting(incomingResource.ResourceKey))
-                {
-                    ChangedLanguages = incomingResource.Translations
-                        .Select(t => new DetectedImportChange.LanguageModel(new CultureInfo(t.Language)))
-                        .ToList()
-                });
+                    {
+                        ChangedLanguages = incomingResource.Translations
+                            .Select(t => new DetectedImportChange.LanguageModel(new CultureInfo(t.Language)))
+                            .ToList()
+                    });
             }
         }
 
@@ -94,7 +103,7 @@ public class ResourceImportWorkflow
         var updates = 0;
         var deletes = 0;
 
-        var allCurrentResources = _queryExecutor.Execute( new GetAllResources.Query(true)).ToDictionary(r => r.ResourceKey);
+        var allCurrentResources = _queryExecutor.Execute(new GetAllResources.Query(true)).ToDictionary(r => r.ResourceKey);
 
         var newInserts = new List<LocalizationResource>();
 

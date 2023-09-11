@@ -8,13 +8,13 @@ using Microsoft.Extensions.Options;
 namespace DbLocalizationProvider.AspNetCore;
 
 /// <summary>
-/// Does config for <see cref="MvcOptions.ModelMetadataDetailsProviders"/>.
+/// Does config for <see cref="MvcOptions.ModelMetadataDetailsProviders" />.
 /// </summary>
 public class ConfigureModelMetadataDetailsProviders : IConfigureOptions<MvcOptions>
 {
-    private readonly ILocalizationProvider _localizationProvider;
-    private readonly ResourceKeyBuilder _keyBuilder;
     private readonly ConfigurationContext _configurationContext;
+    private readonly ResourceKeyBuilder _keyBuilder;
+    private readonly ILocalizationProvider _localizationProvider;
 
     /// <summary>
     /// Creates new instance of the class (what else?).
@@ -22,7 +22,8 @@ public class ConfigureModelMetadataDetailsProviders : IConfigureOptions<MvcOptio
     /// <param name="localizationProvider">localization provider.</param>
     /// <param name="keyBuilder">Resource key builder.</param>
     /// <param name="configurationContext">Context of the library configuration.</param>
-    public ConfigureModelMetadataDetailsProviders(ILocalizationProvider localizationProvider,
+    public ConfigureModelMetadataDetailsProviders(
+        ILocalizationProvider localizationProvider,
         ResourceKeyBuilder keyBuilder,
         ConfigurationContext configurationContext)
     {
@@ -36,6 +37,7 @@ public class ConfigureModelMetadataDetailsProviders : IConfigureOptions<MvcOptio
     {
         options.ModelMetadataDetailsProviders.Add(
             new LocalizedDisplayMetadataProvider(
-                new ModelMetadataLocalizationHelper(_localizationProvider, _keyBuilder, _configurationContext), _configurationContext));
+                new ModelMetadataLocalizationHelper(_localizationProvider, _keyBuilder, _configurationContext),
+                _configurationContext));
     }
 }

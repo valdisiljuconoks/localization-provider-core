@@ -7,10 +7,10 @@ using Newtonsoft.Json.Serialization;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 public class NewtonJsonModelBinder : IModelBinder
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public async Task BindModelAsync(ModelBindingContext bindingContext)
     {
         if (bindingContext == null)
@@ -20,16 +20,18 @@ public class NewtonJsonModelBinder : IModelBinder
 
         using (var reader = new StreamReader(bindingContext.HttpContext.Request.Body))
         {
-            var body = await reader.ReadToEndAsync().ConfigureAwait(continueOnCapturedContext: false);
+            var body = await reader.ReadToEndAsync().ConfigureAwait(false);
 
             // Do something
-            var value = JsonConvert.DeserializeObject(body, bindingContext.ModelType, new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            });
+            var value = JsonConvert.DeserializeObject(body,
+                                                      bindingContext.ModelType,
+                                                      new JsonSerializerSettings
+                                                      {
+                                                          NullValueHandling = NullValueHandling.Ignore,
+                                                          ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                                                          ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                                                          PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                                                      });
 
             bindingContext.Result = ModelBindingResult.Success(value);
         }

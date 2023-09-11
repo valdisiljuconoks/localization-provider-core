@@ -10,8 +10,8 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 /// <inheritdoc />
 public class LocalizedAttributeAdapterProvider : IValidationAttributeAdapterProvider
 {
-    private readonly ResourceKeyBuilder _keyBuilder;
     private readonly IValidationAttributeAdapterProvider _base = new ValidationAttributeAdapterProvider();
+    private readonly ResourceKeyBuilder _keyBuilder;
 
     /// <summary>
     /// Creates new instance of <c>LocalizedAttributeAdapterProvider</c>.

@@ -17,7 +17,7 @@ public class ClearCacheHandler : ICommandHandler<ClearCache.Command>
 
     public void Execute(ClearCache.Command command)
     {
-        foreach(var itemToRemove in InMemoryCacheManager.Entries)
+        foreach (var itemToRemove in InMemoryCacheManager.Entries)
         {
             _cache.Remove(itemToRemove.Key);
         }

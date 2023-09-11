@@ -13,7 +13,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore;
 public class ApiResponse : IActionResult
 {
     private static readonly JsonSerializerSettings _jsonSerializerSettings =
-        new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+        new() { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
     private readonly BaseApiModel _response;
 

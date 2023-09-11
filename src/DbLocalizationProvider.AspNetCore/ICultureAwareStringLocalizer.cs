@@ -7,7 +7,7 @@ using Microsoft.Extensions.Localization;
 namespace DbLocalizationProvider.AspNetCore;
 
 /// <summary>
-/// Workaround interface for changing language on <see cref="IStringLocalizer"/>
+/// Workaround interface for changing language on <see cref="IStringLocalizer" />
 /// </summary>
 public interface ICultureAwareStringLocalizer
 {

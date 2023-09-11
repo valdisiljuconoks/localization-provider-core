@@ -1,7 +1,6 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -16,10 +15,9 @@ namespace DbLocalizationProvider.AspNetCore;
 /// </summary>
 public class DbStringLocalizer : IStringLocalizer, ILocalizationServicesAccessor, ICultureAwareStringLocalizer
 {
-    private readonly ILocalizationProvider _localizationProvider;
-    private readonly ExpressionHelper _expressionHelper;
-    private readonly IQueryExecutor _queryExecutor;
     private readonly CultureInfo _culture;
+    private readonly ILocalizationProvider _localizationProvider;
+    private readonly IQueryExecutor _queryExecutor;
 
     /// <summary>
     /// Creates new instance
@@ -33,7 +31,7 @@ public class DbStringLocalizer : IStringLocalizer, ILocalizationServicesAccessor
         IQueryExecutor queryExecutor)
     {
         _localizationProvider = localizationProvider;
-        _expressionHelper = expressionHelper;
+        ExpressionHelper = expressionHelper;
         _queryExecutor = queryExecutor;
     }
 
@@ -54,25 +52,31 @@ public class DbStringLocalizer : IStringLocalizer, ILocalizationServicesAccessor
     }
 
     /// <summary>
-    /// Returns all strings
-    /// </summary>
-    /// <param name="includeParentCultures">Whether result should include parent cultures as well</param>
-    /// <returns>List of localized strings</returns>
-    public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-    {
-        var values = _localizationProvider.GetStringsByCulture(_culture ?? _queryExecutor.Execute(new GetCurrentUICulture.Query()));
-
-        return values.Select(value => new LocalizedString(value.Key, value.Value ?? value.Key, value.Value == null));
-    }
-
-    /// <summary>
     /// Change language of the provider and returns string localizer with specified language.
     /// </summary>
     /// <param name="language">Language to change to.</param>
     /// <returns>Localizer with specified language.</returns>
     public IStringLocalizer ChangeLanguage(CultureInfo language)
     {
-        return new DbStringLocalizer(language, _localizationProvider, _expressionHelper, _queryExecutor);
+        return new DbStringLocalizer(language, _localizationProvider, ExpressionHelper, _queryExecutor);
+    }
+
+    /// <summary>
+    /// Expression helper to be used to walk lambdas
+    /// </summary>
+    public ExpressionHelper ExpressionHelper { get; }
+
+    /// <summary>
+    /// Returns all strings
+    /// </summary>
+    /// <param name="includeParentCultures">Whether result should include parent cultures as well</param>
+    /// <returns>List of localized strings</returns>
+    public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+    {
+        var values = _localizationProvider.GetStringsByCulture(
+            _culture ?? _queryExecutor.Execute(new GetCurrentUICulture.Query()));
+
+        return values.Select(value => new LocalizedString(value.Key, value.Value ?? value.Key, value.Value == null));
     }
 
     /// <summary>
@@ -107,9 +111,4 @@ public class DbStringLocalizer : IStringLocalizer, ILocalizationServicesAccessor
             return new LocalizedString(name, value ?? name, value == null);
         }
     }
-
-    /// <summary>
-    /// Expression helper to be used to walk lambdas
-    /// </summary>
-    public ExpressionHelper ExpressionHelper => _expressionHelper;
 }

@@ -23,7 +23,11 @@ public static class IEndpointRouteBuilderExtensions
         this IEndpointRouteBuilder builder,
         string path = "/jsl10n")
     {
-        if (string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
+        if (string.IsNullOrEmpty(path))
+        {
+            throw new ArgumentNullException(nameof(path));
+        }
+
         ClientsideConfigurationContext.SetRootPath(path);
 
         var pipeline = builder.CreateApplicationBuilder()

@@ -21,7 +21,11 @@ public static class IRouteBuilderExtensions
     /// <exception cref="ArgumentNullException">path</exception>
     public static IRouteBuilder MapDbLocalizationClientsideProvider(this IRouteBuilder builder, string path = "/jsl10n")
     {
-        if (string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
+        if (string.IsNullOrEmpty(path))
+        {
+            throw new ArgumentNullException(nameof(path));
+        }
+
         ClientsideConfigurationContext.SetRootPath(path);
 
         builder.MapMiddlewareRoute(path + "/{*remaining}", b => b.UseMiddleware<RequestHandler>());

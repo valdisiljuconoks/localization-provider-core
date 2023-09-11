@@ -9,19 +9,19 @@ using Microsoft.AspNetCore.Mvc.Localization;
 namespace DbLocalizationProvider.AspNetCore;
 
 /// <summary>
-/// An <see cref="IViewLocalizer"/> implementation that derives the resource location from the executing view's
+/// An <see cref="IViewLocalizer" /> implementation that derives the resource location from the executing view's
 /// file path.
 /// </summary>
 public class DbViewLocalizer : ViewLocalizer, ILocalizationServicesAccessor, ICultureAwareHtmlLocalizer
 {
-    private readonly DbHtmlLocalizerFactory _localizerFactory;
     private readonly IWebHostEnvironment _hostingEnvironment;
+    private readonly DbHtmlLocalizerFactory _localizerFactory;
 
     /// <summary>
-    /// Creates a new <see cref="ViewLocalizer"/>.
+    /// Creates a new <see cref="ViewLocalizer" />.
     /// </summary>
-    /// <param name="localizerFactory">The <see cref="IHtmlLocalizerFactory"/>.</param>
-    /// <param name="hostingEnvironment">The <see cref="IWebHostEnvironment"/>.</param>
+    /// <param name="localizerFactory">The <see cref="IHtmlLocalizerFactory" />.</param>
+    /// <param name="hostingEnvironment">The <see cref="IWebHostEnvironment" />.</param>
     /// <param name="expressionHelper">Expression helper</param>
     public DbViewLocalizer(
         DbHtmlLocalizerFactory localizerFactory,
@@ -35,15 +35,10 @@ public class DbViewLocalizer : ViewLocalizer, ILocalizationServicesAccessor, ICu
     }
 
     /// <summary>
-    /// Expression helper
-    /// </summary>
-    public ExpressionHelper ExpressionHelper { get; }
-
-    /// <summary>
     /// Changes the language of the view localizer (USE WITH CAUTION! is this involves some magic to get it done).
     /// </summary>
     /// <param name="language">New language to set</param>
-    /// <returns><see cref="IHtmlLocalizer"/> with changed language.</returns>
+    /// <returns><see cref="IHtmlLocalizer" /> with changed language.</returns>
     public IHtmlLocalizer ChangeLanguage(CultureInfo language)
     {
         // capture initialized localizer field from the base
@@ -67,4 +62,9 @@ public class DbViewLocalizer : ViewLocalizer, ILocalizationServicesAccessor, ICu
         // this is VERY HACK-ish and do not recommend anyone to use it. at all. forget about it.
         return dbViewLocalizer;
     }
+
+    /// <summary>
+    /// Expression helper
+    /// </summary>
+    public ExpressionHelper ExpressionHelper { get; }
 }

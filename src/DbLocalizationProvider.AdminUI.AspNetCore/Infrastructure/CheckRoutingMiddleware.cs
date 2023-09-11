@@ -10,9 +10,9 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore.Infrastructure;
 
 public class CheckRoutingMiddleware
 {
+    private static readonly ConcurrentDictionary<string, object> _middlewareNames = new();
+    private static readonly string markerMiddlewareName = typeof(AdminUIMarkerMiddleware).FullName;
     private readonly RequestDelegate _next;
-    private static ConcurrentDictionary<string, object> _middlewareNames = new();
-    private static string markerMiddlewareName = typeof(AdminUIMarkerMiddleware).FullName;
 
     public CheckRoutingMiddleware(RequestDelegate next)
     {
@@ -20,7 +20,10 @@ public class CheckRoutingMiddleware
         var name = next.Target.GetType().FullName;
         _middlewareNames.TryAdd(name, null);
 
-        if (name != markerMiddlewareName) return;
+        if (name != markerMiddlewareName)
+        {
+            return;
+        }
 
         // if `AdminUIMarkerMiddleware` middleware is registered then
         // AdminUI has been added - let's check if we have routing (mvc or endpoint) in place already

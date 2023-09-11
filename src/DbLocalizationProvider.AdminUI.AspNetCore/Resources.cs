@@ -36,7 +36,10 @@ public class Resources
     public static string EmptyTranslation = "Empty";
     public static string CleanCache = "Clean Cache";
     public static string CleanCacheConfirmation = "Wanna start with clean cache state?";
-    public static string ErrorLoadingResources = "There was an error while loading resources. Please check logs for more details!";
+
+    public static string ErrorLoadingResources =
+        "There was an error while loading resources. Please check logs for more details!";
+
     public static string AvailableLanguages = "Available Languages";
     public static string XliffLanguages = "Select XLIFF Export Languages";
     public static string XliffLanguagesSource = "Source Language";
@@ -50,5 +53,4 @@ public class Resources
     public static string ImportChooseActionLabel = "Choose";
     public static string ImportOperationLabel = "Operation";
     public static string Close = "Close";
-
 }

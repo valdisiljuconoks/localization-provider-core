@@ -10,9 +10,9 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 /// </summary>
 public class ModelMetadataLocalizationHelper
 {
-    private readonly ILocalizationProvider _localizationProvider;
-    private readonly ResourceKeyBuilder _keyBuilder;
     private readonly ConfigurationContext _configurationContext;
+    private readonly ResourceKeyBuilder _keyBuilder;
+    private readonly ILocalizationProvider _localizationProvider;
 
     /// <summary>
     /// Creates new instance of this class.
@@ -33,7 +33,10 @@ public class ModelMetadataLocalizationHelper
     internal string GetTranslation(string resourceKey)
     {
         var result = resourceKey;
-        if (!_configurationContext.EnableLocalization())  return result;
+        if (!_configurationContext.EnableLocalization())
+        {
+            return result;
+        }
 
         var localizedDisplayName = _localizationProvider.GetString(resourceKey);
         result = localizedDisplayName;

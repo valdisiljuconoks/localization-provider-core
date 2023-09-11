@@ -127,7 +127,8 @@ public static class IServiceCollectionExtensions
                 ServiceDescriptor.Transient<IConfigureOptions<MvcOptions>, ConfigureModelMetadataDetailsProviders>());
             services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedAttributeAdapterProvider>();
             services.TryAddEnumerable(
-                ServiceDescriptor.Transient<IConfigureOptions<MvcDataAnnotationsLocalizationOptions>, DataAnnotationLocalizerProviderSetup>());
+                ServiceDescriptor
+                    .Transient<IConfigureOptions<MvcDataAnnotationsLocalizationOptions>, DataAnnotationLocalizerProviderSetup>());
         }
 
         services.AddHttpContextAccessor();

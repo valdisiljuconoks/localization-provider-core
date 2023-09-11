@@ -9,7 +9,7 @@ using Microsoft.Extensions.Localization;
 namespace DbLocalizationProvider.AspNetCore;
 
 /// <summary>
-/// Some extensions for <see cref="IStringLocalizer"/>.
+/// Some extensions for <see cref="IStringLocalizer" />.
 /// </summary>
 public static class IStringLocalizerExtensions
 {

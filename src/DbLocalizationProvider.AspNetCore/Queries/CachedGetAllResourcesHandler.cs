@@ -10,13 +10,13 @@ using DbLocalizationProvider.Queries;
 namespace DbLocalizationProvider.AspNetCore.Queries;
 
 /// <summary>
-/// Cached implementation of <see cref="GetAllResources.Query"/>.
+/// Cached implementation of <see cref="GetAllResources.Query" />.
 /// </summary>
 public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>>
 {
+    private readonly ConfigurationContext _configurationContext;
     private readonly IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>> _inner;
     private readonly IQueryExecutor _queryExecutor;
-    private readonly ConfigurationContext _configurationContext;
 
     /// <summary>
     /// Creates new instance of this class.
@@ -41,19 +41,25 @@ public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query,
     /// <returns>Result from the query.</returns>
     public IEnumerable<LocalizationResource> Execute(GetAllResources.Query query)
     {
-        if(query.ForceReadFromDb) return _inner.Execute(query);
+        if (query.ForceReadFromDb)
+        {
+            return _inner.Execute(query);
+        }
 
         // if keys = 0, execute inner query to actually get resources from the db
         // this is usually called during initialization when cache is not yet filled up
-        if(_configurationContext.BaseCacheManager.KnownKeyCount == 0) return _inner.Execute(query);
+        if (_configurationContext.BaseCacheManager.KnownKeyCount == 0)
+        {
+            return _inner.Execute(query);
+        }
 
         var result = new List<LocalizationResource>();
         var keys = _configurationContext.BaseCacheManager.KnownKeys;
 
-        foreach(var key in keys)
+        foreach (var key in keys)
         {
             var cacheKey = CacheKeyHelper.BuildKey(key);
-            if(_configurationContext.CacheManager.Get(cacheKey) is LocalizationResource localizationResource)
+            if (_configurationContext.CacheManager.Get(cacheKey) is LocalizationResource localizationResource)
             {
                 result.Add(localizationResource);
             }

@@ -14,7 +14,7 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore;
 public static class IDbLocalizationProviderAdminUIBuilderExtensions
 {
     /// <summary>
-    ///Adds support for export and import in Xliff format
+    /// Adds support for export and import in Xliff format
     /// </summary>
     /// <param name="services">Service collection</param>
     /// <returns></returns>

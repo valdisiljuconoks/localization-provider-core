@@ -183,7 +183,8 @@ public static class IHtmlHelperOfTExtensions
         }
 
         var resourceKey =
-            GetResourceKeyBuilder(htmlHelper).BuildResourceKey(GetExpressionHelper(htmlHelper).GetFullMemberName(expression), customAttribute);
+            GetResourceKeyBuilder(htmlHelper)
+                .BuildResourceKey(GetExpressionHelper(htmlHelper).GetFullMemberName(expression), customAttribute);
 
         return new HtmlString(GetLocalizationProvider(htmlHelper).GetStringByCulture(resourceKey, language, formatArguments));
     }
@@ -217,10 +218,11 @@ public static class IHtmlHelperOfTExtensions
             throw new ArgumentNullException(nameof(language));
         }
 
-        return new HtmlString(GetLocalizationProvider(htmlHelper).GetStringByCulture(
-                                  GetExpressionHelper(htmlHelper).GetFullMemberName(expression) + "-Description",
-                                  language,
-                                  formatArguments));
+        return new HtmlString(GetLocalizationProvider(htmlHelper)
+                                  .GetStringByCulture(
+                                      GetExpressionHelper(htmlHelper).GetFullMemberName(expression) + "-Description",
+                                      language,
+                                      formatArguments));
     }
 
     public static IHtmlContent GetTranslations<TModel>(
@@ -258,7 +260,11 @@ public static class IHtmlHelperOfTExtensions
             throw new ArgumentNullException(nameof(containerType));
         }
 
-        return GenerateScriptTag(language, alias, debug, GetResourceKeyBuilder(htmlHelper).BuildResourceKey(containerType), camelCase);
+        return GenerateScriptTag(language,
+                                 alias,
+                                 debug,
+                                 GetResourceKeyBuilder(htmlHelper).BuildResourceKey(containerType),
+                                 camelCase);
     }
 
     public static IHtmlContent GetTranslations(

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Localization;
 namespace DbLocalizationProvider.AspNetCore;
 
 /// <summary>
-/// Workaround interface for changing language on <see cref="IHtmlLocalizer"/>
+/// Workaround interface for changing language on <see cref="IHtmlLocalizer" />
 /// </summary>
 public interface ICultureAwareHtmlLocalizer
 {

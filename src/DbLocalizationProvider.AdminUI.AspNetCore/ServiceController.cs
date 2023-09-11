@@ -24,10 +24,10 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore;
 [Authorize(Policy = AccessPolicy.Name)]
 public class ServiceController : ControllerBase
 {
-    private readonly UiConfigurationContext _config;
     private readonly ICommandExecutor _commandExecutor;
-    private readonly IQueryExecutor _queryExecutor;
+    private readonly UiConfigurationContext _config;
     private readonly ConfigurationContext _configurationContext;
+    private readonly IQueryExecutor _queryExecutor;
 
     public ServiceController(
         UiConfigurationContext config,
@@ -110,7 +110,7 @@ public class ServiceController : ControllerBase
 
     [HttpPost]
     [Route("import", Name = "LocAdminImport")]
-    public JsonResult ImportFile([ModelBinder(typeof(NewtonJsonModelBinder))][FromBody]List<DetectedImportChange> changes)
+    public JsonResult ImportFile([ModelBinder(typeof(NewtonJsonModelBinder))] [FromBody] List<DetectedImportChange> changes)
     {
         var detectedImportChanges = changes.Where(c => c.Selected).ToList();
 

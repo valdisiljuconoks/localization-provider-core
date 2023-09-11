@@ -22,7 +22,7 @@ public static class IApplicationBuilderExtensions
     /// Use this method if you wanna see AdminUI under given path.
     /// </summary>
     /// <param name="app">Whatever</param>
-    /// <exception cref="ArgumentNullException">Is thrown if <see cref="UiConfigurationContext.RootUrl"/> is not set.</exception>
+    /// <exception cref="ArgumentNullException">Is thrown if <see cref="UiConfigurationContext.RootUrl" /> is not set.</exception>
     /// <returns>If you want to chain calls further, you can use the same application builder that was used.</returns>
     public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app)
     {
@@ -57,7 +57,6 @@ public static class IApplicationBuilderExtensions
             && (typeof(AvailableLanguagesHandler).IsAssignableFrom(factory.GetHandlerType<AvailableLanguages.Query>())
                 || typeof(AvailableLanguages.Handler).IsAssignableFrom(factory.GetHandlerType<AvailableLanguages.Query>())))
         {
-
             var requestOptions = app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>();
             factory
                 .ForQuery<AvailableLanguages.Query>()

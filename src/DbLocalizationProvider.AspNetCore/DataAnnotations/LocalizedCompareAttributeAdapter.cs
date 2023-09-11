@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
@@ -33,7 +32,9 @@ public class LocalizedCompareAttributeAdapter : LocalizedAttributeAdapterBase<Co
         }
 
         MergeAttribute(context.Attributes, "data-val", "true");
-        MergeAttribute(context.Attributes, "data-val-equalto", GetErrorMessage(context, GetOtherPropertyDisplayName(context, Attribute)));
+        MergeAttribute(context.Attributes,
+                       "data-val-equalto",
+                       GetErrorMessage(context, GetOtherPropertyDisplayName(context, Attribute)));
         MergeAttribute(context.Attributes, "data-val-equalto-other", _otherProperty);
     }
 
