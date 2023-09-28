@@ -102,10 +102,7 @@ public class ServiceController : ControllerBase
         var (resources, _) = GetResources();
         var detectedImportChanges = workflow.DetectChanges(result.Resources, resources);
 
-        return new ValidationResponse(
-            detectedImportChanges
-                .Where(x => !x.ExistingResource.IsHidden.HasValue || !x.ExistingResource.IsHidden.Value)
-                .ToArray());
+        return new ValidationResponse(detectedImportChanges);
     }
 
     [HttpPost]
