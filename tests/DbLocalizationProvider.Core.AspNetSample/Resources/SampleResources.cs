@@ -37,6 +37,13 @@ namespace MyProject
     }
 
 
+    [LocalizedResource]
+    public class UseOtherResources
+    {
+        [UseResource(typeof(SampleResources), nameof(SampleResources.PageHeader))]
+        public string UseOfSampleResourcesPageHeader { get; set; }
+    }
+
     public class ContainerClass
     {
         public class NestedClass

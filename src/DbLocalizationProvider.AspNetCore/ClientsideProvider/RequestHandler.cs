@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Queries;
+using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
@@ -85,7 +86,8 @@ public class RequestHandler
                                      debugMode,
                                      camelCase,
                                      context.RequestServices.GetService<IQueryExecutor>(),
-                                     context.RequestServices.GetService<ConfigurationContext>());
+                                     context.RequestServices.GetService<ConfigurationContext>(),
+                                     context.RequestServices.GetService<ScanState>());
 
             cache.Insert(cacheKey, responseObject, false);
         }
@@ -108,10 +110,11 @@ public class RequestHandler
         bool debugMode,
         bool camelCase,
         IQueryExecutor queryExecutor,
-        ConfigurationContext configurationContext)
+        ConfigurationContext configurationContext,
+        ScanState scanState)
     {
         var settings = new JsonSerializerSettings();
-        var converter = new JsonConverter(queryExecutor);
+        var converter = new JsonConverter(queryExecutor, scanState);
 
         if (camelCase)
         {
