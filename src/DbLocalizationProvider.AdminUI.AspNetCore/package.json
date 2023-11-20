@@ -3,15 +3,14 @@
     "name": "aspnetcore.admin-ui",
     "private": true,
     "devDependencies": {
-        "@fortawesome/fontawesome-free": "^5.15.1"
+        "@fortawesome/fontawesome-free": "^6.4.2"
     },
     "dependencies": {
-        "axios": "^0.21.1",
-        "bootstrap": "^4.5.3",
+        "axios": "^1.6.2",
+        "bootstrap": "^5.3.2",
         "jquery": "^3.5.1",
         "open-iconic": "^1.1.1",
-        "popper.js": "^1.16.1",
-        "vue": "^2.6.12",
+        "vue": "^2.7.15",
         "vue-ads-table-tree": "^2.4.2",
         "vue-directive-tooltip": "^1.6.3"
     }

@@ -59,6 +59,10 @@
     <_AssetsItems Include="$(SolutionDir)\src\DbLocalizationProvider.AdminUI.AspNetCore\wwwroot\**\*.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_AssetsItems Remove="wwwroot\css\fontawesome.solid.min.css" />
+  </ItemGroup>
+
   <Target Name="CopyAssets" AfterTargets="Build">
     <Copy SourceFiles="@(_AssetsItems)" DestinationFolder="..\..\tests\DbLocalizationProvider.Core.AspNetSample\wwwroot\_content\DbLocalizationProvider.AdminUI.AspNetCore\%(RecursiveDir)" />
   </Target>

@@ -22,7 +22,9 @@
     <title>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Title)</title>
     @Model.IncludeStyle("bootstrap.min.css")
     @Model.IncludeStyle("vueDirectiveTooltip.css")
-    @Model.IncludeStyle("fontawesome-all.min.css")
+    @Model.IncludeStyle("fontawesome.solid.min.css")
+    @Model.IncludeStyle("fontawesome.min.css")
+
     <style type="text/css">
         body {
             margin: 10px;
@@ -48,6 +50,10 @@
             box-sizing: border-box;
             border-color: #A9A9A9;
             border-width: 1px;
+        }
+
+        input.form-control {
+            border-radius: 0;
         }
 
         .error {
@@ -177,6 +183,7 @@
         }
 
         table tr th, table tr td, .table .thead-dark th {
+            background-color: #F5F5F5;
             border: 1px solid #dee2e6;
             padding: 5px;
         }
@@ -234,6 +241,26 @@
         #model-import-template-file {
             border: none;
         }
+
+        .ma-4 {
+            margin: 4px;
+        }
+
+        .ma-0 {
+            margin: 0;
+        }
+
+        .ml-4 {
+            margin-left: 4px;
+        }
+
+        .mr-4 {
+            margin-right: 4px;
+        }
+
+        .mb-4 {
+            margin-bottom: 4px;
+        }
     </style>
 
     @if (!string.IsNullOrEmpty(UiContext.CustomCssPath))
@@ -256,9 +283,9 @@
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
-                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
-                    <button class="modal-default-button btn btn-danger" :disabled="!model.isModified" @@click="$emit('remove')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Remove)</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                    <button class="modal-default-button btn btn-primary ma-4" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
+                    <button class="modal-default-button btn btn-danger ma-4" :disabled="!model.isModified" @@click="$emit('remove')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Remove)</button>
+                    <button class="modal-default-button btn btn-default ma-4" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
                 </slot>
                 </div>
             </div>
@@ -280,8 +307,8 @@
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
-                    <button class="modal-default-button btn btn-primary" @@click="$emit('add')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                    <button class="modal-default-button btn btn-primary ma-4" @@click="$emit('add')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</button>
+                    <button class="modal-default-button btn btn-default ma-4" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
                 </slot>
                 </div>
             </div>
@@ -338,10 +365,10 @@
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
-                    <button class="modal-default-button btn btn-primary" v-if="isImport && !vmessages.length" @@click="importFile">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
-                    <button class="modal-default-button btn btn-primary" v-if="isValidate  && !vmessages.length" @@click="validateFile">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Validate)</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('cancel')" v-if="!vmessages.length">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('close')" v-if="vmessages.length">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Close)</button>
+                    <button class="modal-default-button btn btn-primary ma-4" v-if="isImport && !vmessages.length" @@click="importFile">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
+                    <button class="modal-default-button btn btn-primary ma-4" v-if="isValidate  && !vmessages.length" @@click="validateFile">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Validate)</button>
+                    <button class="modal-default-button btn btn-default ma-4" @@click="$emit('cancel')" v-if="!vmessages.length">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                    <button class="modal-default-button btn btn-default ma-4" @@click="$emit('close')" v-if="vmessages.length">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Close)</button>
                 </slot>
                 </div>
             </div>
@@ -372,8 +399,8 @@
                 </div>
                 <div class="modal-footer">
                     <slot name="footer">
-                        <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
-                        <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                        <button class="modal-default-button btn btn-primary ma-4" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
+                        <button class="modal-default-button btn btn-default ma-4" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
                     </slot>
                 </div>
             </div>
@@ -412,8 +439,8 @@
                 </div>
                 <div class="modal-footer">
                     <slot name="footer">
-                        <button class="modal-default-button btn btn-primary" @@click="$emit('export')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
-                        <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                        <button class="modal-default-button btn btn-primary ma-4" @@click="$emit('export')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
+                        <button class="modal-default-button btn btn-default ma-4" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
                     </slot>
                 </div>
             </div>
@@ -424,18 +451,18 @@
 <div id="app" v-cloak>
     <div style="min-height: 75px;" class="row align-items-center">
         <div class="col-lg-6">
-            <span class="float-left">
-                <span class="h1">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Header)</span>
-                <psan>
+            <span class="d-flex flex-row justify-content-start align-items-end">
+                <span class="h1 ma-0">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Header)</span>
+                <span class="ml-4">
                     <small>(v@(UiContext.Version.Value))</small>
-                </psan>
+                </span>
             </span>
         </div>
         <div class="col-lg-6">
-            <div class="float-right">
-                <a href="#" @@click="newResourceModal()" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</a>
-                <div class="btn-group dropdown">
-                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
+            <div class="d-flex flex-row justify-content-end">
+                <a href="#" @@click="newResourceModal()" role="button" class="btn btn-light ma-4">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Add)</a>
+                <div class="btn-group dropdown ma-4">
+                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
                         @foreach (var exportProvider in ConfigContext.Export.Providers)
                         {
@@ -443,13 +470,13 @@
                         }
                     </div>
                 </div>
-                <div class="btn-group">
+                <div class="btn-group ma-4">
                     <button type="button" class="btn btn-light" @@click="importModal()">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Import)</button>
                 </div>
-                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
-                <div class="btn-group dropdown">
-                    <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-cog"></i>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Settings)
+                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light ma-4">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
+                <div class="btn-group dropdown ml-4">
+                    <button type="button" class="btn btn-light dropdown-toggle ma-4" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-gear mr-4" aria-hidden="true"></i>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Settings)
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" :class="{ 'dropdown-item-checked': model.options.showHiddenResources }" href="#" @@click="toggleHiddenResources">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ShowHiddenResources)</a>
@@ -468,8 +495,8 @@
     <addmodal v-if="model.showAddModal" @@add="addResource" @@close="model.showAddModal = false" :model="model.currentResource"></addmodal>
     <xlifflangmodal v-if="model.showXliffLanguagesModal" @@export="exportXliff" @@close="model.showXliffLanguagesModal = false" :model="model"></xlifflangmodal>
     <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal>
-    <div class="row">
-        <div class="form-group offset-lg-9 col-lg-3">
+    <div class="d-flex flex-row justify-content-end mb-4">
+        <div class="form-group offset-lg-9 col-lg-3 ma-4">
             <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder)"/>
         </div>
     </div>
@@ -517,8 +544,7 @@
 </div>
 
 @Model.IncludeScript("jquery.min.js")
-@Model.IncludeScript("popper.min.js")
-@Model.IncludeScript("bootstrap.min.js")
+@Model.IncludeScript("bootstrap.bundle.min.js")
 @Model.IncludeScript("vue.min.js")
 @Model.IncludeScript("axios.min.js")
 @Model.IncludeScript("vueDirectiveTooltip.min.js")

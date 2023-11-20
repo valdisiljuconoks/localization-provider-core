@@ -23,7 +23,8 @@
     @Model.IncludeStyle("bootstrap.min.css")
     @Model.IncludeStyle("vueDirectiveTooltip.css")
     @Model.IncludeStyle("vue-ads-table-tree.css")
-    @Model.IncludeStyle("fontawesome-all.min.css")
+    @Model.IncludeStyle("fontawesome.solid.min.css")
+    @Model.IncludeStyle("fontawesome.min.css")
     <style type="text/css">
         body {
             margin: 10px;
@@ -49,6 +50,10 @@
             box-sizing: border-box;
             border-color: #A9A9A9;
             border-width: 1px;
+        }
+
+        input {
+            border-radius: 0;
         }
 
         .error {
@@ -189,6 +194,22 @@
         .export-xliff-container {
             display: flex;
         }
+
+        .ma-4 {
+            margin: 4px;
+        }
+
+        .ma-0 {
+            margin: 0;
+        }
+        
+        .ml-4 {
+            margin-left: 4px;
+        }
+
+        .mr-4 {
+            margin-right: 4px;
+        }
     </style>
 
     @if (!string.IsNullOrEmpty(UiContext.CustomCssPath))
@@ -212,9 +233,9 @@
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
-                    <button class="modal-default-button btn btn-primary" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
-                    <button class="modal-default-button btn btn-danger" :disabled="!model.isModified" @@click="$emit('remove')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Remove)</button>
-                    <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                    <button class="modal-default-button btn btn-primary ma-4" @@click="$emit('save')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Save)</button>
+                    <button class="modal-default-button btn btn-danger ma-4" :disabled="!model.isModified" @@click="$emit('remove')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Remove)</button>
+                    <button class="modal-default-button btn btn-default ma-4" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
                 </slot>
                 </div>
             </div>
@@ -253,8 +274,8 @@
                 </div>
                 <div class="modal-footer">
                     <slot name="footer">
-                        <button class="modal-default-button btn btn-primary" @@click="$emit('export')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
-                        <button class="modal-default-button btn btn-default" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
+                        <button class="modal-default-button btn btn-primary ma-4" @@click="$emit('export')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
+                        <button class="modal-default-button btn btn-default ma-4" @@click="$emit('close')">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Cancel)</button>
                     </slot>
                 </div>
             </div>
@@ -262,21 +283,20 @@
     </div>
 </script>
 
-
 <div id="app" v-cloak>
     <div style="min-height: 75px;" class="row align-items-center">
         <div class="col-lg-6">
-            <span class="float-left">
-                <span class="h1">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Header)</span>
-                <psan>
+            <span class="d-flex flex-row justify-content-start align-items-end">
+                <span class="h1 ma-0">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Header)</span>
+                <span class="ml-4">
                     <small>(v@(UiContext.Version.Value))</small>
-                </psan>
+                </span>
             </span>
         </div>
         <div class="col-lg-6">
-            <div class="float-right">
-                <div class="btn-group dropdown">
-                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
+                <div class="d-flex flex-row justify-content-end">
+                <div class="btn-group dropdown ma-4">
+                    <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
                         @foreach (var exportProvider in ConfigContext.Export.Providers)
                         {
@@ -284,10 +304,10 @@
                         }
                     </div>
                 </div>
-                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
-                <div class="btn-group dropdown">
-                    <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-cog"></i>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Settings)
+                <a href="?handler=CleanCache" onclick="return confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCacheConfirmation)');" role="button" class="btn btn-light ma-4">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.CleanCache)</a>
+                <div class="btn-group dropdown ma-4">
+                    <button type="button" class="btn btn-light dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-gear mr-4"></i>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Settings)
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                         @*<a class="dropdown-item" :class="{ 'dropdown-item-checked': options.showHiddenResources }" href="#" @@click="toggleHiddenResources">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ShowHiddenResources)</a>
@@ -326,8 +346,7 @@
 </div>
 
 @Model.IncludeScript("jquery.min.js")
-@Model.IncludeScript("popper.min.js")
-@Model.IncludeScript("bootstrap.min.js")
+@Model.IncludeScript("bootstrap.bundle.min.js")
 @Model.IncludeScript("vue.min.js")
 @Model.IncludeScript("axios.min.js")
 @Model.IncludeScript("vue-ads-table-tree.umd.min.js")
