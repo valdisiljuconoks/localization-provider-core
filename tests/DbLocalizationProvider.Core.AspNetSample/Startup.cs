@@ -150,6 +150,7 @@ public class Startup
             .AddCsvSupport()
             .AddXliffSupport();
 
+        services.Configure<UiConfigurationContext>(ctx => ctx.DefaultView = ResourceListView.Table);
         //.VerifyDbLocalizationProviderAdminUISetup();
     }
 

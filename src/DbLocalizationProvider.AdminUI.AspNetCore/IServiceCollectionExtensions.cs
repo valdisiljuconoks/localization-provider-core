@@ -30,19 +30,24 @@ public static class IServiceCollectionExtensions
         Action<UiConfigurationContext> setup = null)
     {
         var context = new UiConfigurationContext();
-
         setup?.Invoke(context);
 
-        services.AddSingleton(_ => context);
+        services.AddOptions();
+        services
+            .AddOptions<UiConfigurationContext>()
+            .Configure(ctx =>
+            {
+                ctx.CopyFrom(context);
+            });
 
         // add support for admin ui razor class library pages
-        services.Configure<RazorPagesOptions>(_ =>
+        services.Configure<RazorPagesOptions>(x =>
         {
-            _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUI", AccessPolicy.Name);
-            _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1", "/AdminUI", context.RootUrl);
+            x.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUI", AccessPolicy.Name);
+            x.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1", "/AdminUI", context.RootUrl);
 
-            _.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree", AccessPolicy.Name);
-            _.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree", context.RootUrl + "/tree");
+            x.Conventions.AuthorizeAreaPage("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree", AccessPolicy.Name);
+            x.Conventions.AddAreaPageRoute("4D5A2189D188417485BF6C70546D34A1", "/AdminUITree", context.RootUrl + "/tree");
         });
 
         if (context.AccessPolicyOptions != null)

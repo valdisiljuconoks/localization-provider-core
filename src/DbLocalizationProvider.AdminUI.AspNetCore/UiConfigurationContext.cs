@@ -104,4 +104,18 @@ public class UiConfigurationContext
     /// Set this bit to true if you want to generate list of available languages just using languages from underlying storage.
     /// </summary>
     public bool UseAvailableLanguageListFromStorage { get; set; } = false;
+
+    public void CopyFrom(UiConfigurationContext context)
+    {
+        AccessPolicyOptions = context.AccessPolicyOptions;
+        DefaultView = context.DefaultView;
+        CustomCssPath = context.CustomCssPath;
+        HideDeleteButton = context.HideDeleteButton;
+        MaxResourceKeyDisplayLength = context.MaxResourceKeyDisplayLength;
+        MaxResourceKeyPopupTitleLength = context.MaxResourceKeyPopupTitleLength;
+        RootUrl = context.RootUrl;
+        ShowHiddenResources = context.ShowHiddenResources;
+        ShowInvariantCulture = context.ShowInvariantCulture;
+        UseAvailableLanguageListFromStorage = context.UseAvailableLanguageListFromStorage;
+    }
 }

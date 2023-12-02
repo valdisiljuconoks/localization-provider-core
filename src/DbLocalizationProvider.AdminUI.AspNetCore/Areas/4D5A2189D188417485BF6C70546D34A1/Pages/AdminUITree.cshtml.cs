@@ -9,7 +9,7 @@ public class AdminUITreeViewModel : BasePage
 {
     public AdminUITreeViewModel(
         IOptions<ConfigurationContext> configurationContext,
-        UiConfigurationContext uiContext,
+        IOptions<UiConfigurationContext> uiContext,
         IQueryExecutor queryExecutor,
         ICommandExecutor commandExecutor)
         : base(configurationContext, uiContext, queryExecutor, commandExecutor) { }

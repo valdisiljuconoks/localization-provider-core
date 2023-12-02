@@ -112,6 +112,36 @@ Following configuration options are available:
 | `AccessPolicyOptions` | How are you going to secure access to AdminUI? |
 | `UseAvailableLanguageListFromStorage` | Flag whether list of available languages should be taked from the underlying storage. |
 
+### Post Configuration
+
+It is also possible to perform post configuration (after you have called `AddDbLocalizationProviderAdminUI()`) of the localization provider Admin UI.
+This is useful when you are unit testing your web app, after Startup code is executed and you want to make sure that some post configuration settings are applied for your unit tests to execute correctly.
+
+**NB!** Please note, that it is *not* possible to configure `RootUrl` and `AccessPolicyOptions`, as these options affects settings regsitered during DI build process.
+
+To post configure localization provider Admin UI you have to follow standard .NET Options pattern:
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        ...
+
+        services.AddDbLocalizationProviderAdminUI(c =>
+        {
+            ...
+            c.ShowInvariantCulture = true;
+        });
+
+        services.Configure<UiConfigurationContext>(ctx =>
+        {
+            ctx.DefaultView = ResourceListView.Table;
+        });
+    }
+}
+```
+
 ## Accessing AdminUI
 By default administration UI is mapped on `/localization-admin` path. You can customize path via `app.AddDbLocalizationProviderAdminUI();`. For example to map to `/loc-admin-ui`, you have to:
 

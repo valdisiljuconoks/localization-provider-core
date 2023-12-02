@@ -26,12 +26,12 @@ public class BasePage : PageModel
 
     public BasePage(
         IOptions<ConfigurationContext> configurationContext,
-        UiConfigurationContext uiConfigurationContext,
+        IOptions<UiConfigurationContext> uiConfigurationContext,
         IQueryExecutor queryExecutor,
         ICommandExecutor commandExecutor)
     {
         _configurationContext = configurationContext?.Value ?? throw new ArgumentNullException(nameof(configurationContext));
-        _uiConfigurationContext = uiConfigurationContext;
+        _uiConfigurationContext = uiConfigurationContext?.Value ?? throw new ArgumentNullException(nameof(uiConfigurationContext));
         _queryExecutor = queryExecutor ?? throw new ArgumentNullException(nameof(queryExecutor));
         _commandExecutor = commandExecutor ?? throw new ArgumentNullException(nameof(commandExecutor));
     }

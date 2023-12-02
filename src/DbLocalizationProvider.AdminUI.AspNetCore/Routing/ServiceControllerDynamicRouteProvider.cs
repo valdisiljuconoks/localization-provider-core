@@ -1,8 +1,10 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Routing;
 
@@ -10,9 +12,9 @@ public class ServiceControllerDynamicRouteProvider : IApplicationModelProvider
 {
     private readonly UiConfigurationContext _context;
 
-    public ServiceControllerDynamicRouteProvider(UiConfigurationContext context)
+    public ServiceControllerDynamicRouteProvider(IOptions<UiConfigurationContext> context)
     {
-        _context = context;
+        _context = context?.Value ?? throw new ArgumentNullException(nameof(context));
     }
 
     public void OnProvidersExecuting(ApplicationModelProviderContext context) { }

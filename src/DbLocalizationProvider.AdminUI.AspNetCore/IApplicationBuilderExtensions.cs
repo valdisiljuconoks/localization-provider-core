@@ -26,9 +26,9 @@ public static class IApplicationBuilderExtensions
     /// <returns>If you want to chain calls further, you can use the same application builder that was used.</returns>
     public static IApplicationBuilder UseDbLocalizationProviderAdminUI(this IApplicationBuilder app)
     {
-        var uiConfigurationContext = app.ApplicationServices.GetRequiredService<UiConfigurationContext>();
+        var uiConfigurationContext = app.ApplicationServices.GetRequiredService<IOptions<UiConfigurationContext>>();
 
-        var path = uiConfigurationContext.RootUrl;
+        var path = uiConfigurationContext.Value.RootUrl;
         if (path == null)
         {
             throw new ArgumentNullException(nameof(path));
@@ -53,7 +53,7 @@ public static class IApplicationBuilderExtensions
         // we can override handler here - but only if it's still well known type
         // if we don't know the handler - this means that somebody override it and basically we can't touch it anymore
         if (factory != null
-            && !uiConfigurationContext.UseAvailableLanguageListFromStorage
+            && !uiConfigurationContext.Value.UseAvailableLanguageListFromStorage
             && (typeof(AvailableLanguagesHandler).IsAssignableFrom(factory.GetHandlerType<AvailableLanguages.Query>())
                 || typeof(AvailableLanguages.Handler).IsAssignableFrom(factory.GetHandlerType<AvailableLanguages.Query>())))
         {

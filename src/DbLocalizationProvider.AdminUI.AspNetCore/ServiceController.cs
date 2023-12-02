@@ -26,12 +26,12 @@ namespace DbLocalizationProvider.AdminUI.AspNetCore;
 public class ServiceController : ControllerBase
 {
     private readonly ICommandExecutor _commandExecutor;
-    private readonly UiConfigurationContext _config;
+    private readonly IOptions<UiConfigurationContext> _config;
     private readonly IOptions<ConfigurationContext> _configurationContext;
     private readonly IQueryExecutor _queryExecutor;
 
     public ServiceController(
-        UiConfigurationContext config,
+        IOptions<UiConfigurationContext> config,
         ICommandExecutor commandExecutor,
         IQueryExecutor queryExecutor,
         IOptions<ConfigurationContext> configurationContext
@@ -132,7 +132,7 @@ public class ServiceController : ControllerBase
     [Route("delete", Name = "LocAdminDelete")]
     public JsonResult Delete([FromBody] DeleteResourceRequestModel model)
     {
-        if (!_config.HideDeleteButton)
+        if (!_config.Value.HideDeleteButton)
         {
             var cmd = new DeleteResource.Command(model.Key);
             _commandExecutor.Execute(cmd);
@@ -150,8 +150,8 @@ public class ServiceController : ControllerBase
             resources,
             languages,
             visibleLanguages ?? languages,
-            _config.MaxResourceKeyPopupTitleLength,
-            _config.MaxResourceKeyDisplayLength,
+            _config.Value.MaxResourceKeyPopupTitleLength,
+            _config.Value.MaxResourceKeyDisplayLength,
             BuildOptions());
 
         return result;
@@ -181,8 +181,8 @@ public class ServiceController : ControllerBase
         var result = new LocalizationResourceApiTreeModel(resources,
                                                           languages,
                                                           visibleLanguages ?? languages,
-                                                          _config.MaxResourceKeyPopupTitleLength,
-                                                          _config.MaxResourceKeyDisplayLength,
+                                                          _config.Value.MaxResourceKeyPopupTitleLength,
+                                                          _config.Value.MaxResourceKeyDisplayLength,
                                                           BuildOptions());
 
         return result;
@@ -207,9 +207,9 @@ public class ServiceController : ControllerBase
         return new UiOptions
         {
             AdminMode = true,
-            ShowInvariantCulture = _config.ShowInvariantCulture,
-            ShowHiddenResources = _config.ShowHiddenResources,
-            ShowDeleteButton = !_config.HideDeleteButton
+            ShowInvariantCulture = _config.Value.ShowInvariantCulture,
+            ShowHiddenResources = _config.Value.ShowHiddenResources,
+            ShowDeleteButton = !_config.Value.HideDeleteButton
         };
     }
 }

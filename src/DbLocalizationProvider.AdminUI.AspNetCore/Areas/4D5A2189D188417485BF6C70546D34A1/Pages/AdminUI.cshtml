@@ -8,7 +8,7 @@
 @*@inject IHtmlLocalizer<Resources> Localizer*@
 @inject ILocalizationProvider LocalizationProvider
 @inject IOptions<ConfigurationContext> ConfigContext
-@inject UiConfigurationContext UiContext
+@inject IOptions<UiConfigurationContext> UiContext
 
 @{
     Layout = null;
@@ -278,9 +278,9 @@
         }
     </style>
 
-    @if (!string.IsNullOrEmpty(UiContext.CustomCssPath))
+    @if (!string.IsNullOrEmpty(UiContext.Value.CustomCssPath))
     {
-        <link rel="stylesheet" href="@UiContext.CustomCssPath">
+        <link rel="stylesheet" href="@UiContext.Value.CustomCssPath">
     }
 </head>
 <body class="container-fluid">
@@ -469,7 +469,7 @@
             <span class="d-flex flex-row justify-content-start align-items-end">
                 <span class="h1 ma-0">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Header)</span>
                 <span class="ml-4">
-                    <small>(v@(UiContext.Version.Value))</small>
+                    <small>(v@(UiContext.Value.Version.Value))</small>
                 </span>
             </span>
         </div>
@@ -525,7 +525,7 @@
                 <th v-for="lang in model.visibleLanguages" scope="col">{{lang.display}}</th>
                 <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.HiddenColumn)</th>
                 <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.FromCodeColumn)</th>
-                @if (!UiContext.HideDeleteButton)
+                @if (!UiContext.Value.HideDeleteButton)
                 {
                     <th>@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.DeleteColumn)</th>
                 }
@@ -545,7 +545,7 @@
                 </td>
                 <td>{{ resource.isHidden }}</td>
                 <td>{{ resource.isFromCode }}</td>
-                @if (!UiContext.HideDeleteButton)
+                @if (!UiContext.Value.HideDeleteButton)
                 {
                     <td>
                         <a href="#" class="btn" v-bind:class="{ disabled: resource.isFromCode }" @@click="deleteResource(resource)">

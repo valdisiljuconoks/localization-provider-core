@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using DbLocalizationProvider.AdminUI.AspNetCore;
 using DbLocalizationProvider.AspNetCore;
 using DbLocalizationProvider.Core.AspNetSample.Models;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
@@ -37,7 +38,8 @@ public class HomeController : Controller
         ISynchronizer synchronizer,
         IStringLocalizer<SampleResources> localizer,
         ICommandExecutor executor,
-        IOptions<ConfigurationContext> ctx)
+        IOptions<ConfigurationContext> ctx,
+        IOptions<UiConfigurationContext> uiCtx)
     {
         _provider = provider;
         _logger = logger;
@@ -49,6 +51,8 @@ public class HomeController : Controller
         var asms = GetAssemblies().Where(a => a.FullName.Contains("DbLocalizationProvider"));
 
         var _c = ctx.Value;
+
+        var _uic = uiCtx.Value;
     }
 
     private static IEnumerable<Assembly> GetAssemblies()
