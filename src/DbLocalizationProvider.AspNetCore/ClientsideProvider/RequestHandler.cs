@@ -1,6 +1,7 @@
 // Copyright (c) Valdis Iljuconoks. All rights reserved.
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using DbLocalizationProvider.Cache;
@@ -135,8 +136,8 @@ public class RequestHandler
     private static string ExtractFileName(HttpContext context)
     {
         var result = context.Request.Path.ToString().Replace(ClientsideConfigurationContext.RootPath, string.Empty);
-        result = result.StartsWith('/') ? result.TrimStart('/') : result;
-        result = result.EndsWith('/') ? result.TrimEnd('/') : result;
+        result = result.StartsWith("/", StringComparison.OrdinalIgnoreCase) ? result.TrimStart('/') : result;
+        result = result.EndsWith("/", StringComparison.OrdinalIgnoreCase) ? result.TrimEnd('/') : result;
 
         return result.Replace("---", "+");
     }
