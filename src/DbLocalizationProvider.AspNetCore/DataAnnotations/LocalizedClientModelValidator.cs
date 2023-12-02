@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using DbLocalizationProvider.Internal;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 
@@ -14,7 +15,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 /// </summary>
 public class LocalizedClientModelValidator : IClientModelValidatorProvider
 {
-    private readonly ConfigurationContext _configurationContext;
+    private readonly IOptions<ConfigurationContext> _configurationContext;
     private readonly ExpressionHelper _expressionHelper;
     private readonly ResourceKeyBuilder _keyBuilder;
     private readonly ILocalizationProvider _localizationProvider;
@@ -33,7 +34,7 @@ public class LocalizedClientModelValidator : IClientModelValidatorProvider
         ILocalizationProvider localizationProvider,
         ResourceKeyBuilder keyBuilder,
         ExpressionHelper expressionHelper,
-        ConfigurationContext configurationContext)
+        IOptions<ConfigurationContext> configurationContext)
     {
         _validationAttributeAdapterProvider = validationAttributeAdapterProvider;
         _localizationProvider = localizationProvider ?? throw new ArgumentNullException(nameof(localizationProvider));
@@ -55,7 +56,7 @@ public class LocalizedClientModelValidator : IClientModelValidatorProvider
         }
 
         var type = context.ModelMetadata.ContainerType ?? context.ModelMetadata.ModelType;
-        var isReusable = _configurationContext.ModelMetadataProviders.UseCachedProviders;
+        var isReusable = _configurationContext.Value.ModelMetadataProviders.UseCachedProviders;
         var flag = false;
 
         foreach (var result in context.Results)

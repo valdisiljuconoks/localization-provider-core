@@ -2,6 +2,7 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AspNetCore;
 
@@ -15,5 +16,5 @@ public interface IUsageConfigurator
     /// </summary>
     /// <param name="context">Configuration context.</param>
     /// <param name="serviceProvider">Service provider.</param>
-    public void Configure(ConfigurationContext context, IServiceProvider serviceProvider);
+    public void Configure(IOptions<ConfigurationContext> context, IServiceProvider serviceProvider);
 }

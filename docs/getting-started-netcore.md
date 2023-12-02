@@ -5,7 +5,7 @@
 > dotnet add package LocalizationProvider.AspNetCore
 ```
 
-## Configure Services
+## Configuring Services
 
 In your `Startup.cs` class you need to add stuff related to Mvc localization (to get required services into DI container - service collection).
 
@@ -81,7 +81,37 @@ Following `ModelMetadataProviders` configuration options are available:
 | `SetupCallback` | If callback action is supplied it's invoked instead of default  model medata data providers setup. This is required in cases when model metadata provider infrastructure is different between runtimes. |
 | `UseCachedProviders` | Gets or sets a value to use cached version of ModelMetadataProvider. |
 
+### Post Configuration
 
+It is also possible to perform post configuration (after you have called `AddDbLocalizationProvider()`) of the localization provider.
+This is useful when you are unit testing your web app, after Startup code is executed and you want to make sure that some post configuration settings are applied for your unit tests to execute correctly.
+
+**NB!** Please note, that it is *not* possible to configure any types, scanners or anything else that is added to the DI container during `AddDbLocalizationProvider()` call. This limitation is due to fact that types are added to DI container and post configuration is called afterwards (when `IServiceProvider` is already built).
+
+To post configure localization provider you have to follow standard .NET Options pattern:
+
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        ...
+
+        services.AddDbLocalizationProvider(cfg =>
+        {
+            ...
+        });
+
+        // post configuring provider
+        services.Configure<ConfigurationContext>(ctx =>
+        {
+            ctx.EnableInvariantCultureFallback = false;
+        });
+    }
+}
+```
+
+### Adding Services to the App
 After then you will need to make sure that you start using the provider:
 
 ```csharp

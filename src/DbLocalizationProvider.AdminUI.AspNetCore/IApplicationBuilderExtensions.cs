@@ -67,15 +67,15 @@ public static class IApplicationBuilderExtensions
         var providerSettings = app.ApplicationServices.GetService<IOptions<ProviderSettings>>();
         if (providerSettings != null)
         {
-            var context = app.ApplicationServices.GetRequiredService<ConfigurationContext>();
+            var context = app.ApplicationServices.GetRequiredService<IOptions<ConfigurationContext>>();
             foreach (var importer in providerSettings.Value.Importers)
             {
-                context.Import.Providers.Add(importer);
+                context.Value.Import.Providers.Add(importer);
             }
 
             foreach (var exporter in providerSettings.Value.Exporters)
             {
-                context.Export.Providers.Add(exporter);
+                context.Value.Export.Providers.Add(exporter);
             }
         }
 

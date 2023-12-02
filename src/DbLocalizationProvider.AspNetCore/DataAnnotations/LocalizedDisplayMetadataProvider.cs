@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using DbLocalizationProvider.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 
@@ -14,7 +15,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 /// </summary>
 public class LocalizedDisplayMetadataProvider : IDisplayMetadataProvider
 {
-    private readonly ConfigurationContext _configurationContext;
+    private readonly IOptions<ConfigurationContext> _configurationContext;
     private readonly ModelMetadataLocalizationHelper _metadataHelper;
 
     /// <summary>
@@ -24,7 +25,7 @@ public class LocalizedDisplayMetadataProvider : IDisplayMetadataProvider
     /// <param name="configurationContext">Configuration settings.</param>
     public LocalizedDisplayMetadataProvider(
         ModelMetadataLocalizationHelper metadataHelper,
-        ConfigurationContext configurationContext)
+        IOptions<ConfigurationContext> configurationContext)
     {
         _metadataHelper = metadataHelper;
         _configurationContext = configurationContext;
@@ -55,7 +56,7 @@ public class LocalizedDisplayMetadataProvider : IDisplayMetadataProvider
         }
         else
         {
-            modelMetadata.DisplayName = () => !_configurationContext.ShouldLookupResource(currentMetaData)
+            modelMetadata.DisplayName = () => !_configurationContext.Value.ShouldLookupResource(currentMetaData)
                 ? _metadataHelper.GetTranslation(currentMetaData)
                 : _metadataHelper.GetTranslation(containerType, propertyName);
 

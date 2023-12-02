@@ -12,7 +12,7 @@ namespace DbLocalizationProvider.AspNetCore;
 /// </summary>
 public class ConfigureModelMetadataDetailsProviders : IConfigureOptions<MvcOptions>
 {
-    private readonly ConfigurationContext _configurationContext;
+    private readonly IOptions<ConfigurationContext> _configurationContext;
     private readonly ResourceKeyBuilder _keyBuilder;
     private readonly ILocalizationProvider _localizationProvider;
 
@@ -25,7 +25,7 @@ public class ConfigureModelMetadataDetailsProviders : IConfigureOptions<MvcOptio
     public ConfigureModelMetadataDetailsProviders(
         ILocalizationProvider localizationProvider,
         ResourceKeyBuilder keyBuilder,
-        ConfigurationContext configurationContext)
+        IOptions<ConfigurationContext> configurationContext)
     {
         _localizationProvider = localizationProvider;
         _keyBuilder = keyBuilder;

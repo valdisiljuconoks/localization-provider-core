@@ -7,32 +7,43 @@ using ILogger = DbLocalizationProvider.Logging.ILogger;
 
 namespace DbLocalizationProvider.AspNetCore;
 
+/// <summary>
+/// 
+/// </summary>
 public class LoggerAdapter : ILogger
 {
     private readonly Microsoft.Extensions.Logging.ILogger _logger;
 
+    /// <summary>
+    /// Initializes new instance of the logger adapter.
+    /// </summary>
+    /// <param name="logger">Original logger to adapt to</param>
     public LoggerAdapter(Microsoft.Extensions.Logging.ILogger logger)
     {
         _logger = logger;
     }
 
-    public void Debug(string message)
+    /// <inheritdoc />
+    public void Debug(string message, params object?[] args)
     {
-        _logger?.LogDebug(message);
+        _logger?.LogDebug(message, args);
     }
 
-    public void Info(string message)
+    /// <inheritdoc />
+    public void Info(string message, params object?[] args)
     {
-        _logger?.LogInformation(message);
+        _logger?.LogInformation(message, args);
     }
 
-    public void Error(string message)
+    /// <inheritdoc />
+    public void Error(string message, params object?[] args)
     {
-        _logger?.LogError(message);
+        _logger?.LogError(message, args);
     }
 
-    public void Error(string message, Exception exception)
+    /// <inheritdoc />
+    public void Error(string message, Exception exception, params object?[] args)
     {
-        _logger?.LogError(message, exception);
+        _logger?.LogError(message, exception, args);
     }
 }

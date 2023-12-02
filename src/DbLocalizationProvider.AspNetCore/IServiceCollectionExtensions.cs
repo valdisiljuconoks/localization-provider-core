@@ -67,8 +67,16 @@ public static class IServiceCollectionExtensions
         services.AddSingleton<CommandExecutor>();
         services.AddSingleton<ICommandExecutor>(sp => sp.GetRequiredService<CommandExecutor>());
         services.AddSingleton<DiscoveredTranslationBuilder>();
-        services.AddSingleton(_ => ctx.FallbackList);
-        services.AddSingleton(_ => ctx);
+        //services.AddSingleton(_ => ctx._fallbackCollection);
+        
+        services
+            .AddOptions<ConfigurationContext>()
+            .Configure(x =>
+            {
+                x.CopyFrom(ctx);
+            });
+
+
         services.AddSingleton(sp =>
         {
             factory.SetServiceFactory(sp.GetService);

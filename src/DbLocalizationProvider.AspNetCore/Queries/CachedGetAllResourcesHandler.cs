@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.Cache;
 using DbLocalizationProvider.Queries;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AspNetCore.Queries;
 
@@ -14,7 +15,7 @@ namespace DbLocalizationProvider.AspNetCore.Queries;
 /// </summary>
 public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>>
 {
-    private readonly ConfigurationContext _configurationContext;
+    private readonly IOptions<ConfigurationContext> _configurationContext;
     private readonly IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>> _inner;
     private readonly IQueryExecutor _queryExecutor;
 
@@ -27,7 +28,7 @@ public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query,
     public CachedGetAllResourcesHandler(
         IQueryHandler<GetAllResources.Query, IEnumerable<LocalizationResource>> inner,
         IQueryExecutor queryExecutor,
-        ConfigurationContext configurationContext)
+        IOptions<ConfigurationContext> configurationContext)
     {
         _inner = inner ?? throw new ArgumentNullException(nameof(inner));
         _queryExecutor = queryExecutor ?? throw new ArgumentNullException(nameof(queryExecutor));
@@ -48,18 +49,18 @@ public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query,
 
         // if keys = 0, execute inner query to actually get resources from the db
         // this is usually called during initialization when cache is not yet filled up
-        if (_configurationContext.BaseCacheManager.KnownKeyCount == 0)
+        if (_configurationContext.Value.BaseCacheManager.KnownKeyCount == 0)
         {
             return _inner.Execute(query);
         }
 
         var result = new List<LocalizationResource>();
-        var keys = _configurationContext.BaseCacheManager.KnownKeys;
+        var keys = _configurationContext.Value.BaseCacheManager.KnownKeys;
 
         foreach (var key in keys)
         {
             var cacheKey = CacheKeyHelper.BuildKey(key);
-            if (_configurationContext.CacheManager.Get(cacheKey) is LocalizationResource localizationResource)
+            if (_configurationContext.Value.CacheManager.Get(cacheKey) is LocalizationResource localizationResource)
             {
                 result.Add(localizationResource);
             }
@@ -71,7 +72,7 @@ public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query,
 
                 if (resourceFromDb != null)
                 {
-                    _configurationContext.CacheManager.Insert(cacheKey, resourceFromDb, true);
+                    _configurationContext.Value.CacheManager.Insert(cacheKey, resourceFromDb, true);
                     result.Add(resourceFromDb);
                 }
             }

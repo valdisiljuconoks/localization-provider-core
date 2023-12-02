@@ -8,6 +8,7 @@ using DbLocalizationProvider.Queries;
 using DbLocalizationProvider.Sync;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -86,7 +87,7 @@ public class RequestHandler
                                      debugMode,
                                      camelCase,
                                      context.RequestServices.GetService<IQueryExecutor>(),
-                                     context.RequestServices.GetService<ConfigurationContext>(),
+                                     context.RequestServices.GetService<IOptions<ConfigurationContext>>(),
                                      context.RequestServices.GetService<ScanState>());
 
             cache.Insert(cacheKey, responseObject, false);
@@ -110,7 +111,7 @@ public class RequestHandler
         bool debugMode,
         bool camelCase,
         IQueryExecutor queryExecutor,
-        ConfigurationContext configurationContext,
+        IOptions<ConfigurationContext> configurationContext,
         ScanState scanState)
     {
         var settings = new JsonSerializerSettings();
@@ -127,15 +128,15 @@ public class RequestHandler
         }
 
         return JsonConvert.SerializeObject(
-            converter.GetJson(filename, languageName, configurationContext.FallbackList, camelCase),
+            converter.GetJson(filename, languageName, configurationContext.Value._fallbackCollection, camelCase),
             settings);
     }
 
     private static string ExtractFileName(HttpContext context)
     {
         var result = context.Request.Path.ToString().Replace(ClientsideConfigurationContext.RootPath, string.Empty);
-        result = result.StartsWith("/") ? result.TrimStart('/') : result;
-        result = result.EndsWith("/") ? result.TrimEnd('/') : result;
+        result = result.StartsWith('/') ? result.TrimStart('/') : result;
+        result = result.EndsWith('/') ? result.TrimEnd('/') : result;
 
         return result.Replace("---", "+");
     }

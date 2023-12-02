@@ -4,6 +4,7 @@
 using System;
 using DbLocalizationProvider.Sync;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AspNetCore;
 
@@ -24,7 +25,7 @@ public static class IServiceProviderExtensions
             throw new ArgumentNullException(nameof(serviceFactory));
         }
 
-        var context = serviceFactory.GetRequiredService<ConfigurationContext>();
+        var context = serviceFactory.GetRequiredService<IOptions<ConfigurationContext>>();
         var usageConfigurator = serviceFactory.GetService<IUsageConfigurator>();
 
         if (usageConfigurator != null)
@@ -34,11 +35,11 @@ public static class IServiceProviderExtensions
 
         // if we need to sync - then it's good time to do it now
         var sync = serviceFactory.GetRequiredService<Synchronizer>();
-        sync.SyncResources(context.DiscoverAndRegisterResources);
+        sync.SyncResources(context.Value.DiscoverAndRegisterResources);
 
-        if (!context.DiscoverAndRegisterResources)
+        if (!context.Value.DiscoverAndRegisterResources)
         {
-            context.Logger?.Info($"{nameof(context.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
+            context.Value.Logger?.Info($"{nameof(context.Value.DiscoverAndRegisterResources)}=false. Resource synchronization skipped.");
         }
 
         foreach (var provider in serviceFactory.GetServices<IManualResourceProvider>())
@@ -46,6 +47,6 @@ public static class IServiceProviderExtensions
             sync.RegisterManually(provider.GetResources());
         }
 
-        context.Logger?.Info("DbLocalizationProvider initialized.");
+        context.Value.Logger?.Info("DbLocalizationProvider initialized.");
     }
 }

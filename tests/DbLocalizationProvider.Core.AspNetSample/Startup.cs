@@ -6,6 +6,7 @@ using DbLocalizationProvider.AspNetCore.ClientsideProvider.Routing;
 using DbLocalizationProvider.Core.AspNet.ForeignAssembly;
 using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
+using DbLocalizationProvider.Logging;
 using DbLocalizationProvider.Storage.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -116,36 +117,35 @@ public class Startup
             opts.SupportedUICultures = supportedCultures;
         });
 
-        services.AddDbLocalizationProvider(_ =>
+        services.AddDbLocalizationProvider(x =>
         {
-            _.EnableInvariantCultureFallback = true;
-            _.DefaultResourceCulture = CultureInfo.InvariantCulture;
-            _.CustomAttributes.Add(typeof(WeirdCustomAttribute));
-            _.ScanAllAssemblies = true;
-            _.FallbackLanguages.Try(supportedCultures);
-            _.ForeignResources.Add<SomeForeignViewModel>();
+            x.EnableInvariantCultureFallback = true;
+            x.DefaultResourceCulture = CultureInfo.InvariantCulture;
+            x.CustomAttributes.Add(typeof(WeirdCustomAttribute));
+            x.ScanAllAssemblies = true;
+            x.FallbackLanguages.Try(supportedCultures);
+            x.ForeignResources.Add<SomeForeignViewModel>();
             //.Try(new CultureInfo("sv"))
             //.Then(new CultureInfo("no"))
             //.Then(new CultureInfo("en"));
 
-            _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             //_.UseAzureTables("UseDevelopmentStorage=true");
 
-            _.ManualResourceProviders.Add<SomeManualResources>();
-            _.ModelMetadataProviders.ReplaceProviders = true;
-            _.FlexibleRefactoringMode = true;
+            x.ManualResourceProviders.Add<SomeManualResources>();
+            x.ModelMetadataProviders.ReplaceProviders = true;
+            x.FlexibleRefactoringMode = true;
         });
 
-        services
-            .AddDbLocalizationProviderAdminUI(_ =>
+        services.AddDbLocalizationProviderAdminUI(x =>
             {
-                _.RootUrl = "/localization-admin";
+                x.RootUrl = "/localization-admin";
                 //_.AccessPolicyOptions = builder => builder.AddRequirements(new RolesAuthorizationRequirement(new [] { "test" }));
-                _.ShowInvariantCulture = true;
-                _.ShowHiddenResources = false;
-                _.DefaultView = ResourceListView.Tree;
-                _.CustomCssPath = "/css/custom-adminui.css";
-                _.HideDeleteButton = false;
+                x.ShowInvariantCulture = true;
+                x.ShowHiddenResources = false;
+                x.DefaultView = ResourceListView.Tree;
+                x.CustomCssPath = "/css/custom-adminui.css";
+                x.HideDeleteButton = false;
             })
             .AddCsvSupport()
             .AddXliffSupport();

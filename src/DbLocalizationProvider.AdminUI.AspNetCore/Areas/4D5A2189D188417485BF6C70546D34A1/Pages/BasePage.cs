@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages;
 
@@ -24,12 +25,12 @@ public class BasePage : PageModel
     private readonly UiConfigurationContext _uiConfigurationContext;
 
     public BasePage(
-        ConfigurationContext configurationContext,
+        IOptions<ConfigurationContext> configurationContext,
         UiConfigurationContext uiConfigurationContext,
         IQueryExecutor queryExecutor,
         ICommandExecutor commandExecutor)
     {
-        _configurationContext = configurationContext ?? throw new ArgumentNullException(nameof(configurationContext));
+        _configurationContext = configurationContext?.Value ?? throw new ArgumentNullException(nameof(configurationContext));
         _uiConfigurationContext = uiConfigurationContext;
         _queryExecutor = queryExecutor ?? throw new ArgumentNullException(nameof(queryExecutor));
         _commandExecutor = commandExecutor ?? throw new ArgumentNullException(nameof(commandExecutor));

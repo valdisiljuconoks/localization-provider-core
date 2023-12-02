@@ -36,7 +36,8 @@ public class HomeController : Controller
         ILogger<HomeController> logger,
         ISynchronizer synchronizer,
         IStringLocalizer<SampleResources> localizer,
-        ICommandExecutor executor)
+        ICommandExecutor executor,
+        IOptions<ConfigurationContext> ctx)
     {
         _provider = provider;
         _logger = logger;
@@ -46,6 +47,8 @@ public class HomeController : Controller
         _simpleLocalizer = localizer;
 
         var asms = GetAssemblies().Where(a => a.FullName.Contains("DbLocalizationProvider"));
+
+        var _c = ctx.Value;
     }
 
     private static IEnumerable<Assembly> GetAssemblies()

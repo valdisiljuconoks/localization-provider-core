@@ -17,6 +17,7 @@ using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore;
 
@@ -26,14 +27,14 @@ public class ServiceController : ControllerBase
 {
     private readonly ICommandExecutor _commandExecutor;
     private readonly UiConfigurationContext _config;
-    private readonly ConfigurationContext _configurationContext;
+    private readonly IOptions<ConfigurationContext> _configurationContext;
     private readonly IQueryExecutor _queryExecutor;
 
     public ServiceController(
         UiConfigurationContext config,
         ICommandExecutor commandExecutor,
         IQueryExecutor queryExecutor,
-        ConfigurationContext configurationContext
+        IOptions<ConfigurationContext> configurationContext
     )
     {
         _config = config;
@@ -96,7 +97,7 @@ public class ServiceController : ControllerBase
             return new ValidationResponse(null);
         }
 
-        var parser = _configurationContext.Import.Providers.FindByExtension(new FileInfo(importFile.FileName).Extension);
+        var parser = _configurationContext.Value.Import.Providers.FindByExtension(new FileInfo(importFile.FileName).Extension);
         var result = parser.Parse(fileContent);
         var workflow = new ResourceImportWorkflow(_commandExecutor, _queryExecutor);
         var (resources, _) = GetResources();

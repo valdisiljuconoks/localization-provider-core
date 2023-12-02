@@ -3,11 +3,12 @@
 @using DbLocalizationProvider
 @using DbLocalizationProvider.AdminUI.AspNetCore
 @using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUITreeViewModel
 
 @inject ILocalizationProvider LocalizationProvider
 @inject IHtmlLocalizer<Resources> Localizer
-@inject ConfigurationContext ConfigContext
+@inject IOptions<ConfigurationContext> ConfigContext
 @inject UiConfigurationContext UiContext
 @{
     Layout = null;
@@ -302,7 +303,7 @@
                 <div class="btn-group dropdown ma-4">
                     <button type="button" class="btn btn-light dropdown-toggle" id="exportMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Export)</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="exportMenuLink">
-                        @foreach (var exportProvider in ConfigContext.Export.Providers)
+                        @foreach (var exportProvider in ConfigContext.Value.Export.Providers)
                         {
                             <a href="#" class="dropdown-item" @@click="handleExportCommand('@exportProvider.ProviderId')">@exportProvider.FormatName</a>
                         }

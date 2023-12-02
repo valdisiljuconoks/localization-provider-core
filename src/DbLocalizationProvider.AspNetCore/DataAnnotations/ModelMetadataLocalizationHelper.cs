@@ -2,6 +2,7 @@
 // Licensed under Apache-2.0. See the LICENSE file in the project root for more information
 
 using System;
+using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 
@@ -10,7 +11,7 @@ namespace DbLocalizationProvider.AspNetCore.DataAnnotations;
 /// </summary>
 public class ModelMetadataLocalizationHelper
 {
-    private readonly ConfigurationContext _configurationContext;
+    private readonly IOptions<ConfigurationContext> _configurationContext;
     private readonly ResourceKeyBuilder _keyBuilder;
     private readonly ILocalizationProvider _localizationProvider;
 
@@ -23,7 +24,7 @@ public class ModelMetadataLocalizationHelper
     public ModelMetadataLocalizationHelper(
         ILocalizationProvider localizationProvider,
         ResourceKeyBuilder keyBuilder,
-        ConfigurationContext configurationContext)
+        IOptions<ConfigurationContext> configurationContext)
     {
         _localizationProvider = localizationProvider ?? throw new ArgumentNullException(nameof(localizationProvider));
         _keyBuilder = keyBuilder ?? throw new ArgumentNullException(nameof(keyBuilder));
@@ -33,7 +34,7 @@ public class ModelMetadataLocalizationHelper
     internal string GetTranslation(string resourceKey)
     {
         var result = resourceKey;
-        if (!_configurationContext.EnableLocalization())
+        if (!_configurationContext.Value.EnableLocalization())
         {
             return result;
         }
@@ -43,7 +44,7 @@ public class ModelMetadataLocalizationHelper
 
         // for the legacy purposes - we need to look for this resource translation using display name
         // once again - this will make sure that existing XPath resources are still working
-        if (localizedDisplayName != null && !_configurationContext.ShouldLookupResource(localizedDisplayName))
+        if (localizedDisplayName != null && !_configurationContext.Value.ShouldLookupResource(localizedDisplayName))
         {
             result = _localizationProvider.GetString(localizedDisplayName);
         }
