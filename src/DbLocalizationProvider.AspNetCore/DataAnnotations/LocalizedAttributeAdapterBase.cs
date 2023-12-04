@@ -32,16 +32,9 @@ public abstract class LocalizedAttributeAdapterBase<T> : AttributeAdapterBase<T>
     /// <inheritdoc />
     public override string GetErrorMessage(ModelValidationContextBase validationContext)
     {
-        if (validationContext == null)
-        {
-            throw new ArgumentNullException(nameof(validationContext));
-        }
+        ArgumentNullException.ThrowIfNull(nameof(validationContext));
 
-        return _stringLocalizer?.GetString(
-            _resourceKeyBuilder.BuildResourceKey(
-                validationContext.ModelMetadata.ContainerType,
-                validationContext.ModelMetadata.PropertyName,
-                Attribute));
+        return GetErrorMessage(validationContext, null);
     }
 
     /// <summary>
@@ -52,9 +45,11 @@ public abstract class LocalizedAttributeAdapterBase<T> : AttributeAdapterBase<T>
     /// <returns>The localized error message.</returns>
     public string GetErrorMessage(ModelValidationContextBase validationContext, params object[] arguments)
     {
-        if (validationContext == null)
+        ArgumentNullException.ThrowIfNull(nameof(validationContext));
+
+        if (validationContext.ModelMetadata.ContainerType == null || validationContext.ModelMetadata.PropertyName == null)
         {
-            throw new ArgumentNullException(nameof(validationContext));
+            return string.Empty;
         }
 
         return _stringLocalizer?.GetString(
