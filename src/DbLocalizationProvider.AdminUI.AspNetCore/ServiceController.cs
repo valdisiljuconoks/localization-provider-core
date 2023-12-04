@@ -45,9 +45,9 @@ public class ServiceController : ControllerBase
 
     [HttpGet]
     [Route("get", Name = "LocAdminGet")]
-    public IActionResult Get()
+    public IActionResult Get(string keyword)
     {
-        return new ApiResponse(PrepareViewModel());
+        return new ApiResponse(PrepareViewModel(keyword?.Trim()));
     }
 
     [HttpGet]
@@ -100,7 +100,7 @@ public class ServiceController : ControllerBase
         var parser = _configurationContext.Value.Import.Providers.FindByExtension(new FileInfo(importFile.FileName).Extension);
         var result = parser.Parse(fileContent);
         var workflow = new ResourceImportWorkflow(_commandExecutor, _queryExecutor);
-        var (resources, _) = GetResources();
+        var resources = GetResources();
         var detectedImportChanges = workflow.DetectChanges(result.Resources, resources);
 
         return new ValidationResponse(detectedImportChanges);
@@ -141,9 +141,25 @@ public class ServiceController : ControllerBase
         return ServiceOperationResult.Ok;
     }
 
-    private LocalizationResourceApiModel PrepareViewModel()
+    private LocalizationResourceApiModel PrepareViewModel(string keyword)
     {
-        var (resources, languages) = GetResources();
+        var resources = new List<LocalizationResource>();
+        var languages = GetAvailableLanguages();
+        if (_config.Value.EnableDbSearch)
+        {
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                resources = GetResources()
+                    .Where(r => r.ResourceKey.Contains(keyword, StringComparison.InvariantCultureIgnoreCase))
+                    .Take(_config.Value.PageSize)
+                    .ToList();
+            }
+        }
+        else
+        {
+            resources = GetResources();
+        }
+
         var visibleLanguages = GetVisibleLanguages(languages);
 
         var result = new LocalizationResourceApiModel(
@@ -175,7 +191,9 @@ public class ServiceController : ControllerBase
 
     private LocalizationResourceApiTreeModel PrepareTreeViewModel()
     {
-        var (resources, languages) = GetResources();
+        var resources = GetResources();
+        var languages = GetAvailableLanguages();
+
         var visibleLanguages = GetVisibleLanguages(languages);
 
         var result = new LocalizationResourceApiTreeModel(resources,
@@ -188,18 +206,23 @@ public class ServiceController : ControllerBase
         return result;
     }
 
-    private (List<LocalizationResource>, IEnumerable<AvailableLanguage>) GetResources()
+    private List<LocalizationResource> GetResources()
+    {
+        var getResourcesQuery = new GetAllResources.Query(true);
+        var resources = _queryExecutor
+            .Execute(getResourcesQuery)
+            .OrderBy(r => r.ResourceKey)
+            .ToList();
+
+        return resources;
+    }
+
+    private ICollection<AvailableLanguage> GetAvailableLanguages()
     {
         var availableLanguagesQuery = new AvailableLanguages.Query { IncludeInvariant = false };
         var languages = _queryExecutor.Execute(availableLanguagesQuery);
 
-        var getResourcesQuery = new GetAllResources.Query(true);
-        var resources = _queryExecutor
-            .Execute(getResourcesQuery)
-            .OrderBy(_ => _.ResourceKey)
-            .ToList();
-
-        return (resources, languages);
+        return languages.ToList();
     }
 
     private UiOptions BuildOptions()
@@ -209,7 +232,8 @@ public class ServiceController : ControllerBase
             AdminMode = true,
             ShowInvariantCulture = _config.Value.ShowInvariantCulture,
             ShowHiddenResources = _config.Value.ShowHiddenResources,
-            ShowDeleteButton = !_config.Value.HideDeleteButton
+            ShowDeleteButton = !_config.Value.HideDeleteButton,
+            EnableDbSearch = _config.Value.EnableDbSearch
         };
     }
 }

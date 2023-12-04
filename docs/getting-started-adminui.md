@@ -6,7 +6,7 @@
 > dotnet add package LocalizationProvider.AdminUI.AspNetCore
 ```
 
-## Configure Services (.NET 6+)
+## Configure Services
 For Minimal API syntax use following set of configuration as your starting point to get AdminUI up & running.
 
 ```csharp
@@ -111,6 +111,8 @@ Following configuration options are available:
 | `HideDeleteButton` | Should `Delete` button be visible? |
 | `AccessPolicyOptions` | How are you going to secure access to AdminUI? |
 | `UseAvailableLanguageListFromStorage` | Flag whether list of available languages should be taked from the underlying storage. |
+| `EnableDbSearch` | Set this this `true` to enable server-side search (should be used if AdminUI performance gives you some headaches). |
+| `PageSize` | If `EnableDbSearch` is set to `true` this controls how many resources will be returned. If you don't see your resources, try to be more specific in search or increase page size. Default is `50` items. |
 
 ### Post Configuration
 

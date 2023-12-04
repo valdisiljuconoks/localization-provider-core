@@ -10,23 +10,18 @@ using Newtonsoft.Json.Serialization;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore;
 
-public class ApiResponse : IActionResult
+public class ApiResponse(BaseApiModel response) : IActionResult
 {
     private static readonly JsonSerializerSettings _jsonSerializerSettings =
         new() { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
-    private readonly BaseApiModel _response;
-
-    public ApiResponse(BaseApiModel response)
-    {
-        _response = response;
-    }
-
     public Task ExecuteResultAsync(ActionContext context)
     {
+        context.HttpContext.Response.ContentType = "application/json";
+
         return context.HttpContext.Response.WriteAsync(
             JsonConvert.SerializeObject(
-                _response,
+                response,
                 _jsonSerializerSettings));
     }
 }

@@ -512,12 +512,15 @@
     <addmodal v-if="model.showAddModal" @@add="addResource" @@close="model.showAddModal = false" :model="model.currentResource"></addmodal>
     <xlifflangmodal v-if="model.showXliffLanguagesModal" @@export="exportXliff" @@close="model.showXliffLanguagesModal = false" :model="model"></xlifflangmodal>
     <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal>
+
     <div class="d-flex flex-row justify-content-end mb-4">
         <div class="form-group offset-lg-9 col-lg-3 ma-4">
-            <input type="text" class="form-control" v-model="model.searchKeyword" placeholder="@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder)"/>
+                <input type="text" class="form-control" id="search-input" v-model="model.searchKeyword" placeholder="@(UiContext.Value.EnableDbSearch ?  LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholderDbSearchEnabled) : LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder))" />
         </div>
     </div>
+    
     <span class="error">{{model.error}}</span>
+    
     <div classs="table-responsive">
         <table v-show="!model.loading" class="table table-hover table-sm">
             <thead class="thead-dark">
@@ -565,6 +568,7 @@
 @Model.IncludeScript("vue.min.js")
 @Model.IncludeScript("axios.min.js")
 @Model.IncludeScript("vueDirectiveTooltip.min.js")
+@Model.IncludeScript("debounce.js")
 
 <script type="text/javascript">
     Vue.component('langmodal', {
@@ -737,7 +741,8 @@
             showInvariantCulture: false,
             showHiddenResources: false,
             showOnlyEmptyResources: false,
-            showDeleteButton: true
+            showDeleteButton: true,
+            enableDbSearch: false
         },
         showXliffLanguagesModal: false,
         sourceLanguage: '',
@@ -750,15 +755,15 @@
             model: vm
         },
         methods: {
-            loadData() {
-                axios.get('api/service/get').then((response) => {
+            loadData(keyword) {
+                axios.get('api/service/get?keyword=' + (keyword ? keyword : '')).then((response) => {
                     if (isObject(response.data)) {
                         var result = response.data;
                         this.model.resources = result.resources;
                         this.model.supportedLanguages = result.languages;
                         this.model.visibleLanguages = result.visibleLanguages;
-                        this.model.checkedLanguages = $.map(result.visibleLanguages, function (l) { return l.code; });
-                        this.model.allLanguagesChecked = this.model.supportedLanguages.length == this.model.visibleLanguages.length;
+                        this.model.checkedLanguages = $.map(result.visibleLanguages, function(l) { return l.code; });
+                        this.model.allLanguagesChecked = this.model.supportedLanguages.length === this.model.visibleLanguages.length;
                         this.model.loading = false;
                         this.model.error = '';
                         this.model.options = result.options;
@@ -827,7 +832,7 @@
             },
 
             deleteResource(resource) {
-                if(confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.DeleteConfirmation)')) {
+                if (confirm('@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.DeleteConfirmation)')) {
                     axios.post('api/service/delete', resource).then(() => {
                         this.model.resources.splice(this.model.resources.indexOf(resource), 1);
                     });
@@ -851,12 +856,10 @@
             },
 
             selectAllLanguages(event) {
-                if(event.$event.target.checked)
-                {
+                if (event.$event.target.checked) {
                     // select all languages
-                    this.model.checkedLanguages = $.map(this.model.supportedLanguages, function (l) { return l.code; });
-                }
-                else {
+                    this.model.checkedLanguages = $.map(this.model.supportedLanguages, function(l) { return l.code; });
+                } else {
                     this.model.checkedLanguages = [];
                 }
             },
@@ -896,22 +899,33 @@
                 if (this.model.options.showOnlyEmptyResources)
                     result = result.filter(r => Object.values(r).some(v => v == null));
 
-                if(upperSearch !== null)
-                    result = result.filter(r => Object.values(r).some(v => String(v).toUpperCase().includes(upperSearch)));
-
+                @if (!UiContext.Value.EnableDbSearch)
+                {
+                @:if (upperSearch !=  = null)
+                @:    result = result.filter(r => Object.values(r).some(v => String(v).toUpperCase().includes(upperSearch)));
+                }
                 return result;
             }
+        },
+        watch: {
+            'model.searchKeyword': debounce(function(e) {
+                this.loadData(e);
+            }, 500)
         }
     });
 
     function isObject(obj)
     {
-        return obj !== undefined && obj !== null && obj.constructor == Object;
+        return obj !== undefined && obj !== null && obj.constructor === Object;
     }
 
     document.onreadystatechange = function() {
-        if (document.readyState == 'interactive') {
+        if (document.readyState === 'interactive') {
             app.loadData();
+            @if (UiContext.Value.EnableDbSearch)
+            {
+            @:document.getElementById('search-input').focus();
+            }
         }
     };
 </script>

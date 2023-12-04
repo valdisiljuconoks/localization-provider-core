@@ -26,6 +26,7 @@ public class Resources
     public static string SelectAll = "(Select All)";
     public static string RemoveConfirmation = "Do you want to remove this translation?";
     public static string SearchPlaceholder = "if it gets too noisy, type filter here...";
+    public static string SearchPlaceholderDbSearchEnabled = "server side search enabled, type resource key...";
     public static string ResourceKeyColumn = "Key";
     public static string InvariantCultureColumn = "Invariant";
     public static string HiddenColumn = "Is Hidden?";

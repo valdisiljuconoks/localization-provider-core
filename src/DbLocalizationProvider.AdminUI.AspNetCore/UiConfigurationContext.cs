@@ -95,6 +95,16 @@ public class UiConfigurationContext
     public Action<AuthorizationPolicyBuilder> AccessPolicyOptions { get; set; }
 
     /// <summary>
+    /// Configure if pagination is enabled (if set to `true` resources are shown only by typing is search box).
+    /// </summary>
+    public bool EnableDbSearch { get; set; } = false;
+
+    /// <summary>
+    /// Page size (number of resources returned) if <see cref="EnableDbSearch"/> is set to `true`.
+    /// </summary>
+    public int PageSize { get; set; } = 50;
+
+    /// <summary>
     /// Returns current version of the lib
     /// </summary>
     public Lazy<string> Version =>
@@ -117,5 +127,7 @@ public class UiConfigurationContext
         ShowHiddenResources = context.ShowHiddenResources;
         ShowInvariantCulture = context.ShowInvariantCulture;
         UseAvailableLanguageListFromStorage = context.UseAvailableLanguageListFromStorage;
+        EnableDbSearch = context.EnableDbSearch;
+        PageSize = context.PageSize;
     }
 }
