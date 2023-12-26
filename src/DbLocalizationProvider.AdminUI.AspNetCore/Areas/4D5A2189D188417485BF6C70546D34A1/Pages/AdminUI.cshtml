@@ -3,6 +3,7 @@
 @using DbLocalizationProvider
 @using DbLocalizationProvider.Abstractions
 @using DbLocalizationProvider.AdminUI.AspNetCore
+@using Microsoft.Extensions.DependencyInjection
 @using Microsoft.Extensions.Options
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUIViewModel
 
@@ -10,7 +11,7 @@
 @inject ILocalizationProvider LocalizationProvider
 @inject IOptions<ConfigurationContext> ConfigContext
 @inject IOptions<UiConfigurationContext> UiContext
-@inject ITranslatorService TranslatorService
+@inject IServiceProvider ServiceProvider
 
 @{
     Layout = null;
@@ -309,7 +310,7 @@
                 </div>
                 <div class="modal-body translation-container">
                     <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
-                    @if (TranslatorService != null)
+                    @if (ServiceProvider.GetService(typeof(ITranslatorService)) != null)
                     {
                         <button type="button" class="modal-default-button btn btn-link ma-4 auto-translate-button" @@click="$emit('translate')">
                             <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
