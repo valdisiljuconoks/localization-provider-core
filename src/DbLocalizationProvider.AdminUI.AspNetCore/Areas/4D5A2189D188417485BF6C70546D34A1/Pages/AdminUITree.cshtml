@@ -1,6 +1,7 @@
 ﻿@page "{handler?}"
 
 @using DbLocalizationProvider
+@using DbLocalizationProvider.Abstractions
 @using DbLocalizationProvider.AdminUI.AspNetCore
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Options
@@ -10,6 +11,8 @@
 @inject IHtmlLocalizer<Resources> Localizer
 @inject IOptions<ConfigurationContext> ConfigContext
 @inject IOptions<UiConfigurationContext> UiContext
+@inject ITranslatorService TranslatorService
+
 @{
     Layout = null;
 }
@@ -223,6 +226,16 @@
         .mr-4 {
             margin-right: 4px;
         }
+
+        .translation-container {
+            position: relative;
+        }
+
+        .auto-translate-button {
+            position: absolute;
+            bottom: 8px;
+            right: 0;
+        }
     </style>
 
     @if (!string.IsNullOrEmpty(UiContext.Value.CustomCssPath))
@@ -241,8 +254,14 @@
                     <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
                     <div>({{model.language }})</div>
                 </div>
-                <div class="modal-body">
+                    <div class="modal-body translation-container">
                     <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
+                    @if (TranslatorService != null)
+                    {
+                        <button type="button" class="modal-default-button btn btn-link ma-4 auto-translate-button" @@click="$emit('translate')">
+                            <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
+                        </button>
+                    }
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
@@ -334,7 +353,7 @@
     </div>
     <div>
         <span class="error">{{error}}</span>
-        <modal v-if="showModal" @@save="save" @@remove="remove" @@close="showModal = false" :model="currentResource"></modal>
+        <modal v-if="showModal" @@save="save" @@remove="remove" @@close="showModal = false" @@translate="translate" :model="currentResource"></modal>
         <xlifflangmodal v-if="showXliffLanguagesModal" @@export="exportXliff" @@close="showXliffLanguagesModal = false" :model="this"></xlifflangmodal>
         <vue-ads-table-tree
             :columns="columns"
@@ -481,10 +500,21 @@
                     translation: translation,
                     language: lang,
                     isModified: resource.isModified,
-                    _ref: resource
+                    _ref: resource,
+                    invariant: resource.translation
                 };
 
                 this.showModal = true;
+            },
+
+            translate() {
+                axios
+                    .get('../api/service/auto-translate?inputText=' + this.currentResource.invariant + '&targetLanguage=' + this.currentResource.language)
+                    .then(response => {
+                        if (response) {
+                            this.currentResource.translation = response.data;
+                        }
+                    });
             },
 
             save() {

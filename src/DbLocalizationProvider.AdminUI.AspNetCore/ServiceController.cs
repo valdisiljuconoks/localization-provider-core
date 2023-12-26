@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using DbLocalizationProvider.Abstractions;
 using DbLocalizationProvider.AdminUI.AspNetCore.Models;
 using DbLocalizationProvider.AdminUI.AspNetCore.Security;
@@ -17,6 +18,7 @@ using DbLocalizationProvider.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace DbLocalizationProvider.AdminUI.AspNetCore;
@@ -139,6 +141,22 @@ public class ServiceController : ControllerBase
         }
 
         return ServiceOperationResult.Ok;
+    }
+
+    [HttpGet]
+    [Route("auto-translate", Name = "LocAdminAutoTranslate")]
+    public async Task<IActionResult> AutoTranslate(string inputText, string targetLanguage)
+    {
+        var translator = Request.HttpContext.RequestServices.GetService<ITranslatorService>();
+
+        if (translator == null)
+        {
+            return BadRequest("Translator service is not configured.");
+        }
+
+        var resultText = await translator.TranslateAsync(inputText, targetLanguage);
+
+        return Ok(resultText);
     }
 
     private LocalizationResourceApiModel PrepareViewModel(string keyword)

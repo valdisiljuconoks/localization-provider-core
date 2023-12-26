@@ -40,7 +40,7 @@ public static class IServiceCollectionExtensions
         this IServiceCollection services,
         Action<ConfigurationContext> setup = null)
     {
-        var ctx = new ConfigurationContext();
+        var ctx = new ConfigurationContext(services);
         var factory = ctx.TypeFactory;
 
         // setup default implementations
@@ -67,7 +67,6 @@ public static class IServiceCollectionExtensions
         services.AddSingleton<CommandExecutor>();
         services.AddSingleton<ICommandExecutor>(sp => sp.GetRequiredService<CommandExecutor>());
         services.AddSingleton<DiscoveredTranslationBuilder>();
-        //services.AddSingleton(_ => ctx._fallbackCollection);
         
         services
             .AddOptions<ConfigurationContext>()

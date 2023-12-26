@@ -8,6 +8,7 @@ using DbLocalizationProvider.Core.AspNetSample.Data;
 using DbLocalizationProvider.Core.AspNetSample.Resources;
 using DbLocalizationProvider.Logging;
 using DbLocalizationProvider.Storage.SqlServer;
+using DbLocalizationProvider.Translator.Azure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -135,6 +136,9 @@ public class Startup
             x.ManualResourceProviders.Add<SomeManualResources>();
             x.ModelMetadataProviders.ReplaceProviders = true;
             x.FlexibleRefactoringMode = true;
+
+            // read these settings from somewhere
+            //x.UseAzureCognitiveServices("ADD YOUR KEY...", "ADD YOUR REGION...");
         });
 
         services.AddDbLocalizationProviderAdminUI(x =>

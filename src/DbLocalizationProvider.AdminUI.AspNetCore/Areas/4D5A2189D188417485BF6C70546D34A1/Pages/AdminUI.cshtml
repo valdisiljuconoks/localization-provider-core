@@ -1,6 +1,7 @@
 ﻿@page "{handler?}"
 
 @using DbLocalizationProvider
+@using DbLocalizationProvider.Abstractions
 @using DbLocalizationProvider.AdminUI.AspNetCore
 @using Microsoft.Extensions.Options
 @model DbLocalizationProvider.AdminUI.AspNetCore.Areas._4D5A2189D188417485BF6C70546D34A1.Pages.AdminUIViewModel
@@ -9,6 +10,7 @@
 @inject ILocalizationProvider LocalizationProvider
 @inject IOptions<ConfigurationContext> ConfigContext
 @inject IOptions<UiConfigurationContext> UiContext
+@inject ITranslatorService TranslatorService
 
 @{
     Layout = null;
@@ -278,6 +280,16 @@
         .mb-4 {
             margin-bottom: 4px;
         }
+
+        .translation-container {
+            position: relative;
+        }
+
+        .auto-translate-button {
+            position: absolute;
+            bottom: 8px;
+            right: 0;
+        }
     </style>
 
     @if (!string.IsNullOrEmpty(UiContext.Value.CustomCssPath))
@@ -295,8 +307,14 @@
                     <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
                     <div>({{model.language }})</div>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body translation-container">
                     <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
+                    @if (TranslatorService != null)
+                    {
+                        <button type="button" class="modal-default-button btn btn-link ma-4 auto-translate-button" @@click="$emit('translate')">
+                            <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
+                        </button>
+                    }
                 </div>
                 <div class="modal-footer">
                 <slot name="footer">
@@ -508,7 +526,7 @@
     </div>
 
     <langmodal v-if="model.showLanguagesModal" v-on:select-all="selectAllLanguages" @@save="saveLanguages" @@close="model.showLanguagesModal = false" :model="model"></langmodal>
-    <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" :model="model.currentResource"></modal>
+    <modal v-if="model.showModal" @@save="save" @@remove="remove" @@close="model.showModal = false" @@translate="translate" :model="model.currentResource"></modal>
     <addmodal v-if="model.showAddModal" @@add="addResource" @@close="model.showAddModal = false" :model="model.currentResource"></addmodal>
     <xlifflangmodal v-if="model.showXliffLanguagesModal" @@export="exportXliff" @@close="model.showXliffLanguagesModal = false" :model="model"></xlifflangmodal>
     <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal>
@@ -779,10 +797,21 @@
                     key: resource.key,
                     translation: resource[lang],
                     language: lang,
-                    isModified: resource.isModified
+                    isModified: resource.isModified,
+                    invariant: resource['_']
                 };
 
                 this.model.showModal = true;
+            },
+
+            translate() {
+                axios
+                    .get('api/service/auto-translate?inputText=' + this.model.currentResource.invariant + '&targetLanguage=' + this.model.currentResource.language)
+                    .then(response => {
+                        if (response) {
+                            this.model.currentResource.translation = response.data;
+                        }
+                    });
             },
 
             save() {
@@ -791,7 +820,7 @@
                 axios.post('api/service/save', this.model.currentResource);
 
                 // update viewmodel
-                var editedResource = this.model.resources.find((r) => { return r.key == this.model.currentResource.key; });
+                var editedResource = this.model.resources.find((r) => { return r.key === this.model.currentResource.key; });
                 if (editedResource != null) {
                     editedResource[this.model.currentResource.language] = this.model.currentResource.translation;
                     editedResource.isModified = true;
@@ -901,7 +930,7 @@
 
                 @if (!UiContext.Value.EnableDbSearch)
                 {
-                @:if (upperSearch !=  = null)
+                @:if (upperSearch != null)
                 @:    result = result.filter(r => Object.values(r).some(v => String(v).toUpperCase().includes(upperSearch)));
                 }
                 return result;
