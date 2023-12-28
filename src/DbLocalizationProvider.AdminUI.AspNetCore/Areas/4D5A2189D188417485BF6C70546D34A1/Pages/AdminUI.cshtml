@@ -56,6 +56,10 @@
             border-width: 1px;
         }
 
+        textarea::placeholder {
+            color: #707070;
+        }
+
         input.form-control {
             border-radius: 0;
         }
@@ -306,10 +310,10 @@
             <div class="modal-container">
                 <div class="modal-header">
                     <div name="header" class="header" v-bind:title="model.key">{{ model.titleKey }}</div>
-                    <div>({{model.language }})</div>
+                    <div>({{ model.language }})</div>
                 </div>
                 <div class="modal-body translation-container">
-                    <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor"></textarea>
+                    <textarea rows="6" cols="50" v-model="model.translation" id="translation" ref="translationEditor" :placeholder="model.invariant"></textarea>
                     @if (ServiceProvider.GetService(typeof(ITranslatorService)) != null)
                     {
                         <button type="button" class="modal-default-button btn btn-link ma-4 auto-translate-button" @@click="$emit('translate')">
