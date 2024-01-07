@@ -110,7 +110,11 @@ public class ResourceImportWorkflow
         // process deletes
         foreach (var delete in changes.Where(c => c.ChangeType == ChangeType.Delete))
         {
-            _commandExecutor.Execute(new DeleteResource.Command(delete.ExistingResource.ResourceKey));
+            _commandExecutor.Execute(
+                new DeleteResource.Command(delete.ExistingResource.ResourceKey)
+                {
+                    IgnoreFromCode = true
+                });
             deletes++;
         }
 
