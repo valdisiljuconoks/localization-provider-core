@@ -10,7 +10,7 @@ Stay tuned!
 
 # v7.0 is OUT
 
-Please read more in [this blog post](https://blog.tech-fellow.net/2022/01/23/dblocalizationprovider-for-optimizely/)!
+Please read more in [this blog post](https://tech-fellow.eu/2022/01/23/dblocalizationprovider-for-optimizely/)!
 
 ## Supporting LocalizationProvider
 
@@ -53,14 +53,14 @@ Install required packages:
 > dotnet add package LocalizationProvider.Storage.SqlServer
 ```
 
-Following service configuration (usually in `Startup.cs`) is required to get localization provider working:
+Following service configuration (usually in `Startup.cs`) is required to get the localization provider working:
 
 ```csharp
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        // add your authorization provider (asp.net identity, identity server, which ever..)
+        // add your authorization provider (asp.net identity, identity server, whichever..)
     
         services
             .AddControllersWithViews()
@@ -85,7 +85,7 @@ public class Startup
 }
 ```
 
-And following setup of the application is required as minimum (also usually located in `Startup.cs`):
+And following setup of the application is required as a minimum (also usually located in `Startup.cs`):
 
 ```csharp
 public class Startup
@@ -112,7 +112,7 @@ public class Startup
 }
 ```
 
-You can grab some snippets form this sample `Startup.cs` file (based ASP.NET Core 3.1):
+You can grab some snippets from this sample `Startup.cs` file:
 
 ```csharp
 using System.Collections.Generic;
@@ -226,7 +226,7 @@ namespace SampleApp
 }
 ```
 
-Also you can refer to [sample app in GitHub](https://github.com/valdisiljuconoks/localization-provider-core/tree/master/tests/DbLocalizationProvider.Core.AspNetSample) for some more hints if needed.
+Also, you can refer to [sample app in GitHub](https://github.com/valdisiljuconoks/localization-provider-core/tree/master/tests/DbLocalizationProvider.Core.AspNetSample) for some more hints if needed.
 
 ### More Detailed Help
 
