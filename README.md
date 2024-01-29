@@ -1,10 +1,14 @@
-# LocalizationProvider for .NET Core
+# LocalizationProvider for .NET Application
 
-Database driven localization provider for .NET Core applications.
+Database-driven localization provider for .NET applications.
 
 [<img src="https://tech-fellow-consulting.visualstudio.com/_apis/public/build/definitions/f63fd8ab-e3f1-48c1-bca0-f027727a53c4/9/badge"/>](https://tech-fellow-consulting.visualstudio.com/localization-provider-core/_build/index?definitionId=9)
 
-# v7.0 is FINALLY OUT!
+# v8.0 is UPCOMING!
+
+Stay tuned!
+
+# v7.0 is OUT
 
 Please read more in [this blog post](https://blog.tech-fellow.net/2022/01/23/dblocalizationprovider-for-optimizely/)!
 
@@ -14,15 +18,23 @@ If you find this library useful, cup of coffee would be awesome! You can support
 
 ## What is the LocalizationProvider project?
 
-LocalizationProvider project is Asp.Net Mvc web application localization provider on steriods.
+LocalizationProvider project is ASP.NET Core web application localization provider on steroids.
 
-Giving you main following features:
-* Database driven localization provider for .Net applications
+Giving you the main following features:
+* Database-driven localization provider for .Net applications
 * Easy resource registrations via code
-* Supports hierarchical resources (with help of child classes)
+* Supports hierarchical resources (with the help of child classes)
 
 ## What's new in v6?
-Please [refer to this post](https://blog.tech-fellow.net/2020/02/21/localization-provider-major-6/) to read more about new features in v6.
+Please [refer to this post](https://tech-fellow.eu/2020/02/21/localization-provider-major-6/) to read more about new features in v6.
+
+
+## Source Code Repos
+The whole package of libraries is split into multiple git repos (with submodule linkage in between). Below is list of all related repositories:
+* [Main Repository](https://github.com/valdisiljuconoks/LocalizationProvider/)
+* [.NET Runtime Repository](https://github.com/valdisiljuconoks/localization-provider-core)
+* [Optimizely Integration Repository](https://github.com/valdisiljuconoks/localization-provider-epi)
+
 
 ## Project Structure
 
@@ -31,7 +43,7 @@ Database localization provider is split into main [abstraction projects](https:/
 ## Getting Started
 
 ### Bare Minimum to Start With
-Below are code fragments that are essential to get started with localization provider.
+Below are code fragments that are essential to get started with a localization provider.
 
 Install required packages:
 
@@ -244,7 +256,7 @@ Some files from these packages are embedded as part of the AdminUI - therefore c
 
 # More Info
 
-* [Part 1: Resources and Models](http://blog.tech-fellow.net/2016/03/16/db-localization-provider-part-1-resources-and-models/)
-* [Part 2: Configuration and Extensions](http://blog.tech-fellow.net/2016/04/21/db-localization-provider-part-2-configuration-and-extensions/)
-* [Part 3: Import and Export](http://blog.tech-fellow.net/2017/02/22/localization-provider-import-and-export-merge/)
-* [Part 4: Resource Refactoring and Migrations](https://blog.tech-fellow.net/2017/10/10/localizationprovider-tree-view-export-and-migrations/)
+* [Part 1: Resources and Models](https://tech-fellow.eu/2016/03/16/db-localization-provider-part-1-resources-and-models/)
+* [Part 2: Configuration and Extensions](https://tech-fellow.eu/2016/04/21/db-localization-provider-part-2-configuration-and-extensions/)
+* [Part 3: Import and Export](https://tech-fellow.eu/2017/02/22/localization-provider-import-and-export-merge/)
+* [Part 4: Resource Refactoring and Migrations](https://tech-fellow.eu/2017/10/10/localizationprovider-tree-view-export-and-migrations/)
