@@ -50,5 +50,5 @@ public class Resources
     public static string ImportChooseActionLabel = "Choose";
     public static string ImportOperationLabel = "Operation";
     public static string Close = "Close";
-
+    public static string Loading = "Loading data...";
 }

@@ -191,6 +191,12 @@
         .export-xliff-container {
             display: flex;
         }
+        
+        .resources-table--loading {
+            display: flex;
+            justify-content: center;
+            font-style: italic;
+        }
     </style>
 
     @if(!string.IsNullOrEmpty(UiContext.CustomCssPath))
@@ -306,7 +312,8 @@
             :rows="rows"
             :filter="filter"
             :page="page"
-            @@filter-change="filterChanged">
+            @@filter-change="filterChanged"
+            v-if="!isLoading">
             <template slot="bottom">&nbsp;</template>
             <template slot="no-rows">There are no resources registered. Make sure you sync them up!</template>
             <template slot="segmentKey" slot-scope="props">{{ props.row.segmentKey }}</template>
@@ -320,6 +327,7 @@
                 <a href="#" class="translation" @@click="edit(props.row, props.column.language, props.row[props.column.property])" v-show="typeof(props.row[props.column.property]) !== 'undefined' && props.row[props.column.property] != null && props.row[props.column.property].trim() != ''">{{ props.row[props.column.property] }}</a>
             </template>
         </vue-ads-table-tree>
+        <div v-if="isLoading" class="resources-table--loading">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Loading)</div>
     </div>
 </div>
 
@@ -400,11 +408,14 @@
                 visibleLanguages: [],
                 showXliffLanguagesModal: false,
                 sourceLanguage: '',
-                targetLanguage: ''
+                targetLanguage: '',
+                isLoading: false
             };
         },
 
         mounted: function() {
+            this.isLoading = true;
+
             axios.get('../api/service/gettree').then((response) => {
                 if (isObject(response.data)) {
                     var result = response.data;
@@ -436,7 +447,12 @@
                     this.error = '@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ErrorLoadingResources)';
                 }
 
-            }).catch(function(error) { alert('error retrieving resources: ' + error); });
+                this.isLoading = false;
+
+            }).catch(function(error) {
+                this.isLoading = false;
+                 alert('error retrieving resources: ' + error);
+            });
         },
 
         methods: {
