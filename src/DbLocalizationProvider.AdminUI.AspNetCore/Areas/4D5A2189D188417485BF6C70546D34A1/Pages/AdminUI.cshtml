@@ -295,6 +295,12 @@
             bottom: 8px;
             right: 0;
         }
+        
+        .resources-table--loading {
+            display: flex;
+            justify-content: center;
+            font-style: italic;
+        }
     </style>
 
     @if (!string.IsNullOrEmpty(UiContext.Value.CustomCssPath))
@@ -583,6 +589,7 @@
                 }
             </tr>
         </table>
+        <div v-if="model.loading" class="resources-table--loading">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Loading)</div>
     </div>
 </div>
 
