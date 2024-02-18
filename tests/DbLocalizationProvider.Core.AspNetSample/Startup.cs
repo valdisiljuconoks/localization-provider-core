@@ -150,6 +150,8 @@ public class Startup
                 x.DefaultView = ResourceListView.Tree;
                 x.CustomCssPath = "/css/custom-adminui.css";
                 x.HideDeleteButton = false;
+                x.EnableDbSearch = true;
+                x.PageSize = 50;
             })
             .AddCsvSupport()
             .AddXliffSupport();

@@ -158,6 +158,6 @@ In these cases you can issue request directly to localization provider endpoint 
 
 For example, issuing request straight to resource endpoint and providing `json` query parameter, you will get back only JSON object.
 
-![2019-03-09_09-05-30](https://blog.tech-fellow.net/content/images/2019/03/2019-03-09_09-05-30.png)
+![2019-03-09_09-05-30](https://tech-fellow.eu/assets/img/2019/03/2019-03-09_09-05-30.png)
 
 Or you can just fire any standard XHR request and localization provider will try its best to detect that request is of ajax type. If so - translations will be served in JSON format by default.

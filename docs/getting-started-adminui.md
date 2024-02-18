@@ -42,7 +42,7 @@ app.MapControllers();
 app.Run();
 ```
 
-## Configure Services (.NET 5)
+## Configure Services (.NET)
 In order to add AdminUI module to your Asp.Net Core Mvc application you have to first add services to dependency container (service collection) via `services.AddDbLocalizationProviderAdminUI()` method:
 
 ```csharp
