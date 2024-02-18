@@ -1,20 +1,12 @@
-# LocalizationProvider for .NET Application
-
-Database-driven localization provider for .NET applications.
-
-[<img src="https://tech-fellow-consulting.visualstudio.com/_apis/public/build/definitions/f63fd8ab-e3f1-48c1-bca0-f027727a53c4/9/badge"/>](https://tech-fellow-consulting.visualstudio.com/localization-provider-core/_build/index?definitionId=9)
-
-# v8.0 is UPCOMING!
-
-Stay tuned!
-
-# v7.0 is OUT
-
-Please read more in [this blog post](https://tech-fellow.eu/2022/01/23/dblocalizationprovider-for-optimizely/)!
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=valdisiljuconoks_localization-provider-core&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=valdisiljuconoks_localization-provider-core)
 
 ## Supporting LocalizationProvider
 
 If you find this library useful, cup of coffee would be awesome! You can support further development of the library via [Paypal](https://paypal.me/valdisiljuconoks).
+
+## Localization Provider v8.0 IS OUT!
+
+Read more about v8.0 release [here](https://github.com/valdisiljuconoks/LocalizationProvider/?tab=readme-ov-file#localization-provider-v80-is-out).
 
 ## What is the LocalizationProvider project?
 
@@ -24,10 +16,6 @@ Giving you the main following features:
 * Database-driven localization provider for .Net applications
 * Easy resource registrations via code
 * Supports hierarchical resources (with the help of child classes)
-
-## What's new in v6?
-Please [refer to this post](https://tech-fellow.eu/2020/02/22/localization-provider-major-6/) to read more about new features in v6.
-
 
 ## Source Code Repos
 The whole package of libraries is split into multiple git repos (with submodule linkage in between). Below is list of all related repositories:
@@ -253,6 +241,15 @@ git clone --recurse-submodules git://github.com/...
 ## Building AdminUI.AspNetCore Project
 You will need to run `npm install` at root of the project to get some of the dependencies downloaded to get started.
 Some files from these packages are embedded as part of the AdminUI - therefore compilation will fail without those files.
+
+# Other Versions
+
+## v7.0 is OUT
+
+Please read more in [this blog post](https://tech-fellow.eu/2022/01/23/dblocalizationprovider-for-optimizely/)!
+
+## What's new in v6?
+Please [refer to this post](https://tech-fellow.eu/2020/02/22/localization-provider-major-6/) to read more about new features in v6.
 
 # More Info
 
