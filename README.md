@@ -1,14 +1,14 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=valdisiljuconoks_localization-provider-core&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=valdisiljuconoks_localization-provider-core)
 
-## Supporting LocalizationProvider
+# Supporting LocalizationProvider
 
 If you find this library useful, cup of coffee would be awesome! You can support further development of the library via [Paypal](https://paypal.me/valdisiljuconoks).
 
-## Localization Provider v8.0 IS OUT!
+# Localization Provider v8.0 IS OUT!
 
 Read more about v8.0 release [here](https://github.com/valdisiljuconoks/LocalizationProvider/?tab=readme-ov-file#localization-provider-v80-is-out).
 
-## What is the LocalizationProvider project?
+# What is the LocalizationProvider project?
 
 LocalizationProvider project is ASP.NET Core web application localization provider on steroids.
 
