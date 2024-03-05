@@ -167,10 +167,17 @@ public class ServiceController : ControllerBase
         {
             if (!string.IsNullOrEmpty(keyword))
             {
-                resources = GetResources()
-                    .Where(r => r.ResourceKey.Contains(keyword, StringComparison.InvariantCultureIgnoreCase))
-                    .Take(_config.Value.PageSize)
-                    .ToList();
+                if (keyword.Equals("*", StringComparison.OrdinalIgnoreCase))
+                {
+                    resources = GetResources();
+                }
+                else
+                {
+                    resources = GetResources()
+                        .Where(r => r.ResourceKey.Contains(keyword, StringComparison.InvariantCultureIgnoreCase))
+                        .Take(_config.Value.PageSize)
+                        .ToList();
+                }
             }
         }
         else
@@ -191,7 +198,7 @@ public class ServiceController : ControllerBase
         return result;
     }
 
-    private IEnumerable<AvailableLanguage> GetVisibleLanguages(IEnumerable<AvailableLanguage> availableLanguages)
+    private IEnumerable<AvailableLanguage>? GetVisibleLanguages(IEnumerable<AvailableLanguage> availableLanguages)
     {
         var cookie = Request.Cookies["LocalizationProvider_VisibleLanguages"];
         if (string.IsNullOrEmpty(cookie))
@@ -214,12 +221,14 @@ public class ServiceController : ControllerBase
 
         var visibleLanguages = GetVisibleLanguages(languages);
 
-        var result = new LocalizationResourceApiTreeModel(resources,
-                                                          languages,
-                                                          visibleLanguages ?? languages,
-                                                          _config.Value.MaxResourceKeyPopupTitleLength,
-                                                          _config.Value.MaxResourceKeyDisplayLength,
-                                                          BuildOptions());
+        var result = new LocalizationResourceApiTreeModel(
+            resources,
+            languages,
+            visibleLanguages ?? languages,
+            _config.Value.MaxResourceKeyPopupTitleLength,
+            _config.Value.MaxResourceKeyDisplayLength,
+            BuildOptions(),
+            _configurationContext.Value.EnableLegacyMode());
 
         return result;
     }

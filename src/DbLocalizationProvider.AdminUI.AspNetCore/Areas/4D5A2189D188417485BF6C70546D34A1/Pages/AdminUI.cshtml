@@ -54,6 +54,7 @@
             box-sizing: border-box;
             border-color: #A9A9A9;
             border-width: 1px;
+            padding: 2px;
         }
 
         textarea::placeholder {
@@ -543,8 +544,8 @@
     <importmodal v-if="model.showImportModal" @@cancel="model.showImportModal=false" @@close="model.showImportModal = false; loadData();" :model="model.filemodel"></importmodal>
 
     <div class="d-flex flex-row justify-content-end mb-4">
-        <div class="form-group offset-lg-9 col-lg-3 ma-4">
-                <input type="text" class="form-control" id="search-input" v-model="model.searchKeyword" placeholder="@(UiContext.Value.EnableDbSearch ?  LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholderDbSearchEnabled) : LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder))" />
+        <div class="form-group offset-lg-9 col-lg-4 ma-4">
+            <input type="text" class="form-control" id="search-input" v-model="model.searchKeyword" placeholder="@(UiContext.Value.EnableDbSearch ?  LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholderDbSearchEnabled) : LocalizationProvider.GetStringWithInvariantFallback(() => Resources.SearchPlaceholder))" />
         </div>
     </div>
     
@@ -590,6 +591,12 @@
             </tr>
         </table>
         <div v-if="model.loading" class="resources-table--loading">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.Loading)</div>
+        @if (UiContext.Value.EnableDbSearch)
+        {
+                <div class="d-flex justify-content-center" v-if="!model.searchKeyword">
+                <button type="button" class="btn btn-light" id="loadAll" @@click="loadAll" aria-expanded="false">@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.LoadAll)</button>
+            </div>
+        }
     </div>
 </div>
 
@@ -801,6 +808,10 @@
                         this.model.error = '@LocalizationProvider.GetStringWithInvariantFallback(() => Resources.ErrorLoadingResources)';
                     }
                 }).catch(function(error) { alert('error retrieving resources: ' + error); });
+            },
+
+            loadAll() {
+                this.model.searchKeyword = '*';
             },
 
             edit(resource, lang) {
