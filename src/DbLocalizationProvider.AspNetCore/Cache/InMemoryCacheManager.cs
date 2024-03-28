@@ -22,6 +22,7 @@ public class InMemoryCacheManager : ICacheManager
     public void Insert(string key, object value, bool insertIntoKnownResourceKeys)
     {
         _memCache.Set(key, value);
+        Entries.TryRemove(key, out _);
         Entries.TryAdd(key, true);
     }
 
