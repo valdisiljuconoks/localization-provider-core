@@ -49,13 +49,13 @@ public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query,
 
         // if keys = 0, execute inner query to actually get resources from the db
         // this is usually called during initialization when cache is not yet filled up
-        if (_configurationContext.Value.BaseCacheManager.KnownKeyCount == 0)
+        if (_configurationContext.Value._baseCacheManager.KnownKeyCount == 0)
         {
             return _inner.Execute(query);
         }
 
         var result = new List<LocalizationResource>();
-        var keys = _configurationContext.Value.BaseCacheManager.KnownKeys;
+        var keys = _configurationContext.Value._baseCacheManager.KnownKeys;
 
         foreach (var key in keys)
         {

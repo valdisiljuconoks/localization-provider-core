@@ -11,9 +11,14 @@ using Microsoft.Extensions.Hosting;
 // ReSharper disable once CheckNamespace
 namespace DbLocalizationProvider.AspNetCore;
 
+/// <summary>
+/// Unfortunately extension methods needs to have their homes somewhere
+/// </summary>
 public static class IApplicationBuilderClientsideExtensions
 {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private static ICacheManager _cache;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     /// <summary>
     /// Makes sure that usage of the clientside resource provider is added to your app.
@@ -25,8 +30,9 @@ public static class IApplicationBuilderClientsideExtensions
         AppContext.Configure(builder.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
         _cache = builder.ApplicationServices.GetRequiredService<ICacheManager>();
 
-        var cacheManager = builder.ApplicationServices.GetService<ICacheManager>();
+        var cacheManager = builder.ApplicationServices.GetRequiredService<ICacheManager>();
         cacheManager.OnRemove += OnRemove;
+
         builder.ApplicationServices
             .GetRequiredService<IHostApplicationLifetime>()
             .ApplicationStopping
