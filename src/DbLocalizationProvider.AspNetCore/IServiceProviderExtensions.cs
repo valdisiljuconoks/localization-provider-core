@@ -26,6 +26,13 @@ public static class IServiceProviderExtensions
         }
 
         var context = serviceFactory.GetRequiredService<IOptions<ConfigurationContext>>();
+
+        // resolve inner cache (if set)
+        if (context.Value._baseCacheManager._implementationFactory != null)
+        {
+            context.Value._baseCacheManager.SetInnerManager(context.Value._baseCacheManager._implementationFactory(serviceFactory));
+        }
+
         var usageConfigurator = serviceFactory.GetService<IUsageConfigurator>();
 
         if (usageConfigurator != null)

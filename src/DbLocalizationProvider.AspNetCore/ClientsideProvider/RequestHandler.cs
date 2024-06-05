@@ -87,9 +87,9 @@ public class RequestHandler
                                      languageName,
                                      debugMode,
                                      camelCase,
-                                     context.RequestServices.GetService<IQueryExecutor>(),
-                                     context.RequestServices.GetService<IOptions<ConfigurationContext>>(),
-                                     context.RequestServices.GetService<ScanState>());
+                                     context.RequestServices.GetRequiredService<IQueryExecutor>(),
+                                     context.RequestServices.GetRequiredService<IOptions<ConfigurationContext>>(),
+                                     context.RequestServices.GetRequiredService<ScanState>());
 
             cache.Insert(cacheKey, responseObject, false);
         }

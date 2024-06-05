@@ -72,9 +72,12 @@ public class CachedGetAllResourcesHandler : IQueryHandler<GetAllResources.Query,
 
                 if (resourceFromDb != null)
                 {
-                    _configurationContext.Value.CacheManager.Insert(cacheKey, resourceFromDb, true);
                     result.Add(resourceFromDb);
                 }
+
+                _configurationContext.Value.CacheManager.Insert(cacheKey,
+                                                                resourceFromDb ?? LocalizationResource.CreateNonExisting(key),
+                                                                true);
             }
         }
 

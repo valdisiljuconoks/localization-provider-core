@@ -38,7 +38,7 @@ public static class IServiceCollectionExtensions
     /// <returns></returns>
     public static IDbLocalizationProviderBuilder AddDbLocalizationProvider(
         this IServiceCollection services,
-        Action<ConfigurationContext> setup = null)
+        Action<ConfigurationContext>? setup = null)
     {
         var ctx = new ConfigurationContext(services);
         var factory = ctx.TypeFactory;
@@ -50,13 +50,16 @@ public static class IServiceCollectionExtensions
 
         // set to default in-memory provider
         // only if we have IMemoryCache service registered
-        if (services.FirstOrDefault(d => d.ServiceType == typeof(IMemoryCache)) != null)
+        var memCacheDescriptor = services.FirstOrDefault(d => d.ServiceType == typeof(IMemoryCache));
+        if (memCacheDescriptor is { ServiceType: not null })
         {
-            services.AddSingleton<ICacheManager, InMemoryCacheManager>();
+            ctx._baseCacheManager.SetInnerManager(sp => new InMemoryCache((IMemoryCache)sp.GetRequiredService(memCacheDescriptor.ServiceType)));
         }
 
         // run custom configuration setup (if any)
         setup?.Invoke(ctx);
+
+        services.AddSingleton(ctx.CacheManager);
 
         services.AddSingleton<ScanState>();
         services.AddSingleton<ResourceKeyBuilder>();

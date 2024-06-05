@@ -6,20 +6,18 @@ using DbLocalizationProvider.Cache;
 
 namespace DbLocalizationProvider.AspNetCore.Cache;
 
-public class ClearCacheHandler : ICommandHandler<ClearCache.Command>
+/// <summary>
+/// Clears the cache.
+/// </summary>
+/// <param name="cache">Cache implementation</param>
+public class ClearCacheHandler(ICacheManager cache) : ICommandHandler<ClearCache.Command>
 {
-    private readonly ICacheManager _cache;
-
-    public ClearCacheHandler(ICacheManager cache)
-    {
-        _cache = cache;
-    }
-
+    /// <inheritdoc />
     public void Execute(ClearCache.Command command)
     {
-        foreach (var itemToRemove in InMemoryCacheManager.Entries)
+        foreach (var itemToRemove in cache.Keys)
         {
-            _cache.Remove(itemToRemove.Key);
+            cache.Remove(itemToRemove);
         }
     }
 }
