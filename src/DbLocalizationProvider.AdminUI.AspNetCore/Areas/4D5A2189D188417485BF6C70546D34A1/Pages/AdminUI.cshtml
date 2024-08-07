@@ -867,7 +867,11 @@
 
             addResource() {
                 this.model.showAddModal = false;
-                axios.post('api/service/add', this.model.currentResource);
+                axios
+                    .post('api/service/add', this.model.currentResource)
+                    .catch(function(error) {
+                         this.app.model.error = error.message;
+                    });
 
                 this.loadData();
             },
