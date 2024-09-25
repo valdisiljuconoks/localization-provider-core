@@ -92,6 +92,7 @@ public class Startup
     
         app.UseEndpoints(endpoints =>
         {
+            endpoints.MapControllers();
             endpoints.MapRazorPages();
             endpoints.MapDbLocalizationAdminUI();
             endpoints.MapDbLocalizationClientsideProvider();
