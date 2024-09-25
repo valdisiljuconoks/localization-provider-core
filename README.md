@@ -204,7 +204,7 @@ namespace SampleApp
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
                 endpoints.MapRazorPages();
 
                 endpoints.MapDbLocalizationAdminUI();
