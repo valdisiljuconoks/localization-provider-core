@@ -49,20 +49,20 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         // add your authorization provider (asp.net identity, identity server, whichever..)
-    
+
         services
             .AddControllersWithViews()
             .AddMvcLocalization();
-    
+
         services.AddRazorPages();
         services.AddRouting();
-    
+
         services.AddDbLocalizationProvider(_ =>
         {
             _.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             ...
         });
-    
+
         services.AddDbLocalizationProviderAdminUI(_ =>
         {
             ...
@@ -85,11 +85,11 @@ public class Startup
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-    
+
         app.UseDbLocalizationProvider();
         app.UseDbLocalizationProviderAdminUI();
         app.UseDbLocalizationClientsideProvider(); //assuming that you like also Javascript
-    
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapRazorPages();
@@ -254,6 +254,6 @@ Please [refer to this post](https://tech-fellow.eu/2020/02/22/localization-provi
 # More Info
 
 * [Part 1: Resources and Models](https://tech-fellow.eu/2016/03/16/db-localization-provider-part-1-resources-and-models/)
-* [Part 2: Configuration and Extensions](https://tech-fellow.eu/2016/04/21/db-localization-provider-part-2-configuration-and-extensions/)
-* [Part 3: Import and Export](https://tech-fellow.eu/2017/02/22/localization-provider-import-and-export-merge/)
+* [Part 2: Configuration and Extensions](https://tech-fellow.eu/2016/04/22/db-localization-provider-part-2-configuration-and-extensions/)
+* [Part 3: Import and Export](https://tech-fellow.eu/2017/02/23/localization-provider-import-and-export-merge/)
 * [Part 4: Resource Refactoring and Migrations](https://tech-fellow.eu/2017/10/10/localizationprovider-tree-view-export-and-migrations/)
