@@ -2,11 +2,12 @@
 
 ## Install Package
 
-```
+```powershell
 > dotnet add package LocalizationProvider.AdminUI.AspNetCore
 ```
 
-## Configure Services
+## Configure Provider
+
 For Minimal API syntax use following set of configuration as your starting point to get AdminUI up & running.
 
 ```csharp
@@ -53,7 +54,7 @@ public class Startup
         services
             .AddControllersWithViews()
             .AddMvcLocalization();
-    
+
         services.AddRazorPages();
         services.AddRouting();
 
@@ -186,4 +187,29 @@ services
     {
         _.AccessPolicyOptions = builder => builder.AddRequirements(...);
     });
+```
+
+# Known Issues
+
+## Admin UI Returns 404
+
+If accessing AdminUI (by default `/localization-admin`) you get 404, check if you have added Razor page mapping.
+
+```csharp
+services.AddRazorPages();
+
+app.MapRazorPages();
+```
+
+## Static Files are Missing
+
+Ref: [#213](https://github.com/valdisiljuconoks/localization-provider-opti/issues/213).
+
+Solution is to add static web assets configuration.
+
+```csharp
+.ConfigureWebHostDefaults(webBuilder =>
+{
+    webBuilder.UseStaticWebAssets();
+});
 ```
