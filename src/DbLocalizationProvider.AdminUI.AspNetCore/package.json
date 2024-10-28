@@ -11,7 +11,7 @@
     "debounce": "^2.0.0",
     "jquery": "^3.7.1",
     "open-iconic": "^1.1.1",
-    "vue": "^2.7.15",
+    "vue": "^3.0.0",
     "vue-ads-table-tree": "^2.4.2",
     "vue-directive-tooltip": "^1.6.3"
   }
